@@ -8,8 +8,11 @@ const {
     signInWithEmailAndPassword,
     signOut,
     sendEmailVerification,
-    sendPasswordResetEmail
+    sendPasswordResetEmail,
+    db
 } = require('../config/firebase');
+
+const verifyToken = require("../middleware/index")
 
 const auth = getAuth();
 const app = express();
@@ -86,6 +89,31 @@ app.post('api/resetpassword', (req, res) => {
             console.error(error);
             res.status(500).json({ error: "Internal Server Error" });
         });
-})
+});
+
+app.post('/api/buildprofile',(req,res)=>{
+    /*
+        uuid,
+        username,
+        phone_number,
+        email,
+     */
+
+    let userProfileData = {};
+    userProfileData = req.body;
+
+    console.log(userProfileData);
+
+    db.collection('users')
+        .doc(`${req.body.uuid}`)
+        .set(userProfileData)
+            .then(result=>{
+                res.json(result);
+            }).catch(err=>{
+                res.json(err);
+            });
+
+
+});  
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
