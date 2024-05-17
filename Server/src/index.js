@@ -20,8 +20,6 @@ app.use(cookieParser());
 app.use(express.json());
 const port = 3000;
 
-app.get('/', (req, res) => res.send('Hello World!'));
-
 app.post('/api/register', (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -116,4 +114,4 @@ app.post('/api/buildprofile',(req,res)=>{
 
 });  
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+app.listen(port, () => console.log(`Server listening on port ${port}!`));
