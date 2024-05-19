@@ -12,7 +12,7 @@ const {
     db
 } = require('../config/firebase');
 
-const verifyToken = require("../middleware/index")
+const verifyToken = require("../middleware/index");
 
 const auth = getAuth();
 const app = express();
@@ -103,7 +103,7 @@ app.post('/api/buildprofile',(req,res)=>{
     console.log(userProfileData);
 
     db.collection('users')
-        .doc(`${req.body.uuid}`)
+        .doc(`${req.body.uid}`)
         .set(userProfileData)
             .then(result=>{
                 res.json(result);
