@@ -9,7 +9,8 @@ const {
     signOut,
     sendEmailVerification,
     sendPasswordResetEmail,
-    db
+    db,
+    linkWithPhoneNumber
 } = require('../config/firebase');
 
 const verifyToken = require("../middleware/index");
@@ -113,5 +114,9 @@ app.post('/api/buildprofile',(req,res)=>{
 
 
 });  
+
+app.post('/api/linkphone',(req,res)=>{
+    let phoneNumber = req.body.phoneNumber;
+});
 
 app.listen(port, () => console.log(`Server listening on port ${port}!`));

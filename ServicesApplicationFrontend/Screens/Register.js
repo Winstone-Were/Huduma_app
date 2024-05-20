@@ -23,7 +23,7 @@ export default function Register({ navigation }) {
 
     } else {
 
-      axios.post('http://192.168.100.140:3000/api/register', { email, password })
+      axios.post('http://192.168.100.146:3000/api/register', { email, password })
         .then(response => {
           //tell user to approve account via email
           //try to logIn
@@ -41,9 +41,9 @@ export default function Register({ navigation }) {
 
   }
 
-  const hangeleRegisterNext = async () => {
+  const handleRegisterNext = async () => {
     //try to logIn
-    axios.post('http://192.168.100.140:3000/api/login', { email, password })
+    axios.post('http://192.168.100.146:3000/api/login', { email, password })
       .then(response => {
         //go to build profile
         //store details in async storage
@@ -79,7 +79,7 @@ export default function Register({ navigation }) {
 
       <Button mode='contained' style={styles.input} onPress={() => handleRegister()} > Send Verification </Button>
       <Button style={styles.input} onPress={() => navigation.push('LoginScreen')}> Login </Button>
-      {accountCreated ? <Button style={styles.input} mode='elevated' onPress={() => doLogin()}> Next </Button> : <></>}
+      {accountCreated ? <Button style={styles.input} mode='elevated' onPress={() => handleRegisterNext()}> Next </Button> : <></>}
     </View>
   )
 }
