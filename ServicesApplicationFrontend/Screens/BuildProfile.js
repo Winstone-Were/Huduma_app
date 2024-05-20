@@ -16,7 +16,7 @@ export default function BuildProfile({ navigation }) {
   const [phone_number, setPhone_number] = useState('');
   const [email, setEmail] = useState('');
   const [waitVerify, setWaitVerify] = useState(true);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [confirmationResult, setConfirmationResult] = useState('');
 
 
@@ -28,7 +28,6 @@ export default function BuildProfile({ navigation }) {
       try {
         const userCredential = await confirmationResult.confirm(code);
         console.log('Verified');
-        setLoading(true);
       } catch (error) {
         console.error(error);
         setVerificationWrong(true);
@@ -42,6 +41,7 @@ export default function BuildProfile({ navigation }) {
     signInWithPhoneNumber(auth, phone_number, recaptchaVerifier.current)
       .then(result => {
         console.log(result);
+        setLoading(!loading);
         setConfirmationResult(result);
       }).catch(err => {
         console.error(err);
@@ -89,35 +89,39 @@ export default function BuildProfile({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.textContainer}>
-        <Text>
-          Tell us about Yourself
-        </Text>
-      </View>
-      <TextInput
-        style={{ ...styles.input, backgroundColor: "white" }}
-        value={username}
-        label='Your name'
-        onChangeText={(text) => setUserName(text)}
-      />
+      {loading ?
+        (<>
+          <View style={styles.textContainer}>
+            <Text>
+              Tell us about Yourself
+            </Text>
+          </View>
+          <TextInput
+            style={{ ...styles.input, backgroundColor: "white" }}
+            value={username}
+            label='Your name'
+            onChangeText={(text) => setUserName(text)}
+          />
 
-      <TextInput
-        style={{ ...styles.input, backgroundColor: "white" }}
-        value={phone_number}
-        label='Your phone number'
-        onChangeText={(text) => setPhone_number(text)}
-      />
+          <TextInput
+            style={{ ...styles.input, backgroundColor: "white" }}
+            value={phone_number}
+            label='Your phone number'
+            onChangeText={(text) => setPhone_number(text)}
+          />
 
-      <Button mode='contained' style={styles.input} onPress={() => handleRegister()} > Send Verification </Button>
-
-      <VerifyPhone
-        onVerify={verifyCode}
-        onVerificationRetry={() => {
-          setConfirmationResult(null);
-          setVerificationWrong(false);
-          setIsVerifying(false);
-        }}
-      />
+          <Button mode='contained' style={styles.input} onPress={() => handleRegister()} > Send Verification </Button>
+        </>) :
+        (<>
+          <VerifyPhone
+            onVerify={verifyCode}
+            onVerificationRetry={() => {
+              setConfirmationResult(null);
+              setVerificationWrong(false);
+              setIsVerifying(false);
+            }}
+          />
+        </>)}
       <FirebaseRecaptchaVerifierModal
         ref={recaptchaVerifier}
         firebaseConfig={app.options}
