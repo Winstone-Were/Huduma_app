@@ -9,6 +9,7 @@ import Login from "../Screens/Login";
 import Register from "../Screens/Register";
 import BuildProfile from "../Screens/BuildProfile";
 import Home from "../Screens/Home";
+import ForgotPassword from "../Screens/ForgotPassword";
 
 const Stack = createNativeStackNavigator();
 const noHeader = { headerShown: false };
@@ -17,7 +18,7 @@ const AuthStack = () => {
     return (
         <PaperProvider>
             <NavigationContainer>
-                <Stack.Navigator initialRouteName="LoginScreen">
+                <Stack.Navigator initialRouteName="BuildProfileScreen">
                     <Stack.Screen
                         name="LoginScreen"
                         component={Login}
@@ -36,6 +37,10 @@ const AuthStack = () => {
                     <Stack.Screen
                         name="HomeScreen"
                         component={Home}
+                    />
+                    <Stack.Screen 
+                        name="ForgotPassword"
+                        component={ForgotPassword}
                     />
                 </Stack.Navigator>
             </NavigationContainer>

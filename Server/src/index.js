@@ -1,5 +1,6 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 require("dotenv").config();
 
 const {
@@ -9,7 +10,8 @@ const {
     signOut,
     sendEmailVerification,
     sendPasswordResetEmail,
-    db
+    db,
+    linkWithPhoneNumber
 } = require('../config/firebase');
 
 const verifyToken = require("../middleware/index");
@@ -18,6 +20,9 @@ const auth = getAuth();
 const app = express();
 app.use(cookieParser());
 app.use(express.json());
+app.use(bodyParser.json({limit:'50mb'}));
+app.use(bodyParser.urlencoded({extended:true}));
+app.use(express.urlencoded({limit:'50mb'}));
 const port = 3000;
 
 app.post('/api/register', (req, res) => {
@@ -68,11 +73,11 @@ app.post('/api/login', (req, res) => {
         .catch((error) => {
             console.error(error);
             const errorMessage = error.message || "An error occurred while logging in";
-            res.status(500).json({ error: errorMessage });
+            res.status(500).json({ error });
         });
 });
 
-app.post('api/resetpassword', (req, res) => {
+app.post('/api/resetpassword', (req, res) => {
     const { email } = req.body;
     if (!email) {
         return res.status(422).json({
@@ -103,7 +108,7 @@ app.post('/api/buildprofile',(req,res)=>{
     console.log(userProfileData);
 
     db.collection('users')
-        .doc(`${req.body.uid}`)
+        .doc('Workers')
         .set(userProfileData)
             .then(result=>{
                 res.json(result);
@@ -113,5 +118,9 @@ app.post('/api/buildprofile',(req,res)=>{
 
 
 });  
+
+app.post('/api/linkphone',(req,res)=>{
+    let phoneNumber = req.body.phoneNumber;
+});
 
 app.listen(port, () => console.log(`Server listening on port ${port}!`));
