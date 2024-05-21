@@ -27,6 +27,7 @@ export default function Register({ navigation }) {
         Alert.alert('Passwords need to match');
       } else {
         axios.post('http://192.168.96.112:3000/api/register', { email, password })
+
           .then(response => {
             //tell user to approve account via email
             //try to logIn
@@ -42,8 +43,9 @@ export default function Register({ navigation }) {
   }
 
   const handleRegisterNext = async () => {
-    //try to logIn
+    //try to logI
     axios.post('http://192.168.96.112:3000/api/login', { email, password })
+
       .then(response => {
         //go to build profile
         //store details in async storage
