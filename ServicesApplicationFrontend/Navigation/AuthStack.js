@@ -18,7 +18,7 @@ const AuthStack = () => {
     return (
         <PaperProvider>
             <NavigationContainer>
-                <Stack.Navigator initialRouteName="BuildProfileScreen">
+                <Stack.Navigator initialRouteName="SplashPage">
                     <Stack.Screen
                         name="LoginScreen"
                         component={Login}
@@ -41,6 +41,11 @@ const AuthStack = () => {
                     <Stack.Screen 
                         name="ForgotPassword"
                         component={ForgotPassword}
+                    />
+                    <Stack.Screen
+                        name="SplashPage"
+                        component={SplashPage}
+                        options={noHeader}
                     />
                 </Stack.Navigator>
             </NavigationContainer>

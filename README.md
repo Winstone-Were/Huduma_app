@@ -2,33 +2,35 @@
 
 A Service delivery Application 
 
-### Download the Android Demo
-[Download Demo](/app-debug.apk)
+
 
 ## Features
-- Play, pause, skip to the previous/next track.
-- Shuffle the playlist to enjoy a randomized listening experience.
-- Display track progress with a formatted time indicator.
-- View album cover, song title, and artist information.
+-Get jobs from the local households
+-Get verified workers to work for you
+-Schedule work appointments
+
 
 ## Getting Started
 1. **Clone the repository:**
     ```bash
-    git clone https://github.com/Winstone-Were/react-native-music-player.git
+    git clone https://github.com/TijaniTatu/Huduma_app.git
     ```
 2. **Install dependencies:**
-    ```bash
-    cd react-native-music-player
-    npm install
+    ```
+    For the mobile app:
+    cd ServicesApplicationFrontend
+    npx expo install
+    npm i
+
+    For the server:
+    cd Server
+    npm i
+    
+
+   
     ```
 3. **Run the app:**
-    ```bash
-    npx react-native run-android
-    ```
-    or
-    ```bash
-    npx react-native run-ios
-    ```
+    
 
 ## Usage
 - **Play/Pause Button:** Toggle between playing and pausing the current track.
