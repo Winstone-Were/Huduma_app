@@ -15,7 +15,7 @@ export default function ForgotPassword({ navigation }) {
         if (email == '') {
             Alert.alert('Email cannot be null');
         } else {
-            axios.post('http://172.20.10.13:3000/api/resetpassword', { email })
+            axios.post('http://10.55.61.139:3000/api/resetpassword', { email })
                 .then(result => {
                     Alert.alert('Reset Link has been sent successfully');
                     navigation.push('LoginScreen');

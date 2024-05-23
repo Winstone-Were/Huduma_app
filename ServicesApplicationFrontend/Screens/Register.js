@@ -24,7 +24,7 @@ export default function Register({ navigation }) {
       if (password != confirmPassword) {
         Alert.alert('Passwords need to match');
       } else {
-        axios.post('http://172.20.10.13:3000/api/register', { email, password })
+        axios.post('http://10.55.61.139:3000/api/register', { email, password })
           .then(response => {
             //tell user to approve account via email
             //try to logIn
@@ -41,7 +41,7 @@ export default function Register({ navigation }) {
 
   const handleRegisterNext = async () => {
     //try to logIn
-    axios.post('http://172.20.10.13:3000/api/login', { email, password })
+    axios.post('http://10.55.61.139:3000/api/login', { email, password })
       .then(response => {
         //go to build profile
         //store details in async storage
