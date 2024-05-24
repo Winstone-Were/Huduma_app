@@ -1,5 +1,6 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 require("dotenv").config();
 
 const {
@@ -8,16 +9,21 @@ const {
     signInWithEmailAndPassword,
     signOut,
     sendEmailVerification,
-    sendPasswordResetEmail
+    sendPasswordResetEmail,
+    db,
+    linkWithPhoneNumber
 } = require('../config/firebase');
+
+const verifyToken = require("../middleware/index");
 
 const auth = getAuth();
 const app = express();
 app.use(cookieParser());
 app.use(express.json());
+app.use(bodyParser.json({limit:'50mb'}));
+app.use(bodyParser.urlencoded({extended:true}));
+app.use(express.urlencoded({limit:'50mb'}));
 const port = 3000;
-
-app.get('/', (req, res) => res.send('Hello World!'));
 
 app.post('/api/register', (req, res) => {
     const { email, password } = req.body;
@@ -67,11 +73,11 @@ app.post('/api/login', (req, res) => {
         .catch((error) => {
             console.error(error);
             const errorMessage = error.message || "An error occurred while logging in";
-            res.status(500).json({ error: errorMessage });
+            res.status(500).json({ error });
         });
 });
 
-app.post('api/resetpassword', (req, res) => {
+app.post('/api/resetpassword', (req, res) => {
     const { email } = req.body;
     if (!email) {
         return res.status(422).json({
@@ -86,6 +92,35 @@ app.post('api/resetpassword', (req, res) => {
             console.error(error);
             res.status(500).json({ error: "Internal Server Error" });
         });
-})
+});
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+app.post('/api/buildprofile',(req,res)=>{
+    /*
+        uuid,
+        username,
+        phone_number,
+        email,
+     */
+
+    let userProfileData = {};
+    userProfileData = req.body;
+
+    console.log(userProfileData);
+
+    db.collection('users')
+        .doc('Workers')
+        .set(userProfileData)
+            .then(result=>{
+                res.json(result);
+            }).catch(err=>{
+                res.json(err);
+            });
+
+
+});  
+
+app.post('/api/linkphone',(req,res)=>{
+    let phoneNumber = req.body.phoneNumber;
+});
+
+app.listen(port, () => console.log(`Server listening on port ${port}!`));
