@@ -17,7 +17,6 @@ export default function Login({navigation}) {
     AsyncStorage.getItem("UserDetails")
     .then(result=>{
       if(JSON.parse(result)){
-        Alert.alert("Storage on");
         LocalAuthentication.authenticateAsync({promptMessage:"Scan your Biometrics to continue"})
         .then(result=>{
             if(result.success){
@@ -28,11 +27,10 @@ export default function Login({navigation}) {
             console.error(err);
         })
       }else {
-        Alert.alert("Storage off");
+
       }
     })
     .catch(err=>{
-      Alert.alert("Storage of")
       console.error(err);
     })
 
@@ -78,7 +76,7 @@ export default function Login({navigation}) {
         onChangeText={(text) => setPassword(text)}
         secureTextEntry={true}
       />
-     
+
       <Button mode='contained' style={styles.input} onPress={() => handleLogIn()} > Login </Button>
       <Button style={styles.input} onPress={() => navigation.push('RegisterScreen')}> Register </Button>
     </View>
