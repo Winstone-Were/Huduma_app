@@ -26,7 +26,7 @@ export default function Register({ navigation }) {
       if (password != confirmPassword) {
         Alert.alert('Passwords need to match');
       } else {
-        axios.post('http://192.168.100.99:3000/api/register', { email, password })
+        axios.post('http://192.168.96.112:3000/api/register', { email, password })
 
           .then(response => {
             //tell user to approve account via email
@@ -44,7 +44,7 @@ export default function Register({ navigation }) {
 
   const handleRegisterNext = async () => {
     //try to logI
-    axios.post('http://192.168.100.99:3000/api/login', { email, password })
+    axios.post('http://192.168.96.112:3000/api/login', { email, password })
 
       .then(response => {
         //go to build profile
