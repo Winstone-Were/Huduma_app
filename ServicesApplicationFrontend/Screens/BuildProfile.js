@@ -45,6 +45,7 @@ export default function BuildProfile({ navigation }) {
             //Send this request after SMS verification
 
             axios.post('http://192.168.96.112:3000/api/buildprofile', { uid, username, phone_number, email })
+
               .then(response => {
                 //go to build profile
                 //store details in async storage
