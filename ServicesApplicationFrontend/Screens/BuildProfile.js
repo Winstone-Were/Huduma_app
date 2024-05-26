@@ -5,7 +5,7 @@ import { Text, TextInput, Button, Switch, HelperText, Menu, Divider, ActivityInd
 import axios from 'axios';
 import { app, auth } from '../firebaseConfig';
 import { signInWithPhoneNumber } from 'firebase/auth';
-import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
+//import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
 import VerifyPhone from './VerifyPhone';
 
 import * as ImagePicker from 'expo-image-picker';
@@ -44,7 +44,7 @@ export default function BuildProfile({ navigation }) {
 
             //Send this request after SMS verification
 
-            axios.post('http://192.168.96.112:3000/api/buildprofile', { uid, username, phone_number, email })
+            axios.post('http://192.168.100.99:3000/api/buildprofile', { uid, username, phone_number, email })
 
               .then(response => {
                 //go to build profile
@@ -69,7 +69,7 @@ export default function BuildProfile({ navigation }) {
   };
 
 
-  const handleRegister = () => {
+  /*const handleRegister = () => {
     signInWithPhoneNumber(auth, phone_number, recaptchaVerifier.current)
       .then(result => {
         console.log(result);
@@ -79,7 +79,7 @@ export default function BuildProfile({ navigation }) {
         console.error(err);
       })
   }
-
+*/
 
   const handleNext = async () => {
 
@@ -181,10 +181,7 @@ export default function BuildProfile({ navigation }) {
             </>)}
 
         </>)}
-      <FirebaseRecaptchaVerifierModal
-        ref={recaptchaVerifier}
-        firebaseConfig={app.options}
-      />
+
 
     </View>
   )
