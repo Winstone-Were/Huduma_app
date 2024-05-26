@@ -19,7 +19,7 @@ const AuthStack = () => {
     return (
         <PaperProvider>
             <NavigationContainer>
-                <Stack.Navigator initialRouteName="SplashScreen">
+                <Stack.Navigator initialRouteName="LoginScreen">
                     <Stack.Screen
                         name="LoginScreen"
                         component={Login}

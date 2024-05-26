@@ -6,35 +6,37 @@ import { Text, TextInput, Button, Switch, HelperText, Menu, Divider } from 'reac
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as LocalAuthentication from 'expo-local-authentication';
+import FirebaseConfig from '../firebaseConfig';
 
-export default function Login({navigation}) {
+export default function Login({ navigation }) {
 
   //Check whether there's something in AsyncStorage
   //kama iko, weka Finger print 
 
-  useEffect(()=>{
+
+  useEffect(() => {
 
     AsyncStorage.getItem("UserDetails")
-    .then(result=>{
-      if(JSON.parse(result)){
-        LocalAuthentication.authenticateAsync({promptMessage:"Scan your Biometrics to continue"})
-        .then(result=>{
-            if(result.success){
-              navigation.push('HomeScreen');
-            }
-        })
-        .catch(err=>{
-            console.error(err);
-        })
-      }else {
+      .then(result => {
+        if (JSON.parse(result)) {
+          LocalAuthentication.authenticateAsync({ promptMessage: "Scan your Biometrics to continue" })
+            .then(result => {
+              if (result.success) {
+                navigation.push('HomeScreen');
+              }
+            })
+            .catch(err => {
+              console.error(err);
+            })
+        } else {
 
-      }
-    })
-    .catch(err=>{
-      console.error(err);
-    })
+        }
+      })
+      .catch(err => {
+        console.error(err);
+      })
 
-  },[]);
+  }, []);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -43,7 +45,7 @@ export default function Login({navigation}) {
 
   const handleLogIn = async () => {
     //Try login 
-    axios.post('http://192.168.100.99:3000/api/login',{email, password})
+    /*axios.post('http://192.168.100.99:3000/api/login',{email, password})
     .then(response=>{
       //set to async storage
       AsyncStorage.setItem('UserDetails',JSON.stringify(response));
@@ -52,7 +54,16 @@ export default function Login({navigation}) {
     }).catch(err=>{
       //somehow alert the user there's an error
       console.error(Object.keys(err));
-    })
+    })*/
+
+    FirebaseConfig.signInWithEmailAndPassword(FirebaseConfig.auth, email, password)
+      .then((userCredential) => {
+        const idToken = userCredential._tokenResponse.idToken
+        console.log('Success');
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }
 
   return (
