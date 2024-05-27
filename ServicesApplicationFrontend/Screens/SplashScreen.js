@@ -25,7 +25,7 @@ const SplashScreen = ({navigation}) => {
         />
       )}
       {showSplash && (
-        <TouchableOpacity onPress={Login}>
+        <TouchableOpacity onPress={()=> {navigation.push("LoginScreen")}}>
           <Text style={{ fontSize: 18, color: '#4CAF50' }}>Proceed</Text>
         </TouchableOpacity>
       )}
