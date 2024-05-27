@@ -19,7 +19,7 @@ const Login = async (email, password, navigation) => {
                 message: 'redirecting to Homepage',
                 user: userCredential}
             AsyncStorage.setItem('user', JSON.stringify(userObject));
-            navigation.push("HomeScreen");
+            navigation.replace("HomeScreen");
         })
         .catch(err => {
             console.error(err);

@@ -19,7 +19,7 @@ export default function Login({ navigation }) {
           LocalAuthentication.authenticateAsync({ promptMessage: "Scan your Biometrics to continue" })
             .then(result => {
               if (result.success) {
-                navigation.push('HomeScreen');
+                navigation.replace('HomeScreen');
               }
             })
             .catch(err => {
@@ -72,7 +72,7 @@ export default function Login({ navigation }) {
       />
 
       <Button mode='contained' style={styles.input} onPress={() => handleLogIn()} > Login </Button>
-      <Button style={styles.input} onPress={() => navigation.push('RegisterScreen')}> Register </Button>
+      <Button style={styles.input} onPress={() => navigation.replace('RegisterScreen')}> Register </Button>
     </View>
   )
 }

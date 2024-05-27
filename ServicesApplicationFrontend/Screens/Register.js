@@ -99,7 +99,7 @@ export default function Register({ navigation }) {
           <Text style={styles.Information}> The Password should be at least 8 characters long </Text>
 
           <Button mode='contained' style={styles.input} onPress={() => handleRegister()} > Send Email Verification </Button>
-          <Button style={styles.input} onPress={() => navigation.push('LoginScreen')}> Login </Button>
+          <Button style={styles.input} onPress={() => navigation.replace('LoginScreen')}> Login </Button>
         </>
       )}
 
