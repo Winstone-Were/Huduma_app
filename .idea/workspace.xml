@@ -4,7 +4,15 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c8fbc8a-4249-4c1b-8eed-c48c73f026dc" name="Changes" comment="" />
+    <list default="true" id="8c8fbc8a-4249-4c1b-8eed-c48c73f026dc" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServicesApplicationFrontend" beforeDir="false" afterPath="$PROJECT_DIR$/ServicesApplicationFrontend" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServicesApplicationFrontend/Screens/BuildProfile.js" beforeDir="false" afterPath="$PROJECT_DIR$/ServicesApplicationFrontend/Screens/BuildProfile.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServicesApplicationFrontend/Screens/Login.js" beforeDir="false" afterPath="$PROJECT_DIR$/ServicesApplicationFrontend/Screens/Login.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ServicesApplicationFrontend/Screens/Register.js" beforeDir="false" afterPath="$PROJECT_DIR$/ServicesApplicationFrontend/Screens/Register.js" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -19,10 +27,10 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "customColor": "",
-  "associatedIndex": 6
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 6
+}</component>
   <component name="ProjectId" id="2ggpnuguzpBrNjRsQy91736oHmS" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -36,9 +44,10 @@
     "RunOnceActivity.readMode.enableVisualFormatting": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "develop",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "settings.editor.selected.configurable": "device.mirroring"
+    "settings.editor.selected.configurable": "emulator"
   }
 }]]></component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />

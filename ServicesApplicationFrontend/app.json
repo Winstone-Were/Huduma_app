@@ -7,13 +7,20 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "entryPoint": "./App.js",
+    "plugins": [[
+      "expo-image-picker",
+      {
+        "photosPermission": "The app accesses your photos to let you upload a profile photo"
+      }
+    ]],
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.ServicesApplicationFrontend"
     },
     "android": {
       "adaptiveIcon": {
