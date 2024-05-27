@@ -38,22 +38,15 @@ export default function Login({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  //const dispatch = useDispatch();
-
   const handleLogIn = async () => {
     AuthService.Login(email,password, navigation)
     .then(result=>{
       console.log('problem here')
       console.log(result);
+    }).catch(err=>{
+      console.error(err);
     })
-    /*FirebaseConfig.signInWithEmailAndPassword(FirebaseConfig.auth, email, password)
-      .then((userCredential) => {
-        const idToken = userCredential._tokenResponse.idToken
-        console.log('Success');
-      })
-      .catch((error) => {
-        console.error(error);
-      })*/
+
   }
 
   return (
