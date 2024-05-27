@@ -7,16 +7,13 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as LocalAuthentication from 'expo-local-authentication';
 import FirebaseConfig from '../firebaseConfig';
+import AuthService from '../Services/authService';
+
 
 export default function Login({ navigation }) {
-
-  //Check whether there's something in AsyncStorage
-  //kama iko, weka Finger print 
-
-
   useEffect(() => {
 
-    AsyncStorage.getItem("UserDetails")
+    AsyncStorage.getItem("user")
       .then(result => {
         if (JSON.parse(result)) {
           LocalAuthentication.authenticateAsync({ promptMessage: "Scan your Biometrics to continue" })
@@ -44,26 +41,19 @@ export default function Login({ navigation }) {
   //const dispatch = useDispatch();
 
   const handleLogIn = async () => {
-    //Try login 
-    /*axios.post('http://192.168.100.99:3000/api/login',{email, password})
-    .then(response=>{
-      //set to async storage
-      AsyncStorage.setItem('UserDetails',JSON.stringify(response));
-      //push to profile
-      navigation.push('HomeScreen');
-    }).catch(err=>{
-      //somehow alert the user there's an error
-      console.error(Object.keys(err));
-    })*/
-
-    FirebaseConfig.signInWithEmailAndPassword(FirebaseConfig.auth, email, password)
+    AuthService.Login(email,password, navigation)
+    .then(result=>{
+      console.log('problem here')
+      console.log(result);
+    })
+    /*FirebaseConfig.signInWithEmailAndPassword(FirebaseConfig.auth, email, password)
       .then((userCredential) => {
         const idToken = userCredential._tokenResponse.idToken
         console.log('Success');
       })
       .catch((error) => {
         console.error(error);
-      });
+      })*/
   }
 
   return (

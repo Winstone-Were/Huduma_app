@@ -119,8 +119,9 @@ const styles = StyleSheet.create({
   },
   textContainer: { alignContent: 'center', alignItems: 'center' },
   Information: {
-    color: 'purple',
-    fontSize: 15
+    color: '#ED7D27',
+    fontSize: 15,
+    alignSelf: 'center'
   }
 
 });
