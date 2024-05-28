@@ -20,7 +20,8 @@ export default function Home({navigation}) {
   }
 
   const clearStorage = async () => {
-    AsyncStorage.clear()
+    AsyncStorage.clear();
+    navigation.push("LoginScreen");
   }
 
   const readStorage = async () => {
