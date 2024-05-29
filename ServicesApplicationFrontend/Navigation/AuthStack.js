@@ -14,6 +14,7 @@ import SplashScreen from "../Screens/SplashScreen";
 import WorkerHomepage from "../Screens/WorkerHomepage";
 import CustomerHomepage from "../Screens/CustomerHomepage";
 
+
 const Stack = createNativeStackNavigator();
 const noHeader = { headerShown: false };
 
@@ -21,7 +22,7 @@ const AuthStack = () => {
     return (
         <PaperProvider>
             <NavigationContainer>
-                <Stack.Navigator initialRouteName="WorkerHomepage">
+                <Stack.Navigator initialRouteName="SplashScreen">
                     <Stack.Screen
                         name="LoginScreen"
                         component={Login}
@@ -50,16 +51,17 @@ const AuthStack = () => {
                         component={SplashScreen}
                         options={noHeader}
                     />
-                    <Stack.Screen
+                    {/* <Stack.Screen
                          name="WorkerHomepage"
                         component={WorkerHomepage}
                         options={noHeader}
-                    />
-                    <Stack.Screen
+                    
+                    /> */}
+                    {/* <Stack.Screen
                         name="CustomerHomepage"
                         component={CustomerHomepage}
                         options={noHeader}
-                    />
+                    /> */}
                 </Stack.Navigator>
             </NavigationContainer>
         </PaperProvider>

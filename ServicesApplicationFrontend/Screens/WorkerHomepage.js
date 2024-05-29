@@ -1,45 +1,62 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import { BottomNavigation, Title, IconButton, Icon } from 'react-native-paper';
+import { BottomNavigation, IconButton } from 'react-native-paper';
+// import { createMaterialBottomTabNavigator } from 'react-native-paper/react-navigation';
+
+// const Tab = createMaterialBottomTabNavigator();
+
+// function MyTabs() {
+//   return (
+//     <Tab.Navigator>
+//       <Tab.Screen name="Home" component={HomeScreen} />
+//       <Tab.Screen name="Settings" component={SettingsScreen} />
+//     </Tab.Navigator>
+//   );
+// }
 
 const WorkerHomepage = () => {
   const [index, setIndex] = React.useState(0);
 
   const routes = [
-    { key: 'home', title: 'Home', Icon: 'home' },
-    { key: 'jobs', title: 'Jobs', Icon: 'work' },
-    { key: 'pending', title: 'Pending', Icon: 'timer' },
-    { key: 'settings', title: 'Settings', Icon: 'settings' },
+    { key: 'jobs', title: 'Jobs', icon: 'briefcase' },
+    { key: 'pending', title: 'Pending', icon: 'clock' },
+    { key: 'profile', title: 'Profile', icon: 'account' },
   ];
 
-  const renderScene = BottomNavigation.SceneMap({//will make screens for this later
-    home: () => <HomeScreen />,
-    jobs: () => <JobsScreen />,
-    pending: () => <PendingScreen />,
-    settings: () => <SettingsScreen />,
-  });
-//to take you to some specific page
+  const render= () => {
+    switch (index) {
+      case 0:
+        return <JobsScreen />;
+      case 1:
+        return <PendingScreen />;
+      case 2:
+        return <ProfileScreen />;
+      default:
+        return <JobsScreen />;
+    }
+  };
+
   return (
-    <BottomNavigation
-      navigationState={{ index, routes }}
-      onIndexChange={setIndex}
-      renderScene={renderScene}>
-      {routes.map((route, index) => (
-        <BottomNavigation.Tab
-          key={route.key}
-          icon={() => <IconButton icon={route.Icon} />}
-          label={()=><Title label={route.title}/>}
-          onPress={() => setIndex(index)}
+    <View style={{ flex: 1 }}>
+      {render()}
+      <BottomNavigation
+        navigationState={{ index, routes }}
+        onIndexChange={setIndex}
+      >
+        {routes.map((route, i) => (
+          <BottomNavigation.Tab
+            key={route.key}
+            icon={() => <IconButton icon={route.icon} />}
+            label={route.title}
+            onPress={() => setIndex(i)}
           />
         ))}
+        <BottomNavigation.Action
+          icon={() => <IconButton icon="settings" />}
+          onPress={() => console.log('Settings pressed')}
+          style={{ position: 'absolute', right: 16, bottom: 16 }}
+        />
       </BottomNavigation>
-  );
-};
-
-const HomeScreen = () => {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Home Screen</Text>
     </View>
   );
 };
@@ -60,10 +77,10 @@ const PendingScreen = () => {
   );
 };
 
-const SettingsScreen = () => {
+const ProfileScreen = () => {
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Settings Screen</Text>
+      <Text>Profile Screen</Text>
     </View>
   );
 };
