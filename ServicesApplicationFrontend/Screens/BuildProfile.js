@@ -5,7 +5,6 @@ import { Text, TextInput, Button, Switch, HelperText, Menu, Divider, ActivityInd
 import axios from 'axios';
 import { app, auth } from '../firebaseConfig';
 import { signInWithPhoneNumber } from 'firebase/auth';
-//import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
 import VerifyPhone from './VerifyPhone';
 
 import * as ImagePicker from 'expo-image-picker';

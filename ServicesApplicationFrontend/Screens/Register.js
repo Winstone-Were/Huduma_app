@@ -133,7 +133,9 @@ const styles = StyleSheet.create({
   },
   textContainer: { alignContent: 'center', alignItems: 'center' },
   Information: {
+
     color: 'purple',
     fontSize: 15,
+
   }
 });
