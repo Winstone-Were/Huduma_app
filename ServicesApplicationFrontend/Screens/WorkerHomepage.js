@@ -1,71 +1,49 @@
-import React from 'react';
-import { View, Text } from 'react-native';
-import { BottomNavigation, Title, IconButton, Icon } from 'react-native-paper';
+import { createMaterialBottomTabNavigator } from 'react-native-paper/react-navigation';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import JobScreen from './Jobs';
+import ProfileScreen from './Profile';
+import PendingScreen from './Pending';
 
-const WorkerHomepage = () => {
-  const [index, setIndex] = React.useState(0);
+const Tab = createMaterialBottomTabNavigator();
 
-  const routes = [
-    { key: 'home', title: 'Home', Icon: 'home' },
-    { key: 'jobs', title: 'Jobs', Icon: 'work' },
-    { key: 'pending', title: 'Pending', Icon: 'timer' },
-    { key: 'settings', title: 'Settings', Icon: 'settings' },
-  ];
-
-  const renderScene = BottomNavigation.SceneMap({//will make screens for this later
-    home: () => <HomeScreen />,
-    jobs: () => <JobsScreen />,
-    pending: () => <PendingScreen />,
-    settings: () => <SettingsScreen />,
-  });
-//to take you to some specific page
+function WorkerHomepage() {
   return (
-    <BottomNavigation
-      navigationState={{ index, routes }}
-      onIndexChange={setIndex}
-      renderScene={renderScene}>
-      {routes.map((route, index) => (
-        <BottomNavigation.Tab
-          key={route.key}
-          icon={() => <IconButton icon={route.Icon} />}
-          label={()=><Title label={route.title}/>}
-          onPress={() => setIndex(index)}
-          />
-        ))}
-      </BottomNavigation>
+    <Tab.Navigator
+      initialRouteName="Jobs"
+      activeColor="#e91e63"
+      barStyle={{ backgroundColor: 'tomato' }}
+    >
+      <Tab.Screen
+        name="Jobs"
+        component={JobScreen}
+        options={{
+          tabBarLabel: 'Jobs',
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="briefcase" color={color} size={26} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Pending"
+        component={PendingScreen}
+        options={{
+          tabBarLabel: 'Pending',
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="clock" color={color} size={26} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+          tabBarLabel: 'Profile',
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="account" color={color} size={26} />
+          ),
+        }}
+      />
+    </Tab.Navigator>
   );
-};
-
-const HomeScreen = () => {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Home Screen</Text>
-    </View>
-  );
-};
-
-const JobsScreen = () => {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Jobs Screen</Text>
-    </View>
-  );
-};
-
-const PendingScreen = () => {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Pending Screen</Text>
-    </View>
-  );
-};
-
-const SettingsScreen = () => {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Settings Screen</Text>
-    </View>
-  );
-};
-
+}
 export default WorkerHomepage;
