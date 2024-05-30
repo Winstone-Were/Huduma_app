@@ -1,71 +1,58 @@
-// import React from 'react';
-// import { View, Text } from 'react-native';
-// import { BottomNavigation, IconButton, Title } from 'react-native-paper';
+import React from 'react';
+import { createMaterialBottomTabNavigator } from 'react-native-paper/react-navigation';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import JobScreen from './Jobs';
+import ProfileScreen from './Profile';
+import PendingScreen from './Pending';
+import CustomHeader from '../components/CustomHeader'; 
 
-// const CustomerHomepage = () => {
-//   const [index, setIndex] = React.useState(0);
+const Tab = createMaterialBottomTabNavigator();
 
-//   const routes = [
-//     { key: 'home', title: 'Home', icon: 'home' },
-//     { key: 'request', title: 'Request', icon: 'add-circle' },
-//     { key: 'history', title: 'History', icon: 'history' },
-//     { key: 'settings', title: 'Settings', icon: 'settings' },
-//   ];
+function CustomerHomepage({ navigation }) {
+  return (
+    <>
+      <CustomHeader
+        username="Tijani"
+        onSettingsPress={() => navigation.navigate('Settings')}///create a settings page...sijadefine bado
+      />
+      <Tab.Navigator
+        initialRouteName="Jobs"
+        activeColor="#e91e63"
+        barStyle={{ backgroundColor: 'tomato' }}
+      >
+        <Tab.Screen
+          name="Jobs"
+          component={JobScreen}
+          options={{
+            tabBarLabel: 'Jobs',
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name="briefcase" color={color} size={26} />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Activity"
+          component={PendingScreen}
+          options={{
+            tabBarLabel: 'Activity',
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name="clock" color={color} size={26} />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Profile"
+          component={ProfileScreen}
+          options={{
+            tabBarLabel: 'Profile',
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name="account" color={color} size={26} />
+            ),
+          }}
+        />
+      </Tab.Navigator>
+    </>
+  );
+}
 
-//   // const renderScene = BottomNavigation.SceneMap({
-//   //   home: () => <HomeScreen />,
-//   //   request: () => <RequestScreen />,
-//   //   history: () => <HistoryScreen />,
-//   //   settings: () => <SettingsScreen />,
-//   // });
-
-//   return (
-//     <BottomNavigation
-//       navigationState={{ index, routes }}
-//       onIndexChange={setIndex}
-//       renderScene={renderScene}>
-//       {routes.map((route, index) => (
-//         <BottomNavigation.Tab
-//           key={route.key}
-//           icon={() => <IconButton icon={route.icon} />}
-//           label={()=><Title label={route.title}/>}
-//           onPress={() => setIndex(index)}
-//         />
-//       ))}
-//     </BottomNavigation>
-//   );
-// };
-
-// const HomeScreen = () => {
-//   return (
-//     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-//       <Text>Home Screen</Text>
-//     </View>
-//   );
-// };
-
-// const RequestScreen = () => {
-//   return (
-//     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-//       <Text>Request Screen</Text>
-//     </View>
-//   );
-// };
-
-// const HistoryScreen = () => {
-//   return (
-//     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-//       <Text>History Screen</Text>
-//     </View>
-//   );
-// };
-
-// const SettingsScreen = () => {
-//   return (
-//     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-//       <Text>Settings Screen</Text>
-//     </View>
-//   );
-// };
-
-// export default CustomerHomepage;
+export default CustomerHomepage;

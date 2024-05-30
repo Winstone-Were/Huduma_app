@@ -51,17 +51,17 @@ const AuthStack = () => {
                         component={SplashScreen}
                         options={noHeader}
                     />
-                    {/* <Stack.Screen
-                         name="WorkerHomepage"
+                    <Stack.Screen
+                        name="WorkerHomepage"
                         component={WorkerHomepage}
                         options={noHeader}
                     
-                    /> */}
-                    {/* <Stack.Screen
+                    />
+                    <Stack.Screen
                         name="CustomerHomepage"
                         component={CustomerHomepage}
                         options={noHeader}
-                    /> */}
+                    />
                 </Stack.Navigator>
             </NavigationContainer>
         </PaperProvider>
