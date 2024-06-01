@@ -13,6 +13,7 @@ import ForgotPassword from "../Screens/ForgotPassword";
 import SplashScreen from "../Screens/SplashScreen";
 import WorkerHomepage from "../Screens/WorkerHomepage";
 import CustomerHomepage from "../Screens/CustomerHomepage";
+import Settings from "../Screens/Settings";
 
 
 const Stack = createNativeStackNavigator();
@@ -33,10 +34,11 @@ const theme = {
 }
 const AuthStack = () => {
     return (
+        
         <PaperProvider theme={theme}>
             <NavigationContainer>
 
-                <Stack.Navigator initialRouteName="SplashScreen">
+                <Stack.Navigator initialRouteName="CustomerHomepage">
 
                     <Stack.Screen
                         name="LoginScreen"
@@ -75,6 +77,11 @@ const AuthStack = () => {
                     <Stack.Screen
                         name="CustomerHomepage"
                         component={CustomerHomepage}
+                        options={noHeader}
+                    />
+                        <Stack.Screen
+                        name="Settings"
+                        component={Settings}
                         options={noHeader}
                     />
                 </Stack.Navigator>
