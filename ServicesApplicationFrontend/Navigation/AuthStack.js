@@ -11,6 +11,9 @@ import BuildProfile from "../Screens/BuildProfile";
 import Home from "../Screens/Home";
 import ForgotPassword from "../Screens/ForgotPassword";
 import SplashScreen from "../Screens/SplashScreen";
+import WorkerHomepage from "../Screens/WorkerHomepage";
+import CustomerHomepage from "../Screens/CustomerHomepage";
+
 
 const Stack = createNativeStackNavigator();
 const noHeader = { headerShown: false };
@@ -32,7 +35,9 @@ const AuthStack = () => {
     return (
         <PaperProvider theme={theme}>
             <NavigationContainer>
-                <Stack.Navigator initialRouteName="LoginScreen">
+
+                <Stack.Navigator initialRouteName="SplashScreen">
+
                     <Stack.Screen
                         name="LoginScreen"
                         component={Login}
@@ -59,6 +64,17 @@ const AuthStack = () => {
                     <Stack.Screen
                         name="SplashScreen"
                         component={SplashScreen}
+                        options={noHeader}
+                    />
+                    <Stack.Screen
+                        name="WorkerHomepage"
+                        component={WorkerHomepage}
+                        options={noHeader}
+                    
+                    />
+                    <Stack.Screen
+                        name="CustomerHomepage"
+                        component={CustomerHomepage}
                         options={noHeader}
                     />
                 </Stack.Navigator>
