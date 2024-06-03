@@ -2,9 +2,9 @@ import { LOGOUT, LOGIN_SUCCESS } from "./type";
 import authService from "../Services/authService";
 
 export const login = (user) => (dispatch) =>{
-    console.log("AUTH ACTION FIRED");
-    return authService.logIn(user).then(
+    return authService.Login(user.email, user.password, 'HomeScreen').then(
         (response)=>{
+          console.log(response);
             if(response.status == "success") {
                 console.log(response.user);
                 dispatch({

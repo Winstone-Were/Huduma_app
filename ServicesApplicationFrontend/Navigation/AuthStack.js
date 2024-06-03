@@ -3,7 +3,7 @@ import React from "react";
 import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { MD2LightTheme as DefaultTheme, MD2Colors, MD3DarkTheme, MD3LightTheme, PaperProvider } from "react-native-paper";
+import { MD2LightTheme as DefaultTheme, PaperProvider } from "react-native-paper";
 
 import Login from "../Screens/Login";
 import Register from "../Screens/Register";
@@ -36,7 +36,7 @@ const AuthStack = () => {
         <PaperProvider theme={theme}>
             <NavigationContainer>
 
-                <Stack.Navigator initialRouteName="SplashScreen">
+                <Stack.Navigator initialRouteName="LoginScreen">
 
                     <Stack.Screen
                         name="LoginScreen"

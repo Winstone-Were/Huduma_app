@@ -9,10 +9,17 @@ import * as LocalAuthentication from 'expo-local-authentication';
 import FirebaseConfig from '../firebaseConfig';
 import AuthService from '../Services/authService';
 
+import { useDispatch } from 'react-redux';
+import {login} from '../Actions/auth'
 
 export default function Login({ navigation }) {
-  useEffect(() => {
 
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
     AsyncStorage.getItem("user")
       .then(result => {
         if (JSON.parse(result)) {
@@ -35,18 +42,22 @@ export default function Login({ navigation }) {
 
   }, []);
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
   const handleLogIn = async () => {
-    AuthService.Login(email,password, navigation)
+    /*AuthService.Login(email,password, navigation)
     .then(result=>{
       console.log('problem here')
       console.log(result);
     }).catch(err=>{
       console.error(err);
-    })
+    })*/
 
+    dispatch(login({email,password}))
+      .then(resp=>{
+        console.log(resp);
+      })
+      .catch(err=>{
+        console.error(err);
+      })
   }
 
   return (

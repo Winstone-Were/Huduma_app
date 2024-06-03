@@ -3,7 +3,7 @@ import { LOGIN_SUCCESS, REGISTER_SUCCESS, LOGOUT } from "../Actions/type";
 
 const initialState = {isLoggedIn: false, user: null};
 
-export default auth = ( state = initialState, action)=>{
+export default authReducer = ( state = initialState, action)=>{
     const {type, payload} = action;
     switch(type){
         case LOGIN_SUCCESS:

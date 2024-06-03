@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
-import { Provider as StoreProvider } from 'react-native-paper';
+import {Provider as StoreProvider} from 'react-redux'
 import store from './Store'
 
 import AuthStack from './Navigation/AuthStack'; 

@@ -8,7 +8,7 @@ const CustomHeader = ({ username, onSettingsPress }) => {
     <SafeAreaView style={styles.headerContainer}>
       <View style={styles.headerContent}>
         <Text style={styles.welcomeText}>Welcome, {username}</Text>
-        <TouchableOpacity onPress={onSettingsPress}>// can i remove this and put the settings page directly from the components bar
+        <TouchableOpacity onPress={onSettingsPress}> 
           <MaterialCommunityIcons name="cog" color="#000" size={26} />
         </TouchableOpacity>
       </View>

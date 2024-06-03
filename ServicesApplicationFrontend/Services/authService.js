@@ -1,4 +1,3 @@
-//import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from "axios";
 import firebaseConfig from "../firebaseConfig";
 import {
@@ -10,26 +9,34 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Login = async (email, password, navigation) => {
-    console.log('I get called');
     signInWithEmailAndPassword(firebaseConfig.auth, email, password)
-        .then(userCredential => {      
-            let userObject = {
+        .then(userCredential => {
+            
+            //AsyncStorage.setItem('user', JSON.stringify(userObject));
+            //navigation.replace("HomeScreen");
+            return {
                 status: 'success',
                 type: 'emailPass',
                 message: 'redirecting to Homepage',
-                user: userCredential}
-            AsyncStorage.setItem('user', JSON.stringify(userObject));
-            navigation.replace("HomeScreen");
+                user: userCredential
+            };
+
         })
         .catch(err => {
             console.error(err);
+            return{
+                status: 'error',
+                type: 'emailPass',
+                message: 'redirecting to Homepage',
+                user: err
+            };;
         });
     //logic to do login user 
-    /*return{
+    return{
         status:"success",
         message:"Redirecting to Homepage",
-        user: username,
-    }*/
+        user: 'blank',
+    }
 }
 
 const register = async (email, password) => {
