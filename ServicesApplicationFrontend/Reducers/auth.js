@@ -1,5 +1,5 @@
 
-import { LOGIN_SUCCESS, REGISTER_SUCCESS, LOGOUT } from "../Actions/type";
+import { LOGIN_SUCCESS, REGISTER_SUCCESS, LOGOUT, LOADPROFILE_SUCCESS } from "../Actions/type";
 
 const initialState = {isLoggedIn: false, user: null};
 
@@ -18,6 +18,12 @@ export default authReducer = ( state = initialState, action)=>{
                 isLoggedIn: false,
                 user: null
             };
+        case LOADPROFILE_SUCCESS : 
+            return {
+                ...state,
+                isLoggedIn: true,
+                user: payload.user
+            }
         default:
             return state;
     }

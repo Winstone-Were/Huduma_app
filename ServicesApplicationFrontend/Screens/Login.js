@@ -10,7 +10,8 @@ import FirebaseConfig from '../firebaseConfig';
 import AuthService from '../Services/authService';
 
 import { useDispatch } from 'react-redux';
-import {login} from '../Actions/auth'
+import {login} from '../Actions/auth';
+import {loadUserProfileAction} from '../Actions/profile'
 
 export default function Login({ navigation }) {
 
@@ -20,7 +21,7 @@ export default function Login({ navigation }) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    AsyncStorage.getItem("user")
+    /*AsyncStorage.getItem("user")
       .then(result => {
         if (JSON.parse(result)) {
           LocalAuthentication.authenticateAsync({ promptMessage: "Scan your Biometrics to continue" })
@@ -38,7 +39,11 @@ export default function Login({ navigation }) {
       })
       .catch(err => {
         console.error(err);
-      })
+      })*/
+
+      dispatch(loadUserProfileAction())
+        .then((resp)=> console.log('works'))
+        .catch((err)=> console.log('not works'))
 
   }, []);
 
