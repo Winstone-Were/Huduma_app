@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { View, Image, TouchableOpacity, Text } from 'react-native';
-import Login from './Login';
 
 const SplashScreen = ({navigation}) => {
   const [showSplash, setShowSplash] = useState(true);
@@ -11,11 +10,6 @@ const SplashScreen = ({navigation}) => {
     }, 4000); // show splash screen for 3 seconds
   }, []);
 
-  const proceed = () => {
-    setShowSplash(false);
-    // navigate to main app screen
-  };
-
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       {showSplash && (
@@ -25,7 +19,7 @@ const SplashScreen = ({navigation}) => {
         />
       )}
       {showSplash && (
-        <TouchableOpacity onPress={Login}>
+        <TouchableOpacity onPress={()=> {navigation.push("LoginScreen")}}>
           <Text style={{ fontSize: 18, color: '#4CAF50' }}>Proceed</Text>
         </TouchableOpacity>
       )}
