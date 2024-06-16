@@ -51,7 +51,7 @@ const Settings = ({ navigation }) => {
           />
           <List.Item
             title="Two-Factor Authentication"
-            onPress={() => navigation.navigate('TwoFactorAuth')}//STONIE should create a screen😂
+            onPress={() => navigation.navigate('TwoFactorAuth')}//STONIE should create a screen
             left={() => <List.Icon icon="shield-lock" />}
           />
           <List.Item
