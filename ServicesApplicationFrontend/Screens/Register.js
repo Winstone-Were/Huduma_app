@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
-import { Text, TextInput, Button, ActivityIndicator, Portal, Modal } from 'react-native-paper';
+import { Text, TextInput, Button, ActivityIndicator, Portal, Modal, Menu } from 'react-native-paper';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
 
 const PasswordModal = ({ visible, hideModal }) => {
   const containerStyle = { backgroundColor: 'white', padding: 20, margin: 20 };
@@ -26,9 +28,11 @@ export default function Register({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [role, setRole] = useState('customer'); // default value is 'customer'
   const [accountCreated, setAccountCreated] = useState(false);
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [menuVisible, setMenuVisible] = useState(false);
 
   const handleRegister = async () => {
       //Call /api/register
@@ -42,7 +46,7 @@ export default function Register({ navigation }) {
         Alert.alert('Passwords need to match');
         setLoading(false);//to not show loading sign
       } else {
-        axios.post('http://192.168.100.99:3000/api/register', { email, password })
+        axios.post('http://192.168.100.91:3000/api/register', { email, password, role })
           .then(response => {
             //tell user to approve account via email
             //try to logIn
@@ -60,7 +64,7 @@ export default function Register({ navigation }) {
 
   const handleRegisterNext = async () => {
     //try to logIn
-    axios.post('http://192.168.100.99:3000/api/login', { email, password })
+    axios.post('http://192.168.100.91:3000/api/login', { email, password })
       .then(response => {
          //go to build profile
         //store details in async storage
@@ -74,6 +78,8 @@ export default function Register({ navigation }) {
 
   const showModal = () => setModalVisible(true);
   const hideModal = () => setModalVisible(false);
+  const openMenu = () => setMenuVisible(true);
+  const closeMenu = () => setMenuVisible(false);
 
   return (
     //+paperprovider to maintai
@@ -86,6 +92,7 @@ export default function Register({ navigation }) {
           <ActivityIndicator animating={true} />
         ) : (
           <>
+
             <TextInput
               style={{ ...styles.input, backgroundColor: "white" }}
               value={email}
@@ -108,7 +115,20 @@ export default function Register({ navigation }) {
               secureTextEntry={true}
               onFocus={showModal}
             />
-            
+
+            <Menu
+              visible={menuVisible}
+              onDismiss={closeMenu}
+              anchor={
+                <Button onPress={openMenu} mode="outlined">
+                  Select Role: {role}
+                </Button>
+              }
+            >
+              <Menu.Item onPress={() => { setRole('customer'); closeMenu(); }} title="Customer" />
+              <Menu.Item onPress={() => { setRole('worker'); closeMenu(); }} title="Worker" />
+            </Menu>
+
             <Button mode='contained' style={styles.input} onPress={handleRegister}> Send Email Verification </Button>
             <Button style={styles.input} onPress={() => navigation.push('LoginScreen')}> Login </Button>
           </>

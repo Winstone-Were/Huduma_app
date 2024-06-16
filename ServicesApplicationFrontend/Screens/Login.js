@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 
 import { Alert, StyleSheet, View } from 'react-native';
-import { Text, TextInput, Button, Switch, HelperText, Menu, Divider } from 'react-native-paper';
+import { Text, TextInput, Button,} from 'react-native-paper';
 
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -19,8 +19,14 @@ export default function Login({ navigation }) {
           LocalAuthentication.authenticateAsync({ promptMessage: "Scan your Biometrics to continue" })
             .then(result => {
               if (result.success) {
-                navigation.push('HomeScreen');
+                const userDetails = JSON.parse(result);
+                // Navigate based on user role
+                if (userDetails.role === 'customer') {
+                  navigation.push('CustomerHomepage');
+                } else if (userDetails.role === 'worker') {
+                  navigation.push('WorkerHomepage');
               }
+            }
             })
             .catch(err => {
               console.error(err);
@@ -39,15 +45,23 @@ export default function Login({ navigation }) {
   const [password, setPassword] = useState('');
 
   const handleLogIn = async () => {
-    AuthService.Login(email,password, navigation)
-    .then(result=>{
-      console.log('problem here')
-      console.log(result);
-    }).catch(err=>{
-      console.error(err);
-    })
+    try {
+      const userDetails = await AuthService.Login(email, password, navigation);
 
-  }
+      // Store user details in AsyncStorage
+      await AsyncStorage.setItem('UserDetails', JSON.stringify(userDetails));
+
+      // Navigate based on user role
+      if (userDetails.role === 'customer') {
+        navigation.push('CustomerHomepage');
+      } else if (userDetails.role === 'worker') {
+        navigation.push('WorkerHomepage');
+      }
+    } catch (err) {
+      Alert.alert('Login failed', 'An error occurred during login.');
+      console.error(err);
+    }
+  };
 
   return (
     <View style={styles.container}>
