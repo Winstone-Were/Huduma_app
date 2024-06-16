@@ -3,14 +3,14 @@ import { View, TouchableOpacity, Text, StyleSheet, Image, SafeAreaView, ScrollVi
 
 const occupations = [
   //ongeza more occupations....nb require is required
-  { id: '1', name: 'Electrician', icon: require( '../assets/Icons/electrician.png') },//
-  { id: '2', name: 'Maid', icon: require('../assets/Icons/maid.jpg') },
-  { id: '3', name: 'Gardener', icon: require('../assets/Icons/gardener.png') },
-  { id: '4', name: 'Chef', icon: require('../assets/Icons/chef.png') },
-  { id: '5', name: 'Exterminator', icon: require('../assets/Icons/exterminator.png') },
-  { id: '6', name: 'Plumber', icon: require('../assets/Icons/plumber.png') },
-   { id: '5', name: 'Carpenter', icon: require('../assets/Icons/carpenter.png') },
-   { id: '7', name: 'Pet services', icon: require('../assets/Icons/dogwalker.png') },
+  { id: '1', name: 'Electrician', icon: require( '../../assets/Icons/electrician.png') },//
+  { id: '2', name: 'Maid', icon: require('../../assets/Icons/maid.jpg') },
+  { id: '3', name: 'Gardener', icon: require('../../assets/Icons/gardener.png') },
+  { id: '4', name: 'Chef', icon: require('../../assets/Icons/chef.png') },
+  { id: '5', name: 'Exterminator', icon: require('../../assets/Icons/exterminator.png') },
+  { id: '6', name: 'Plumber', icon: require('../../assets/Icons/plumber.png') },
+   { id: '5', name: 'Carpenter', icon: require('../../assets/Icons/carpenter.png') },
+   { id: '7', name: 'Pet services', icon: require('../../assets/Icons/dogwalker.png') },
   
 ];
 

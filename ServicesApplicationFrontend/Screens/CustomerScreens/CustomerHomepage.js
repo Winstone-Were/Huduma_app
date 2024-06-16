@@ -4,7 +4,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import JobScreen from './Jobs';
 import ProfileScreen from './Profile';
 import PendingScreen from './Pending';
-import CustomHeader from '../components/CustomHeader'; 
+import CustomHeader from '../../components/CustomHeader'; 
 
 const Tab = createMaterialBottomTabNavigator();
 

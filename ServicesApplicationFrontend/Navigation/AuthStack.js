@@ -12,7 +12,7 @@ import Home from "../Screens/Home";
 import ForgotPassword from "../Screens/ForgotPassword";
 import SplashScreen from "../Screens/SplashScreen";
 import WorkerHomepage from "../Screens/WorkerScreens/WorkerHomepage";
-import CustomerHomepage from "../Screens/CustomerHomepage";
+import CustomerHomepage from "../Screens/CustomerScreens/CustomerHomepage";
 import Settings from "../Screens/Settings";
 
 
@@ -38,7 +38,7 @@ const AuthStack = () => {
         <PaperProvider theme={theme}>
             <NavigationContainer>
 
-                <Stack.Navigator initialRouteName="SplashScreen">
+                <Stack.Navigator initialRouteName="CustomerHomepage">
 
                     <Stack.Screen
                         name="LoginScreen"
