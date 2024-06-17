@@ -12,7 +12,6 @@ import Login from './Screens/Login';
 import Register from './Screens/Register';
 import BuildProfile from './Screens/BuildProfile';
 import Home from './Screens/Home';
-import LocalAuthenticationScreen from './Screens/LocalAuthenticationScreen';
 
 export default function App() {
   return (

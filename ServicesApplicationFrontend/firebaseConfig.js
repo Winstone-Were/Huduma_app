@@ -1,25 +1,18 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-import { getAuth, signInWithEmailAndPassword, setPersistence } from "firebase/auth";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+import { initializeApp } from "firebase/app";
+import { getAuth} from "firebase/auth";
+import {getFirestore} from "firebase/firestore"
+
 const firebaseConfig = {
-  apiKey: "AIzaSyDE_9Pt3oJ0-HIJwgUwndnbw8guR7pCAVw",
-  authDomain: "node-js-auth-49757.firebaseapp.com",
-  projectId: "node-js-auth-49757",
-  storageBucket: "node-js-auth-49757.appspot.com",
-  messagingSenderId: "265988169371",
-  appId: "1:265988169371:web:34195a2a05544bcc93703e",
-  measurementId: "G-KR1Z0SSTLT"
+  apiKey: "AIzaSyD-cPaG74E7yXIS9__ZB0UtqJoHcLxw8Yc",
+  authDomain: "huduma-4bc13.firebaseapp.com",
+  projectId: "huduma-4bc13",
+  storageBucket: "huduma-4bc13.appspot.com",
+  messagingSenderId: "93399060513",
+  appId: "1:93399060513:web:ce4298700dff08d5001360"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 const auth = getAuth();
-
-export default {app, auth, signInWithEmailAndPassword};
+export const FIRESTORE_DB = getFirestore(app);
+export default {app, auth};
