@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
 import { Text, TextInput, Button, ActivityIndicator, Portal, Modal, Menu } from 'react-native-paper';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword } from 'firebase/auth';
+import {addDoc, collection, setDoc, doc, getDoc} from 'firebase/firestore'
+import Firebase from '../firebaseConfig';
+import {FIRESTORE_DB} from '../firebaseConfig'
 
 
 const PasswordModal = ({ visible, hideModal }) => {
@@ -28,16 +31,13 @@ export default function Register({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [role, setRole] = useState('customer'); // default value is 'customer'
+  const [role, setRole] = useState('client'); // default value is client
   const [accountCreated, setAccountCreated] = useState(false);
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
 
   const handleRegister = async () => {
-      //Call /api/register
-    //Email verify 
-    //Login user by placing user tokens in AsyncStorage
     setLoading(true);
     if (accountCreated) {
       setLoading(false);
@@ -46,16 +46,22 @@ export default function Register({ navigation }) {
         Alert.alert('Passwords need to match');
         setLoading(false);//to not show loading sign
       } else {
-        axios.post('http://192.168.100.91:3000/api/register', { email, password, role })
-          .then(response => {
-            //tell user to approve account via email
-            //try to logIn
-            console.log(response);
-            setAccountCreated(!accountCreated);
-            setLoading(false);
-          }).catch(err => {
-             //somehow alert the user there's an error
-            console.error(err);
+        createUserWithEmailAndPassword(Firebase.auth, email, password)
+          .then((userCredential)=>{
+            sendEmailVerification(Firebase.auth.currentUser)
+              .then(()=>{
+                let uid = userCredential.user.uid;
+                setDoc(doc(FIRESTORE_DB, 'Users', uid), {role});
+                Alert.alert("Verification Email sent, Click the link in your email address to verify your account");
+              })
+            .catch((error)=>{
+              console.error(error)
+              Alert.alert('Another Error');
+            })
+          })
+          .catch((error)=> {
+            console.error(error);
+            Alert.alert('Email Already Used');
             setLoading(false);
           });
       }
@@ -63,17 +69,16 @@ export default function Register({ navigation }) {
   };
 
   const handleRegisterNext = async () => {
-    //try to logIn
-    axios.post('http://192.168.100.91:3000/api/login', { email, password })
-      .then(response => {
-         //go to build profile
-        //store details in async storage
-        AsyncStorage.setItem('UserDetails', JSON.stringify(response));
-        navigation.push('BuildProfileScreen');
-      }).catch(err => {
-        //somehow alert the user there's an error
-        console.error(err);
-      });
+    //Login place creds in localStorage then push to Home Screen based on role
+    signInWithEmailAndPassword(Firebase.auth, email, password)
+      .then((userCredentials)=>{
+        const user = userCredentials;
+        AsyncStorage.setItem('user', JSON.stringify(userCredentials));
+        AsyncStorage.setItem('user-login-object', JSON.parse({email,password,role}));
+        //push to HomeScreenBasedOnRole
+        //load a bit, check whats in fireStore then push based on that
+        console.log(user);
+      })
   };
 
   const showModal = () => setModalVisible(true);
@@ -113,7 +118,6 @@ export default function Register({ navigation }) {
               label='confirm password'
               onChangeText={(text) => setConfirmPassword(text)}
               secureTextEntry={true}
-              onFocus={showModal}
             />
 
             <Menu
@@ -125,7 +129,7 @@ export default function Register({ navigation }) {
                 </Button>
               }
             >
-              <Menu.Item onPress={() => { setRole('customer'); closeMenu(); }} title="Customer" />
+              <Menu.Item onPress={() => { setRole('client'); closeMenu(); }} title="client" />
               <Menu.Item onPress={() => { setRole('worker'); closeMenu(); }} title="Worker" />
             </Menu>
 

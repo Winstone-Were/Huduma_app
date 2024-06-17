@@ -1,32 +1,43 @@
 import React, { useState, useEffect } from 'react'
 
 import { Alert, StyleSheet, View } from 'react-native';
-import { Text, TextInput, Button,} from 'react-native-paper';
+import { Text, TextInput, Button, } from 'react-native-paper';
 
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as LocalAuthentication from 'expo-local-authentication';
 import FirebaseConfig from '../firebaseConfig';
-import AuthService from '../Services/authService';
-
+import { signInWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
+import { addDoc, collection, setDoc, doc, getDoc, getDocs } from 'firebase/firestore'
+import { FIRESTORE_DB } from '../firebaseConfig';
 
 export default function Login({ navigation }) {
   useEffect(() => {
-
-    AsyncStorage.getItem("user")
+    AsyncStorage.getItem("user-login-object")
       .then(result => {
+        user = JSON.parse(result);
+        console.log(user);
         if (JSON.parse(result)) {
           LocalAuthentication.authenticateAsync({ promptMessage: "Scan your Biometrics to continue" })
-            .then(result => {
-              if (result.success) {
-                const userDetails = JSON.parse(result);
-                // Navigate based on user role
-                if (userDetails.role === 'customer') {
-                  navigation.push('CustomerHomepage');
-                } else if (userDetails.role === 'worker') {
-                  navigation.push('WorkerHomepage');
+            .then(biometrics => {
+              if (biometrics.success) {
+                signInWithEmailAndPassword(FirebaseConfig.auth, user.email, user.password)
+                  .then((userCredentials) => {
+                    const user = userCredentials;
+                    AsyncStorage.setItem('user', JSON.parse(user))
+                    AsyncStorage.setItem('user-login-object', JSON.stringify({ email, password }));
+                    const DocRef = doc(FIRESTORE_DB, "Users", user.user.uid);
+                    const docSnap = (getDoc(DocRef));
+                    if (docSnap.exists()) {
+                      console.log(docSnap.data());
+                    } else {
+                      Alert.alert('User role not in DB')
+                    }
+                  })
+                  .catch((error) => {
+                    console.log(error.code + " : " + error.message);
+                  })
               }
-            }
             })
             .catch(err => {
               console.error(err);
@@ -45,22 +56,30 @@ export default function Login({ navigation }) {
   const [password, setPassword] = useState('');
 
   const handleLogIn = async () => {
-    try {
-      const userDetails = await AuthService.Login(email, password, navigation);
+    //login user 
+    signInWithEmailAndPassword(FirebaseConfig.auth, email, password)
+      .then((userCredentials) => {
+        const user = userCredentials;
+        AsyncStorage.setItem('user', JSON.stringify(user));
+        AsyncStorage.setItem('user-login-object', JSON.stringify({ email, password }));
+        const DocRef = doc(FIRESTORE_DB, "Users", user.user.uid);
+        getDoc(DocRef)
+          .then(data=>{
+            let user_role = data.data().role;
+            if (user_role == 'client'){
+              navigation.replace('CustomerHomepage')
+            }else if (user_role == 'worker'){
+              navigation.replace('WorkerHomepage')
+            }
+          })
+          .catch(err=>{
+            console.error(err)
+          })
 
-      // Store user details in AsyncStorage
-      await AsyncStorage.setItem('UserDetails', JSON.stringify(userDetails));
-
-      // Navigate based on user role
-      if (userDetails.role === 'customer') {
-        navigation.push('CustomerHomepage');
-      } else if (userDetails.role === 'worker') {
-        navigation.push('WorkerHomepage');
-      }
-    } catch (err) {
-      Alert.alert('Login failed', 'An error occurred during login.');
-      console.error(err);
-    }
+      })
+      .catch((error) => {
+        console.log(error.code + " : " + error.message);
+      })
   };
 
   return (
