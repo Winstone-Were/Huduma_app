@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { Text, Button, Avatar, TextInput, Snackbar } from 'react-native-paper';
+import { Text, Button, Avatar, TextInput, Snackbar, IconButton } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 
@@ -13,7 +13,12 @@ const ProfileScreen = () => {
     secondaryEmail: '',
     avatar: null,
   });
-  const [editMode, setEditMode] = useState(false);
+  const [editMode, setEditMode] = useState({
+    name: false,
+    phoneNumber: false,
+    address: false,
+    secondaryEmail: false,
+  });
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
 
@@ -42,16 +47,8 @@ const ProfileScreen = () => {
 
   const handleSaveProfile = async () => {
     try {
-      const updatedUserData = {
-        ...user,
-        name: user.name,
-        phoneNumber: user.phoneNumber,
-        address: user.address,
-        secondaryEmail: user.secondaryEmail,
-      };
-      await AsyncStorage.setItem('UserDetails', JSON.stringify(updatedUserData));
-
-      setEditMode(false);
+      await AsyncStorage.setItem('UserDetails', JSON.stringify(user));
+      setEditMode({ name: false, phoneNumber: false, address: false, secondaryEmail: false });
       setSnackbarMessage('Profile updated successfully');
       setSnackbarVisible(true);
     } catch (error) {
@@ -68,14 +65,23 @@ const ProfileScreen = () => {
         allowsEditing: true,
         aspect: [1, 1],
         quality: 1,
-        base64: true,
       });
       if (!result.canceled) {
-        setUser({ ...user, avatar: result.uri });
+        const newAvatarUri = `${result.uri}?${new Date().getTime()}`;
+        setUser({ ...user, avatar: newAvatarUri });
+        await AsyncStorage.setItem('UserDetails', JSON.stringify({ ...user, avatar: newAvatarUri }));
+        setSnackbarMessage('Profile picture updated successfully');
+        setSnackbarVisible(true);
       }
     } catch (error) {
       console.error('Error picking image:', error);
+      setSnackbarMessage('Failed to update profile picture');
+      setSnackbarVisible(true);
     }
+  };
+
+  const toggleEditMode = (field) => {
+    setEditMode({ ...editMode, [field]: !editMode[field] });
   };
 
   return (
@@ -85,6 +91,7 @@ const ProfileScreen = () => {
           <Avatar.Image
             size={100}
             source={user.avatar ? { uri: user.avatar } : require('../../assets/default-user.png')}
+            style={styles.avatar}
           />
         </TouchableOpacity>
         <View style={styles.header}>
@@ -93,49 +100,29 @@ const ProfileScreen = () => {
         </View>
 
         <View style={styles.content}>
-          <TextInput
-            label="Name"
-            value={user.name}
-            onChangeText={(text) => setUser({ ...user, name: text })}
-            editable={editMode}
-            style={styles.input}
-          />
-          <TextInput
-            label="Phone Number"
-            value={user.phoneNumber}
-            onChangeText={(text) => setUser({ ...user, phoneNumber: text })}
-            editable={editMode}
-            keyboardType="phone-pad"
-            style={styles.input}
-          />
-          <TextInput
-            label="Address"
-            value={user.address}
-            onChangeText={(text) => setUser({ ...user, address: text })}
-            editable={editMode}
-            style={styles.input}
-          />
-          <TextInput
-            label="Secondary Email"
-            value={user.secondaryEmail}
-            onChangeText={(text) => setUser({ ...user, secondaryEmail: text })}
-            editable={editMode}
-            keyboardType="email-address"
-            style={styles.input}
-          />
-          {!editMode ? (
-            <Button mode="contained" style={styles.button} onPress={() => setEditMode(true)}>
-              Edit Profile
+          {['name', 'phoneNumber', 'address', 'secondaryEmail'].map((field) => (
+            <View key={field} style={styles.inputContainer}>
+              <TextInput
+                label={capitalize(field)}
+                value={user[field]}
+                onChangeText={(text) => setUser({ ...user, [field]: text })}
+                editable={editMode[field]}
+                style={styles.input}
+                mode="outlined"
+                theme={{ roundness: 10 }}
+                right={
+                  <TextInput.Icon
+                    icon="pencil"
+                    onPress={() => toggleEditMode(field)}
+                  />
+                }
+              />
+            </View>
+          ))}
+          {Object.values(editMode).some((isEditing) => isEditing) && (
+            <Button mode="contained" style={styles.button} onPress={handleSaveProfile}>
+              Save Profile
             </Button>
-          ) : (
-            <>
-              <Button mode="contained" style={styles.button} onPress={handleSaveProfile}>
-                Save Profile
-              </Button>
-              <Button style={styles.button} onPress={() => setEditMode(false)}>
-                Cancel
-              </Button>
-            </>
           )}
         </View>
       </View>
@@ -147,6 +134,8 @@ const ProfileScreen = () => {
   );
 };
 
+const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -157,6 +146,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
   },
+  avatar: {
+    backgroundColor: '#ccc',
+  },
   header: {
     alignItems: 'center',
     marginBottom: 20,
@@ -165,22 +157,28 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginTop: 10,
-    textAlign: 'center', // Center text horizontally
+    textAlign: 'center',
   },
   userEmail: {
     fontSize: 16,
     color: '#666',
     marginTop: 5,
-    textAlign: 'center', // Center text horizontally
+    textAlign: 'center',
   },
   content: {
     marginTop: 20,
   },
-  input: {
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 10,
+  },
+  input: {
+    flex: 1,
   },
   button: {
     marginVertical: 10,
+    borderRadius: 10,
   },
 });
 

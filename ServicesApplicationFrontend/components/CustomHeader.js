@@ -2,21 +2,25 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-
-const CustomHeader = ({ username, onSettingsPress }) => {
+const CustomHeader = ({ username, onSettingsPress, onNotificationsPress }) => {
   return (
     <SafeAreaView style={styles.headerContainer}>
       <View style={styles.headerContent}>
         <Text style={styles.welcomeText}>Welcome, {username}</Text>
-        <TouchableOpacity onPress={onSettingsPress}>  
-        {/* can i remove this and put the settings page directly from the components bar */}
-          <MaterialCommunityIcons name="cog" color="#000" size={26} />
-        </TouchableOpacity>
+        <View style={styles.iconContainer}>
+          <TouchableOpacity onPress={onNotificationsPress} style={styles.iconButton}>
+            <MaterialCommunityIcons name="bell" color="#888888" size={26} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={onSettingsPress} style={styles.iconButton}>
+            <MaterialCommunityIcons name="cog" color="#888888" size={26} />
+          </TouchableOpacity>
+        </View>
       </View>
-    </SafeAreaView>///to fit the space
+      <View style={styles.separator} />
+    </SafeAreaView>
   );
 };
-//
+
 const styles = StyleSheet.create({
   headerContainer: {
     backgroundColor: '#fff',
@@ -35,6 +39,16 @@ const styles = StyleSheet.create({
   welcomeText: {
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  iconContainer: {
+    flexDirection: 'row',
+  },
+  iconButton: {
+    marginLeft: 15,
+  },
+  separator: {
+    height: 1,
+    backgroundColor: '#ccc',
   },
 });
 
