@@ -14,6 +14,8 @@ import SplashScreen from "../Screens/SplashScreen";
 import WorkerHomepage from "../Screens/WorkerScreens/WorkerHomepage";
 import CustomerHomepage from "../Screens/CustomerScreens/CustomerHomepage";
 import Settings from "../Screens/SettingScreens/Settings";
+import ChangePassword from "../Screens/SettingScreens/ChangePassword";
+import ChangeEmail from "../Screens/SettingScreens/ChangeEmail";
 
 
 const Stack = createNativeStackNavigator();
@@ -35,7 +37,7 @@ const theme = {
   };
 const AuthStack = () => {
     return (
-        
+
         <PaperProvider theme={theme}>
             <NavigationContainer>
 
@@ -60,7 +62,7 @@ const AuthStack = () => {
                         name="HomeScreen"
                         component={Home}
                     />
-                    <Stack.Screen 
+                    <Stack.Screen
                         name="ForgotPassword"
                         component={ForgotPassword}
                     />
@@ -73,16 +75,26 @@ const AuthStack = () => {
                         name="WorkerHomepage"
                         component={WorkerHomepage}
                         options={noHeader}
-                    
+
                     />
                     <Stack.Screen
                         name="CustomerHomepage"
                         component={CustomerHomepage}
                         options={noHeader}
                     />
-                        <Stack.Screen
+                    <Stack.Screen
                         name="Settings"
                         component={Settings}
+                        options={noHeader}
+                    />
+                    <Stack.Screen
+                        name="ChangePasswordScreen"
+                        component={ChangePassword}
+                        options={noHeader}
+                    />
+                    <Stack.Screen
+                        name="ChangeEmailScreen"
+                        component={ChangeEmail}
                         options={noHeader}
                     />
                 </Stack.Navigator>
