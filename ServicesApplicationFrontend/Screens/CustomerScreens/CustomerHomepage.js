@@ -5,13 +5,14 @@ import JobScreen from './Jobs';
 import ProfileScreen from './Profile';
 import PendingScreen from './Pending';
 import CustomHeader from '../../components/CustomHeader'; 
+
 const Tab = createMaterialBottomTabNavigator();
 
 const CustomerHomepage = ({ navigation }) => {
   const [username, setUsername] = useState('');
 
   useEffect(() => {
-    // Function to fetch username from AsyncStorage || backend API
+    // Function to fetch username from AsyncStorage or backend API
     fetchUsername();
   }, []);
 
@@ -23,7 +24,7 @@ const CustomerHomepage = ({ navigation }) => {
         setUsername(storedUsername);
       } else {
         // If username not found in AsyncStorage
-        const response = await fetch('http://192.168.100.91:3000/api/profile', {//add enpoint
+        const response = await fetch('http://192.168.100.91:3000/api/profile', {
           method: 'GET',
           headers: {
             // authorization token
@@ -44,13 +45,14 @@ const CustomerHomepage = ({ navigation }) => {
   return (
     <>
       <CustomHeader
-        username={username} // Pass dynamically fetched username to CustomHeader
-        onSettingsPress={() => navigation.navigate('Settings')} 
+        username={username}
+        onSettingsPress={() => navigation.navigate('Settings')}
       />
       <Tab.Navigator
         initialRouteName="Jobs"
-        activeColor="#e91e63"
-        barStyle={{ backgroundColor: '#ED7D27' }}
+        activeColor="#ED7D27" // Active tab color (orange)
+        inactiveColor="#888888" // Inactive tab color (grey)
+        barStyle={{ backgroundColor: '#ffffff' }} // Background color of the tab bar
       >
         <Tab.Screen
           name="Jobs"
@@ -58,8 +60,12 @@ const CustomerHomepage = ({ navigation }) => {
           options={{
             tabBarLabel: 'Jobs',
             tabBarIcon: ({ color }) => (
-              <MaterialCommunityIcons name="briefcase" color={color} size={26} />
-            )
+              <MaterialCommunityIcons
+                name="briefcase"
+                color={color}
+                size={26}
+              />
+            ),
           }}
         />
         <Tab.Screen
@@ -68,8 +74,12 @@ const CustomerHomepage = ({ navigation }) => {
           options={{
             tabBarLabel: 'Activity',
             tabBarIcon: ({ color }) => (
-              <MaterialCommunityIcons name="clock" color={color} size={26} />
-            )
+              <MaterialCommunityIcons
+                name="clock"
+                color={color}
+                size={26}
+              />
+            ),
           }}
         />
         <Tab.Screen
@@ -78,8 +88,12 @@ const CustomerHomepage = ({ navigation }) => {
           options={{
             tabBarLabel: 'Profile',
             tabBarIcon: ({ color }) => (
-              <MaterialCommunityIcons name="account" color={color} size={26} />
-            )
+              <MaterialCommunityIcons
+                name="account"
+                color={color}
+                size={26}
+              />
+            ),
           }}
         />
       </Tab.Navigator>

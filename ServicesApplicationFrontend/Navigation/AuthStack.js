@@ -25,22 +25,23 @@ const theme = {
     ...DefaultTheme,
     roundness: 0,
     colors: {
-        ...DefaultTheme.colors,
-        primary: '#ED7D27',
-        secondary: '#f1c40f',
-        tertiary: '#a1b2c3',
-        surface: '#FFFFFF',
-        secondaryContainer: '#FFFFFF',
-        onSurface: '#141414'
-    }
-}
+      ...DefaultTheme.colors,
+      primary: '#ED7D27',          
+      accent: '#f1c40f',          
+      background: '#FFFFFF',       
+      surface: '#FFFFFF',          
+      text: '#141414',             
+      placeholder: '#a1b2c3',      
+      onSurface: '#141414',        
+    },
+  };
 const AuthStack = () => {
     return (
 
         <PaperProvider theme={theme}>
             <NavigationContainer>
 
-                <Stack.Navigator initialRouteName="LoginScreen">
+                <Stack.Navigator initialRouteName="SplashScreen">
 
                     <Stack.Screen
                         name="LoginScreen"

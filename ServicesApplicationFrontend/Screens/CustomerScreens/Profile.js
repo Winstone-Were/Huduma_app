@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, TouchableOpacity, } from 'react-native';
+
 import { Image } from 'expo-image';
 import { Text, Button, Avatar, TextInput, Snackbar } from 'react-native-paper';
+import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { Text, Button, Avatar, TextInput, Snackbar, IconButton } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 import { AUTH, FIRESTORE_DB } from '../../firebaseConfig';
 import { addDoc, collection, setDoc, doc, getDoc } from 'firebase/firestore';
 import { updateProfile } from 'firebase/auth';
-
 
 
 const ProfileScreen = ({ navigation }) => {
@@ -20,6 +21,7 @@ const ProfileScreen = ({ navigation }) => {
   const [imageURL, setImageURL] = useState();
   const [dwImage, setDwImage] = useState();
   const [editMode, setEditMode] = useState(false);
+
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [profileExists, setProfileExists] = useState(false);
@@ -47,7 +49,7 @@ const ProfileScreen = ({ navigation }) => {
   }, []);
 
 
-  const handleSaveProfile = async () => {
+  const handleSaveProfile = async () => 
     updateProfile(AUTH.currentUser, {
       displayName: name
     }).then((res)=>{
@@ -59,6 +61,7 @@ const ProfileScreen = ({ navigation }) => {
     }).catch((err)=>{
       console.error(err);
     })
+
   };
 
   const pickImage = async () => {
@@ -68,15 +71,21 @@ const ProfileScreen = ({ navigation }) => {
         allowsEditing: true,
         aspect: [1, 1],
         quality: 1,
-        base64: true,
       });
       if (!result.canceled) {
-        setUser({ ...user, avatar: result.uri });
+        const newAvatarUri = `${result.uri}?${new Date().getTime()}`;
+        setUser({ ...user, avatar: newAvatarUri });
+        await AsyncStorage.setItem('UserDetails', JSON.stringify({ ...user, avatar: newAvatarUri }));
+        setSnackbarMessage('Profile picture updated successfully');
+        setSnackbarVisible(true);
       }
     } catch (error) {
       console.error('Error picking image:', error);
+      setSnackbarMessage('Failed to update profile picture');
+      setSnackbarVisible(true);
     }
   };
+
 
   const fetchProfileImage = () => {
 
@@ -173,6 +182,8 @@ const ProfileScreen = ({ navigation }) => {
   );
 };
 
+const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -183,6 +194,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
   },
+  avatar: {
+    backgroundColor: '#ccc',
+  },
   header: {
     alignItems: 'center',
     marginBottom: 20,
@@ -191,22 +205,28 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginTop: 10,
-    textAlign: 'center', // Center text horizontally
+    textAlign: 'center',
   },
   userEmail: {
     fontSize: 16,
     color: '#666',
     marginTop: 5,
-    textAlign: 'center', // Center text horizontally
+    textAlign: 'center',
   },
   content: {
     marginTop: 20,
   },
-  input: {
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 10,
+  },
+  input: {
+    flex: 1,
   },
   button: {
     marginVertical: 10,
+    borderRadius: 10,
   },
   image: {
     width: 200,
