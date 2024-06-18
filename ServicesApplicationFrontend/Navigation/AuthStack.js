@@ -14,6 +14,7 @@ import SplashScreen from "../Screens/SplashScreen";
 import WorkerHomepage from "../Screens/WorkerScreens/WorkerHomepage";
 import CustomerHomepage from "../Screens/CustomerScreens/CustomerHomepage";
 import Settings from "../Screens/SettingScreens/Settings";
+import ChangePassword from "../Screens/SettingScreens/ChangePassword";
 
 
 const Stack = createNativeStackNavigator();

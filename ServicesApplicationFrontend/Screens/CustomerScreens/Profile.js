@@ -50,8 +50,8 @@ const ProfileScreen = ({ navigation }) => {
       displayName: name
     }).then((res)=>{
       setDoc(doc(FIRESTORE_DB, 'Users', AUTH.currentUser.uid), {phone_number, address, secEmail}, {merge:true})
-        .then((res)=>{
-
+        .then((resp)=>{
+          console.log(resp);
         })
         .catch((err)=> console.error);
     }).catch((err)=>{
@@ -145,7 +145,7 @@ const ProfileScreen = ({ navigation }) => {
                   </Button>
                 ) : (
                   <>
-                    <Button mode="contained" style={styles.button} onPress={handleSaveProfile}>
+                    <Button mode="contained" style={styles.button} onPress={() => handleSaveProfile()}>
                       Save Profile
                     </Button>
                     <Button style={styles.button} onPress={() => setEditMode(false)}>
