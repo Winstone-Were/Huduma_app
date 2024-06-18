@@ -1,6 +1,8 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import { View, StyleSheet, ScrollView, Alert } from 'react-native';
 import { Appbar, List, Switch } from 'react-native-paper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const Settings = ({ navigation }) => {
   const [notificationsEnabled, setNotificationsEnabled] = React.useState(false);
@@ -9,7 +11,7 @@ const Settings = ({ navigation }) => {
   const toggleNotifications = () => setNotificationsEnabled(!notificationsEnabled);
   const toggleDarkMode = () => setDarkModeEnabled(!darkModeEnabled);
   const handleLogOut = async ()=>{
-    AsyncStorage.clear()
+    AsyncStorage.clear();
     Alert.alert("You've been logged out");
     navigation.push('LoginScreen');
   }
@@ -46,12 +48,12 @@ const Settings = ({ navigation }) => {
           <List.Subheader>Account</List.Subheader>
           <List.Item
             title="Change Password"
-            onPress={() => navigation.navigate('ChangePassword')}//create a reset password screen...maybe can be similar to the forgot password
+            onPress={() => navigation.navigate('ChangePasswordScreen')}//create a reset password screen...maybe can be similar to the forgot password
             left={() => <List.Icon icon="lock" />}
           />
           <List.Item
-            title="Two-Factor Authentication"
-            onPress={() => navigation.navigate('TwoFactorAuth')}//STONIE should create a screen
+            title="Change Email Address"
+            onPress={() => navigation.navigate('ChangeEmailScreen')}//STONIE should create a screen
             left={() => <List.Icon icon="shield-lock" />}
           />
           <List.Item

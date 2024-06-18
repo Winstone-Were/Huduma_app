@@ -1,61 +1,66 @@
 import React, { useState, useEffect } from 'react';
+
+import { Image } from 'expo-image';
+import { Text, Button, Avatar, TextInput, Snackbar } from 'react-native-paper';
 import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { Text, Button, Avatar, TextInput, Snackbar, IconButton } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
+import { AUTH, FIRESTORE_DB } from '../../firebaseConfig';
+import { addDoc, collection, setDoc, doc, getDoc } from 'firebase/firestore';
+import { updateProfile } from 'firebase/auth';
 
-const ProfileScreen = () => {
-  const [user, setUser] = useState({
-    name: '',
-    email: '',
-    phoneNumber: '',
-    address: '',
-    secondaryEmail: '',
-    avatar: null,
-  });
-  const [editMode, setEditMode] = useState({
-    name: false,
-    phoneNumber: false,
-    address: false,
-    secondaryEmail: false,
-  });
+
+const ProfileScreen = ({ navigation }) => {
+
+  const [name, setName] = useState('');
+  const [phone_number, setPhone_number] = useState('+254');
+  const [email, setEmail] = useState('');
+  const [address, setAddress] = useState();
+  const [secEmail, setSecEmail] = useState('');
+  const [imageURL, setImageURL] = useState();
+  const [dwImage, setDwImage] = useState();
+  const [editMode, setEditMode] = useState(false);
+
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [profileExists, setProfileExists] = useState();
+
+  const blurhash =
+  '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
 
   useEffect(() => {
-    getUserDetails();
+    if (AUTH.currentUser.displayName) {
+      setProfileExists(true);
+      setName(AUTH.currentUser.displayName);
+      setImageURL(AUTH.currentUser.photoURL);
+      setSecEmail(AUTH.currentUser.email);
+      const DocRef = doc(FIRESTORE_DB, "Users", AUTH.currentUser.uid);
+      getDoc(DocRef)
+        .then((res) => {
+          setPhone_number(res.data().phone_number);
+          setAddress(res.data().address);
+          setSecEmail(res.data().secEmail);
+        }).catch((err) => console.error);
+    } else {
+      profileExists(false);
+    }
   }, []);
 
-  const getUserDetails = async () => {
-    try {
-      const userDetails = await AsyncStorage.getItem('UserDetails');
-      if (userDetails) {
-        const userData = JSON.parse(userDetails);
-        setUser({
-          name: userData.name || '',
-          email: userData.email || '',
-          phoneNumber: userData.phoneNumber || '',
-          address: userData.address || '',
-          secondaryEmail: userData.secondaryEmail || '',
-          avatar: userData.avatar || null,
-        });
-      }
-    } catch (error) {
-      console.error('Error fetching user details:', error);
-    }
-  };
 
-  const handleSaveProfile = async () => {
-    try {
-      await AsyncStorage.setItem('UserDetails', JSON.stringify(user));
-      setEditMode({ name: false, phoneNumber: false, address: false, secondaryEmail: false });
-      setSnackbarMessage('Profile updated successfully');
-      setSnackbarVisible(true);
-    } catch (error) {
-      console.error('Error updating profile:', error);
-      setSnackbarMessage('Failed to update profile');
-      setSnackbarVisible(true);
-    }
+  const handleSaveProfile = async () => 
+    updateProfile(AUTH.currentUser, {
+      displayName: name
+    }).then((res)=>{
+      setDoc(doc(FIRESTORE_DB, 'Users', AUTH.currentUser.uid), {phone_number, address, secEmail}, {merge:true})
+        .then((resp)=>{
+          console.log(resp);
+        })
+        .catch((err)=> console.error);
+    }).catch((err)=>{
+      console.error(err);
+    })
+
   };
 
   const pickImage = async () => {
@@ -80,53 +85,95 @@ const ProfileScreen = () => {
     }
   };
 
-  const toggleEditMode = (field) => {
-    setEditMode({ ...editMode, [field]: !editMode[field] });
-  };
+
+  const fetchProfileImage = () => {
+
+  }
 
   return (
     <ScrollView>
-      <View style={styles.container}>
-        <TouchableOpacity onPress={pickImage} style={styles.avatarContainer}>
-          <Avatar.Image
-            size={100}
-            source={user.avatar ? { uri: user.avatar } : require('../../assets/default-user.png')}
-            style={styles.avatar}
-          />
-        </TouchableOpacity>
-        <View style={styles.header}>
-          <Text style={styles.userName}>{user.name}</Text>
-          <Text style={styles.userEmail}>{user.email}</Text>
-        </View>
+      {profileExists ?
+        (
+          <>
+            <View style={styles.container}>
+              <TouchableOpacity onPress={pickImage} style={styles.avatarContainer}>
+                {imageURL ? (
+                  <>
+                    <Image
+                      style={styles.image}
+                      source={imageURL}
+                      placeholder={{ blurhash }}
+                      contentFit="cover"
+                      transition={1000}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <Text> Loading Image</Text>
+                  </>
+                )}
+              </TouchableOpacity>
+              <View style={styles.header}>
+                <Text style={styles.userName}>{name}</Text>
+                <Text style={styles.userEmail}>{email}</Text>
+              </View>
 
-        <View style={styles.content}>
-          {['name', 'phoneNumber', 'address', 'secondaryEmail'].map((field) => (
-            <View key={field} style={styles.inputContainer}>
-              <TextInput
-                label={capitalize(field)}
-                value={user[field]}
-                onChangeText={(text) => setUser({ ...user, [field]: text })}
-                editable={editMode[field]}
-                style={styles.input}
-                mode="outlined"
-                theme={{ roundness: 10 }}
-                right={
-                  <TextInput.Icon
-                    icon="pencil"
-                    onPress={() => toggleEditMode(field)}
-                  />
-                }
-              />
+              <View style={styles.content}>
+                <TextInput
+                  label="Name"
+                  value={name}
+                  onChangeText={(text) => setName(text)}
+                  editable={editMode}
+                  style={styles.input}
+                />
+                <TextInput
+                  label="Phone Number"
+                  value={phone_number}
+                  onChangeText={(text) => setPhone_number(text)}
+                  editable={editMode}
+                  keyboardType="phone-pad"
+                  style={styles.input}
+                />
+                <TextInput
+                  label="Address"
+                  value={address}
+                  onChangeText={(text) => setAddress(text)}
+                  editable={editMode}
+                  style={styles.input}
+                />
+                <TextInput
+                  label="Secondary Email"
+                  value={secEmail}
+                  onChangeText={(text) => setSecEmail(text)}
+                  editable={editMode}
+                  keyboardType="email-address"
+                  style={styles.input}
+                />
+                {!editMode ? (
+                  <Button mode="contained" style={styles.button} onPress={() => setEditMode(true)}>
+                    Edit Profile
+                  </Button>
+                ) : (
+                  <>
+                    <Button mode="contained" style={styles.button} onPress={() => handleSaveProfile()}>
+                      Save Profile
+                    </Button>
+                    <Button style={styles.button} onPress={() => setEditMode(false)}>
+                      Cancel
+                    </Button>
+                  </>
+                )}
+              </View>
             </View>
-          ))}
-          {Object.values(editMode).some((isEditing) => isEditing) && (
-            <Button mode="contained" style={styles.button} onPress={handleSaveProfile}>
-              Save Profile
-            </Button>
-          )}
-        </View>
-      </View>
-
+          </>
+        ) :
+        (<>
+          <View style={styles.container}>
+            <Text> It seems you haven't built your profile yet </Text>
+            <Text> Lets Build One</Text>
+            <Button onPress={() => { navigation.push('BuildProfileScreen') }}> Build Profile </Button>
+          </View>
+        </>)}
       <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000}>
         {snackbarMessage}
       </Snackbar>
@@ -179,6 +226,12 @@ const styles = StyleSheet.create({
   button: {
     marginVertical: 10,
     borderRadius: 10,
+  },
+  image: {
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    alignSelf: "center"
   },
 });
 
