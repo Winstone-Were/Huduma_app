@@ -32,6 +32,7 @@ const ProfileScreen = ({ navigation }) => {
       setProfileExists(true);
       setName(AUTH.currentUser.displayName);
       setImageURL(AUTH.currentUser.photoURL);
+      setSecEmail(AUTH.currentUser.email);
       const DocRef = doc(FIRESTORE_DB, "Users", AUTH.currentUser.uid);
       getDoc(DocRef)
         .then((res) => {
@@ -104,8 +105,8 @@ const ProfileScreen = ({ navigation }) => {
                 )}
               </TouchableOpacity>
               <View style={styles.header}>
-                <Text style={styles.userName}>{user.name}</Text>
-                <Text style={styles.userEmail}>{user.email}</Text>
+                <Text style={styles.userName}>{name}</Text>
+                <Text style={styles.userEmail}>{email}</Text>
               </View>
 
               <View style={styles.content}>

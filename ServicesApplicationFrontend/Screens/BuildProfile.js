@@ -215,7 +215,7 @@ export default function BuildProfile({ navigation }) {
       const UserObject = await AsyncStorage.getItem('user');
       const user = JSON.parse(UserObject);
       let uid = user.user.uid;
-      setDoc(doc(FIRESTORE_DB, 'Users', uid),{username, phone_number, date}, {merge:true});
+      setDoc(doc(FIRESTORE_DB, 'Users', uid),{username, phone_number, date,}, {merge:true});
     }catch (err) {
       console.error(err)
     }
@@ -224,8 +224,9 @@ export default function BuildProfile({ navigation }) {
   const updateUserProfile = async () => {
     console.log(AUTH.currentUser);
     updateProfile(AUTH.currentUser, {
-      displayName: username, photoURL: imageURL, phoneNumber: phone_number
+      displayName: username, photoURL: imageURL, 
     }).then((res)=>{
+      uploadImage();
       writeUserToFirestore();
       console.log(res)
     }).catch((err)=>{
