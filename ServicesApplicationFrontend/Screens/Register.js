@@ -53,10 +53,12 @@ export default function Register({ navigation }) {
                 let uid = userCredential.user.uid;
                 setDoc(doc(FIRESTORE_DB, 'Users', uid), {role});
                 Alert.alert("Verification Email sent, Click the link in your email address to verify your account");
+                setLoading(false);
               })
             .catch((error)=>{
               console.error(error)
               Alert.alert('Another Error');
+              setLoading(false);
             })
           })
           .catch((error)=> {
@@ -70,14 +72,31 @@ export default function Register({ navigation }) {
 
   const handleRegisterNext = async () => {
     //Login place creds in localStorage then push to Home Screen based on role
-    signInWithEmailAndPassword(Firebase.auth, email, password)
-      .then((userCredentials)=>{
+    setLoading(true);
+    signInWithEmailAndPassword(FirebaseConfig.auth, email, password)
+      .then((userCredentials) => {
         const user = userCredentials;
-        AsyncStorage.setItem('user', JSON.stringify(userCredentials));
-        AsyncStorage.setItem('user-login-object', JSON.parse({email,password,role}));
-        //push to HomeScreenBasedOnRole
-        //load a bit, check whats in fireStore then push based on that
-        console.log(user);
+        AsyncStorage.setItem('user', JSON.stringify(user));
+        AsyncStorage.setItem('user-login-object', JSON.stringify({ email, password }));
+        const DocRef = doc(FIRESTORE_DB, "Users", user.user.uid);
+        getDoc(DocRef)
+          .then(data => {
+            let user_role = data.data().role;
+            if (user_role == 'client') {
+              navigation.replace('CustomerHomepage')
+            } else if (user_role == 'worker') {
+              navigation.replace('WorkerHomepage')
+            }
+          })
+          .catch(err => {
+            setLoading(false);
+            console.error(err)
+          })
+
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log(error.code + " : " + error.message);
       })
   };
 

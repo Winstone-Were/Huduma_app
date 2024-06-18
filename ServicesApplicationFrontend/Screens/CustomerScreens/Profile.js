@@ -22,7 +22,7 @@ const ProfileScreen = ({ navigation }) => {
   const [editMode, setEditMode] = useState(false);
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [profileExists, setProfileExists] = useState();
+  const [profileExists, setProfileExists] = useState(false);
 
   const blurhash =
   '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
@@ -32,6 +32,7 @@ const ProfileScreen = ({ navigation }) => {
       setProfileExists(true);
       setName(AUTH.currentUser.displayName);
       setImageURL(AUTH.currentUser.photoURL);
+      console.log(AUTH.currentUser);
       setSecEmail(AUTH.currentUser.email);
       const DocRef = doc(FIRESTORE_DB, "Users", AUTH.currentUser.uid);
       getDoc(DocRef)
@@ -41,7 +42,7 @@ const ProfileScreen = ({ navigation }) => {
           setSecEmail(res.data().secEmail);
         }).catch((err) => console.error);
     } else {
-      profileExists(false);
+      setProfileExists(false);
     }
   }, []);
 

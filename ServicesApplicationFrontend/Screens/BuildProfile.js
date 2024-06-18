@@ -143,6 +143,7 @@ export default function BuildProfile({ navigation }) {
       const pathReference = ref(STORAGE, refPath);
       const URL = await getDownloadURL(pathReference);
       setImageURL(URL);
+      console.log(URL);
       return URL;
     } catch (err) { 
       console.error(err);
@@ -159,8 +160,6 @@ export default function BuildProfile({ navigation }) {
     });
 
     setImage((await result).assets[0].uri);
-    getPhotoURL();
-
   }
 
 
@@ -190,6 +189,7 @@ export default function BuildProfile({ navigation }) {
     console.log(filename);
 
     const path = await getUploadPath();
+    console.log(path);
     const profilePhotoStorage = ref(STORAGE, `${path}`);
 
     const metadata = {
@@ -201,7 +201,8 @@ export default function BuildProfile({ navigation }) {
         resp.blob().then(res => {
           uploadBytes(profilePhotoStorage, res, metadata)
             .then((snap) => {
-              console.log('uploaded profile photo')
+              console.log('uploaded profile photo');
+              getPhotoURL();
             })
             .catch((err) => {
               console.error(err);
@@ -224,10 +225,11 @@ export default function BuildProfile({ navigation }) {
   const updateUserProfile = async () => {
     console.log(AUTH.currentUser);
     updateProfile(AUTH.currentUser, {
-      displayName: username, photoURL: imageURL, 
+      displayName: username, photoURL: await getPhotoURL(), 
     }).then((res)=>{
       uploadImage();
       writeUserToFirestore();
+      navigation.push("LoginScreen");
       console.log(res)
     }).catch((err)=>{
       console.error(err);
@@ -283,7 +285,7 @@ export default function BuildProfile({ navigation }) {
 
           <Button mode='elevated' style={styles.input} onPress={() => pickImage()}> Select Image </Button>
 
-          <Button mode='contained' style={styles.input} onPress={() => updateUserProfile()}> Send Verification </Button>
+          <Button mode='contained' style={styles.input} onPress={() => updateUserProfile()}> Continue </Button>
         </>) :
         (<>
           {verifyLoading ?
