@@ -1,6 +1,8 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import { View, StyleSheet, ScrollView, Alert } from 'react-native';
 import { Appbar, List, Switch } from 'react-native-paper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const Settings = ({ navigation }) => {
   const [notificationsEnabled, setNotificationsEnabled] = React.useState(false);
@@ -9,7 +11,7 @@ const Settings = ({ navigation }) => {
   const toggleNotifications = () => setNotificationsEnabled(!notificationsEnabled);
   const toggleDarkMode = () => setDarkModeEnabled(!darkModeEnabled);
   const handleLogOut = async ()=>{
-    AsyncStorage.clear()
+    AsyncStorage.clear();
     Alert.alert("You've been logged out");
     navigation.push('LoginScreen');
   }
