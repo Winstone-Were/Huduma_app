@@ -24,7 +24,7 @@ export default function Login({ navigation }) {
                 signInWithEmailAndPassword(FirebaseConfig.auth, user.email, user.password)
                   .then((userCredentials) => {
                     const user = userCredentials;
-                    AsyncStorage.setItem('user', JSON.parse(user))
+                    AsyncStorage.setItem('user', JSON.stringify(user))
                     AsyncStorage.setItem('user-login-object', JSON.stringify({ email, password }));
                     const DocRef = doc(FIRESTORE_DB, "Users", user.user.uid);
                     const docSnap = (getDoc(DocRef));

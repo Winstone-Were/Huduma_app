@@ -18,7 +18,7 @@ const CustomerHomepage = ({ navigation }) => {
 
   const fetchUsername = async () => {
     try {
-      // Example: Fetch username from AsyncStorage
+      //  Fetch username from AsyncStorage
       const storedUsername = await AsyncStorage.getItem('username');
       if (storedUsername) {
         setUsername(storedUsername);
@@ -27,7 +27,7 @@ const CustomerHomepage = ({ navigation }) => {
         const response = await fetch('http://192.168.100.91:3000/api/profile', {
           method: 'GET',
           headers: {
-            // authorization token
+            // create usernames retrieval
           },
         });
         if (response.ok) {
