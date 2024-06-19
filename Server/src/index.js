@@ -3,6 +3,8 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 require("dotenv").config();
 
+const {collection, getDocs} = require('firebase/firestore')
+
 const {
     getAuth,
     createUserWithEmailAndPassword,
@@ -11,7 +13,8 @@ const {
     sendEmailVerification,
     sendPasswordResetEmail,
     db,
-    linkWithPhoneNumber
+    linkWithPhoneNumber,
+    FIRESTORE_DB
 } = require('../config/firebase');
 
 const verifyToken = require("../middleware/index");
@@ -20,9 +23,9 @@ const auth = getAuth();
 const app = express();
 app.use(cookieParser());
 app.use(express.json());
-app.use(bodyParser.json({limit:'50mb'}));
-app.use(bodyParser.urlencoded({extended:true}));
-app.use(express.urlencoded({limit:'50mb'}));
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.urlencoded({ limit: '50mb' }));
 const port = 3000;
 
 app.post('/api/register', (req, res) => {
@@ -94,7 +97,7 @@ app.post('/api/resetpassword', (req, res) => {
         });
 });
 
-app.post('/api/buildprofile',(req,res)=>{
+app.post('/api/buildprofile', (req, res) => {
     /*
         uuid,
         username,
@@ -110,17 +113,32 @@ app.post('/api/buildprofile',(req,res)=>{
     db.collection('users')
         .doc('Workers')
         .set(userProfileData)
-            .then(result=>{
-                res.json(result);
-            }).catch(err=>{
-                res.json(err);
-            });
+        .then(result => {
+            res.json(result);
+        }).catch(err => {
+            res.json(err);
+        });
 
 
-});  
+});
 
-app.post('/api/linkphone',(req,res)=>{
+app.post('/api/linkphone', (req, res) => {
     let phoneNumber = req.body.phoneNumber;
+});
+
+app.get('/api/getusers', (req, res) => {
+    let users = [];
+    getDocs(collection(FIRESTORE_DB, 'Users'))
+        .then((snapshot)=>{
+            snapshot.forEach((doc)=>{
+                users.push(doc.data());
+                console.log(doc.data());
+            })
+            res.json(users);
+        }).catch(err=>{
+            console.error(err);
+            res.send(err);
+        })
 });
 
 app.listen(port, () => console.log(`Server listening on port ${port}!`));
