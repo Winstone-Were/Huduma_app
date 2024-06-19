@@ -57,8 +57,8 @@ const Settings = ({ navigation }) => {
             left={() => <List.Icon icon="shield-lock" />}
           />
           <List.Item
-            title="Privacy Settings"
-            onPress={() => navigation.navigate('PrivacySettings')}//sample screens from gpt
+            title="Build Profile"
+            onPress={() => navigation.navigate('BuildProfileScreen')}//sample screens from gpt
             left={() => <List.Icon icon="shield" />}
           />
         </List.Section>

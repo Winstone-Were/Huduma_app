@@ -22,62 +22,42 @@ const ProfileScreen = ({ navigation }) => {
   const [profileExists, setProfileExists] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false); // State to show/hide date picker
-
   const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
 
   useEffect(() => {
-    const loadUserProfile = async () => {
-      if (AUTH.currentUser && AUTH.currentUser.displayName) {
-        setProfileExists(true);
-        setName(AUTH.currentUser.displayName);
-        setImageURL(AUTH.currentUser.photoURL);
-        setEmail(AUTH.currentUser.email);
-        const DocRef = doc(FIRESTORE_DB, 'Users', AUTH.currentUser.uid);
-        try {
-          const res = await getDoc(DocRef);
-          if (res.exists()) {
-            const userData = res.data();
-            setPhone_number(userData.phone_number || '');
-            setAddress(userData.address || '');
-            setSecEmail(userData.secEmail || '');
-            setDob(userData.dob ? new Date(userData.dob) : new Date());
-            setUsername(userData.username || '');
-          } else {
-            console.log('No such document!');
-          }
-        } catch (err) {
-          console.error(err);
-        }
-      } else {
-        setProfileExists(false);
-      }
-    };
+    if (AUTH.currentUser.displayName) {
+      setProfileExists(true);
+      setName(AUTH.currentUser.displayName);
+      setImageURL(AUTH.currentUser.photoURL);
+      console.log(AUTH.currentUser);
+      setSecEmail(AUTH.currentUser.email);
+      const DocRef = doc(FIRESTORE_DB, "Users", AUTH.currentUser.uid);
+      getDoc(DocRef)
+        .then((res) => {
+          setPhone_number(res.data().phone_number);
+          setAddress(res.data().address);
+          setSecEmail(res.data().secEmail);
+        }).catch((err) => console.error);
+    } else {
+      setProfileExists(false);
+    }
 
-    loadUserProfile();
   }, []);
 
   const handleSaveProfile = async () => {
-    try {
-      await updateProfile(AUTH.currentUser, {
-        displayName: name,
-        photoURL: imageURL,
-      });
-
-      await setDoc(
-        doc(FIRESTORE_DB, 'Users', AUTH.currentUser.uid),
-        { phone_number, address, secEmail, dob: dob.toISOString(), username },
-        { merge: true }
-      );
-
-      setSnackbarMessage('Profile updated successfully');
-      setSnackbarVisible(true);
-      setEditMode(false);
-    } catch (err) {
+    updateProfile(AUTH.currentUser, {
+      displayName: name
+    }).then((res)=>{
+      setDoc(doc(FIRESTORE_DB, 'Users', AUTH.currentUser.uid), {phone_number, address, secEmail}, {merge:true})
+        .then((resp)=>{
+          console.log(resp);
+        })
+        .catch((err)=> console.error);
+    }).catch((err)=>{
       console.error(err);
-      setSnackbarMessage('Failed to update profile');
-      setSnackbarVisible(true);
-    }
+    })
+
   };
 
   const pickImage = async () => {

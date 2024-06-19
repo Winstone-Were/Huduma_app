@@ -128,6 +128,9 @@ export default function Login({ navigation }) {
           <Button style={styles.input} onPress={() => navigation.push('RegisterScreen')}> Register </Button>
         </>)}
 
+        <Button onPress={()=> navigation.push('ForgotPassword')}> Forgot Password </Button>
+
+
     </View>
   )
 }

@@ -16,13 +16,10 @@ export default function ChangeEmail({ navigation }) {
 
   const updateUserEmail = async () => {
     setLoading(true);
-    sendEmailVerification(emailAddress)
+    verifyBeforeUpdateEmail(AUTH.currentUser, emailAddress)
         .then(()=>{
-
-        })
-        .catch((err)=>{
-            console.error(err);
-        })
+            Alert.alert('Email changed');
+        }).catch(err=> console.error);
     /*updateEmail(AUTH.currentUser, emailAddress)
         .then((resp)=>{
             console.error(resp)
@@ -41,6 +38,7 @@ export default function ChangeEmail({ navigation }) {
       {loading ?
         (<>
           <ActivityIndicator animating={true}/>
+          <Text> Check your email Address to verify </Text>
         </>) :
         (<>
           <View>
