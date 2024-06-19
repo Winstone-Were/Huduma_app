@@ -49,7 +49,7 @@ const ProfileScreen = ({ navigation }) => {
   }, []);
 
 
-  const handleSaveProfile = async () => 
+  const handleSaveProfile = async () => {
     updateProfile(AUTH.currentUser, {
       displayName: name
     }).then((res)=>{
