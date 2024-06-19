@@ -131,8 +131,9 @@ app.get('/api/getusers', (req, res) => {
     getDocs(collection(FIRESTORE_DB, 'Users'))
         .then((snapshot)=>{
             snapshot.forEach((doc)=>{
-                users.push(doc.data());
-                console.log(doc.data());
+                let uid = doc.id
+                users.push({uid , ...doc.data()});
+                console.log(doc.id,'=>',doc.data());
             })
             res.json(users);
         }).catch(err=>{
