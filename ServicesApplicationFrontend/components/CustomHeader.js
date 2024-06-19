@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const CustomHeader = ({ username, onSettingsPress, onNotificationsPress }) => {
+const CustomHeader = ({ username, onSettingsPress, onNotificationsPress, onProfilePress }) => {
   return (
     <SafeAreaView style={styles.headerContainer}>
       <View style={styles.headerContent}>
@@ -13,6 +13,9 @@ const CustomHeader = ({ username, onSettingsPress, onNotificationsPress }) => {
           </TouchableOpacity>
           <TouchableOpacity onPress={onSettingsPress} style={styles.iconButton}>
             <MaterialCommunityIcons name="cog" color="#888888" size={26} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={onProfilePress} style={styles.iconButton}>
+            <MaterialCommunityIcons name="account-circle" color="#888888" size={26} />
           </TouchableOpacity>
         </View>
       </View>

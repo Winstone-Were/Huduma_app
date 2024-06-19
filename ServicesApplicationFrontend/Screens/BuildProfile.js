@@ -224,6 +224,7 @@ export default function BuildProfile({ navigation }) {
 
   const updateUserProfile = async () => {
     console.log(AUTH.currentUser);
+
     updateProfile(AUTH.currentUser, {
       displayName: username, photoURL: await getPhotoURL(), 
     }).then((res)=>{
