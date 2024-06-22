@@ -6,10 +6,11 @@ import { Text, TextInput, Button, ActivityIndicator } from 'react-native-paper';
 
 import JobScreen from './Jobs';
 import ProfileScreen from './Profile';
-import PendingScreen from './Pending';
-
+import ActivityScreen from './Activity';
+import CustomHeader from '../../components/CustomHeader'; 
 import { Appbar, List, Switch } from 'react-native-paper';
 import CustomHeader from '../../components/CustomHeader';
+
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -76,7 +77,7 @@ const CustomerHomepage = ({ navigation }) => {
         />
         <Tab.Screen
           name="Activity"
-          component={PendingScreen}
+          component={ActivityScreen}
           options={{
             tabBarLabel: 'Activity',
             tabBarIcon: ({ color }) => (

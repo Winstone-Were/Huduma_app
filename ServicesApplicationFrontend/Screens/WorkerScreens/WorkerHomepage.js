@@ -1,16 +1,101 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { createMaterialBottomTabNavigator } from 'react-native-paper/react-navigation';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import JobRequestsScreen from './JobRequests';
+import ActivityScreen from './Activity';
+import ProfileScreen from './Profile';
+import CustomHeader from '../../components/CustomHeader'; 
 
-function WorkerHomepage() {
+const Tab = createMaterialBottomTabNavigator();
+
+const WorkerHomepage = ({ navigation }) => {
+  const [username, setUsername] = useState('');
+
+  useEffect(() => {
+    fetchUsername();
+  }, []);
+
+  const fetchUsername = async () => {
+    try {
+      const storedUsername = await AsyncStorage.getItem('username');
+      if (storedUsername) {
+        setUsername(storedUsername);
+      } else {
+        const response = await fetch('http://192.168.100.91:3000/api/profile', {
+          method: 'GET',
+          headers: {
+            
+          },
+        });
+        if (response.ok) {
+          const userData = await response.json();
+          setUsername(userData.username);
+        } else {
+          console.error('Failed to fetch username');
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching username:', error);
+    }
+  };
+
   return (
-    <View style={styles.container}>
-      <Text>Welcome to the Worker Home Page</Text>
-    </View>
+    <>
+      <CustomHeader
+        username={username}
+        onSettingsPress={() => navigation.navigate('Settings')}
+      />
+      <Tab.Navigator
+        initialRouteName="Requests"
+        activeColor="#ED7D27"
+        inactiveColor="#888888"
+        barStyle={{ backgroundColor: '#ffffff' }}
+      >
+        <Tab.Screen
+          name="Requests"
+          component={JobRequestsScreen}
+          options={{
+            tabBarLabel: 'Requests',
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons
+                name="file-document-outline"
+                color={color}
+                size={26}
+              />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Activity"
+          component={ActivityScreen}
+          options={{
+            tabBarLabel: 'Activity',
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons
+                name="clock"
+                color={color}
+                size={26}
+              />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Profile"
+          component={ProfileScreen}
+          options={{
+            tabBarLabel: 'Profile',
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons
+                name="account"
+                color={color}
+                size={26}
+              />
+            ),
+          }}
+        />
+      </Tab.Navigator>
+    </>
   );
-}
-
-const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", alignItems: "center" },
-});
+};
 
 export default WorkerHomepage;
