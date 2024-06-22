@@ -3,7 +3,7 @@ import { createMaterialBottomTabNavigator } from 'react-native-paper/react-navig
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import JobScreen from './Jobs';
 import ProfileScreen from './Profile';
-import PendingScreen from './Pending';
+import ActivityScreen from './Activity';
 import CustomHeader from '../../components/CustomHeader'; 
 
 const Tab = createMaterialBottomTabNavigator();
@@ -70,7 +70,7 @@ const CustomerHomepage = ({ navigation }) => {
         />
         <Tab.Screen
           name="Activity"
-          component={PendingScreen}
+          component={ActivityScreen}
           options={{
             tabBarLabel: 'Activity',
             tabBarIcon: ({ color }) => (
