@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { createMaterialBottomTabNavigator } from 'react-native-paper/react-navigation';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { Alert, StyleSheet, View } from 'react-native';
+import { Text, TextInput, Button, ActivityIndicator } from 'react-native-paper';
+
 import JobScreen from './Jobs';
 import ProfileScreen from './Profile';
 import ActivityScreen from './Activity';
 import CustomHeader from '../../components/CustomHeader'; 
+import { Appbar, List, Switch } from 'react-native-paper';
+import CustomHeader from '../../components/CustomHeader';
+
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -13,7 +19,7 @@ const CustomerHomepage = ({ navigation }) => {
 
   useEffect(() => {
     // Function to fetch username from AsyncStorage or backend API
-    fetchUsername();
+    //fetchUsername();
   }, []);
 
   const fetchUsername = async () => {
@@ -44,10 +50,11 @@ const CustomerHomepage = ({ navigation }) => {
 
   return (
     <>
-      <CustomHeader
-        username={username}
-        onSettingsPress={() => navigation.navigate('Settings')}
-      />
+      <Appbar.Header mode='small' collapsable={true}>
+        <Appbar.BackAction onPress={() => navigation.goBack()} />
+        <Appbar.Content title="Customer Homepage" />
+        <Appbar.Action icon="cog" onPress={() => {navigation.push("Settings")}} />
+      </Appbar.Header>
       <Tab.Navigator
         initialRouteName="Jobs"
         activeColor="#ED7D27" // Active tab color (orange)
@@ -100,5 +107,18 @@ const CustomerHomepage = ({ navigation }) => {
     </>
   );
 };
+
+const styles = StyleSheet.create({
+  container: { flex: 1, justifyContent: "center", marginHorizontal: 30 },
+  input: { marginVertical: 5, borderRadius: 0 },
+  row: {
+    alignItems: "center",
+    flexDirection: "row",
+    marginVertical: 20,
+    justifyContent: "space-between",
+  },
+  textContainer: { alignContent: 'center', alignItems: 'center' }
+
+});
 
 export default CustomerHomepage;

@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState, useRef } from 'react';
 import { Alert, StyleSheet, View, Image, TouchableOpacity } from 'react-native';
-import { Text, TextInput, Button, Switch, HelperText, Menu, Divider, ActivityIndicator } from 'react-native-paper';
+import { Text, TextInput, Button, Switch, HelperText, Menu, Divider, ActivityIndicator, Appbar } from 'react-native-paper';
 
 import axios from 'axios';
 import { app, auth } from '../firebaseConfig';
@@ -9,7 +9,7 @@ import { signInWithPhoneNumber } from 'firebase/auth';
 import VerifyPhone from './VerifyPhone';
 import { DatePickerModal } from 'react-native-paper-dates';
 import { STORAGE, AUTH, FIRESTORE_DB } from '../firebaseConfig';
-import {addDoc, collection, setDoc, doc, getDoc} from 'firebase/firestore'
+import { addDoc, collection, setDoc, doc, getDoc } from 'firebase/firestore'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { updateProfile } from 'firebase/auth';
 
@@ -138,14 +138,14 @@ export default function BuildProfile({ navigation }) {
   }
 
   const getPhotoURL = async () => {
-    try{
+    try {
       const refPath = await getUploadPath();
       const pathReference = ref(STORAGE, refPath);
       const URL = await getDownloadURL(pathReference);
       setImageURL(URL);
       console.log(URL);
       return URL;
-    } catch (err) { 
+    } catch (err) {
       console.error(err);
     }
   }
@@ -193,7 +193,7 @@ export default function BuildProfile({ navigation }) {
     const profilePhotoStorage = ref(STORAGE, `${path}`);
 
     const metadata = {
-      contentType : 'image/jpeg'
+      contentType: 'image/jpeg'
     }
 
     fetch(image)
@@ -212,12 +212,12 @@ export default function BuildProfile({ navigation }) {
   }
 
   const writeUserToFirestore = async () => {
-    try{
+    try {
       const UserObject = await AsyncStorage.getItem('user');
       const user = JSON.parse(UserObject);
       let uid = user.user.uid;
-      setDoc(doc(FIRESTORE_DB, 'Users', uid),{username, phone_number, date,}, {merge:true});
-    }catch (err) {
+      setDoc(doc(FIRESTORE_DB, 'Users', uid), { username, phone_number, date, }, { merge: true });
+    } catch (err) {
       console.error(err)
     }
   }
@@ -226,19 +226,24 @@ export default function BuildProfile({ navigation }) {
     console.log(AUTH.currentUser);
 
     updateProfile(AUTH.currentUser, {
-      displayName: username, photoURL: await getPhotoURL(), 
-    }).then((res)=>{
+      displayName: username, photoURL: await getPhotoURL(),
+    }).then((res) => {
       uploadImage();
       writeUserToFirestore();
       navigation.push("LoginScreen");
       console.log(res)
-    }).catch((err)=>{
+    }).catch((err) => {
       console.error(err);
     })
   }
 
   return (
-    <View style={styles.container}>
+    <View>
+      <Appbar.Header mode='small' collapsable={true}>
+        <Appbar.BackAction onPress={() => navigation.goBack()} />
+        <Appbar.Content title="Customer Homepage" />
+        <Appbar.Action icon="cog" onPress={() => { navigation.push("Settings") }} />
+      </Appbar.Header>
       {loading ?
         (<>
           <View style={styles.textContainer}>
