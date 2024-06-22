@@ -1,44 +1,45 @@
 import React, { useState, useEffect } from 'react';
 import { createMaterialBottomTabNavigator } from 'react-native-paper/react-navigation';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Alert, StyleSheet, View } from 'react-native';
-import { Text, TextInput, Button, ActivityIndicator } from 'react-native-paper';
+import { StyleSheet, View, Image, Text } from 'react-native';
+import { Appbar, Avatar } from 'react-native-paper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getAuth } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
+import { getStorage, ref, getDownloadURL } from 'firebase/storage';
 
 import JobScreen from './Jobs';
 import ProfileScreen from './Profile';
 import ActivityScreen from './Activity';
-import CustomHeader from '../../components/CustomHeader'; 
-import { Appbar, List, Switch } from 'react-native-paper';
-import CustomHeader from '../../components/CustomHeader';
 
 
 const Tab = createMaterialBottomTabNavigator();
 
 const CustomerHomepage = ({ navigation }) => {
   const [username, setUsername] = useState('');
+  const [profilePic, setProfilePic] = useState(null);
 
   useEffect(() => {
-    // Function to fetch username from AsyncStorage or backend API
-    //fetchUsername();
+    fetchUsernameAndProfilePic();
   }, []);
 
-  const fetchUsername = async () => {
+  const fetchUsernameAndProfilePic = async () => {
     try {
-      //  Fetch username from AsyncStorage
       const storedUsername = await AsyncStorage.getItem('username');
       if (storedUsername) {
         setUsername(storedUsername);
+        fetchProfilePic();
       } else {
-        // If username not found in AsyncStorage
-        const response = await fetch('http://192.168.100.91:3000/api/profile', {
+        const response = await fetch('http://192.168.100.91:3000/api/getusers/username', {
           method: 'GET',
           headers: {
-            // create usernames retrieval
+            
           },
         });
         if (response.ok) {
           const userData = await response.json();
           setUsername(userData.username);
+          fetchProfilePic();
         } else {
           console.error('Failed to fetch username');
         }
@@ -48,12 +49,52 @@ const CustomerHomepage = ({ navigation }) => {
     }
   };
 
+  const fetchProfilePic = async () => {
+    try {
+      const auth = getAuth();
+      const currentUser = auth.currentUser;
+      if (currentUser) {
+        const uid = currentUser.uid;
+        const docRef = doc(FIRESTORE_DB, "users", uid);
+        const userDoc = await getDoc(docRef);
+        if (userDoc.exists()) {
+          const profilePicPath = userDoc.data().profilePicPath; // Assuming profilePicPath is the path to the image in Firebase Storage
+          if (profilePicPath) {
+            const storage = getStorage();
+            const storageRef = ref(storage, profilePicPath);
+            const url = await getDownloadURL(storageRef);
+            setProfilePic(url);
+          } else {
+            console.error('Profile picture path not found');
+          }
+        } else {
+          console.error('No such document!');
+        }
+      } else {
+        console.error('No user is signed in');
+      }
+    } catch (error) {
+      console.error('Error fetching profile picture:', error);
+    }
+  };
+
   return (
     <>
-      <Appbar.Header mode='small' collapsable={true}>
-        <Appbar.BackAction onPress={() => navigation.goBack()} />
-        <Appbar.Content title="Customer Homepage" />
-        <Appbar.Action icon="cog" onPress={() => {navigation.push("Settings")}} />
+      <Appbar.Header style={styles.header}>
+        <View style={styles.titleContainer}>
+          <Text style={styles.welcomeText}>Welcome, {username}</Text>
+        </View>
+        <View style={styles.iconContainer}>
+          <Appbar.Action icon="cog" onPress={() => navigation.push('Settings')} />
+          <Appbar.Action icon="bell" onPress={() => {/* Handle notification icon press */}} />
+          <View style={styles.profileIconContainer}>
+            {profilePic ? (
+              <Image source={{ uri: profilePic }} style={styles.profileIcon} />
+            ) : (
+              <Avatar.Icon size={40} icon="account" style={styles.avatarIcon} />
+            )}
+          </View>
+        </View>
       </Appbar.Header>
       <Tab.Navigator
         initialRouteName="Jobs"
@@ -109,16 +150,38 @@ const CustomerHomepage = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", marginHorizontal: 30 },
-  input: { marginVertical: 5, borderRadius: 0 },
-  row: {
-    alignItems: "center",
-    flexDirection: "row",
-    marginVertical: 20,
-    justifyContent: "space-between",
+  header: {
+    backgroundColor: '#ffffff',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexDirection: 'row',
+    paddingHorizontal: 10,
   },
-  textContainer: { alignContent: 'center', alignItems: 'center' }
-
+  titleContainer: {
+    flex: 1,
+    alignItems: 'flex-start',
+  },
+  welcomeText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  iconContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  profileIconContainer: {
+    backgroundColor: '#CCCCCC', // Gray background color for profile icon container
+    borderRadius: 20,
+    padding: 5,
+  },
+  profileIcon: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+  },
+  avatarIcon: {
+    backgroundColor: '#CCCCCC', // Gray background color for Avatar.Icon
+  },
 });
 
 export default CustomerHomepage;
