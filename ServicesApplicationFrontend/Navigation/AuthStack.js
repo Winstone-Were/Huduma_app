@@ -42,7 +42,7 @@ const AuthStack = () => {
         <PaperProvider theme={theme}>
             <NavigationContainer>
 
-                <Stack.Navigator initialRouteName="LoginScreen">
+                <Stack.Navigator initialRouteName="WorkerHomepage">
 
                     <Stack.Screen
                         name="LoginScreen"
