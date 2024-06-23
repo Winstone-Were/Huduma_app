@@ -7,12 +7,14 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "entryPoint": "./App.js",
-    "plugins": [[
-      "expo-image-picker",
-      {
-        "photosPermission": "The app accesses your photos to let you upload a profile photo"
-      }
-    ]],
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
+        }
+      ]
+    ],
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -27,10 +29,24 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.anonymous.ServicesApplicationFrontend"
+      "package": "com.anonymous.ServicesApplicationFrontend",
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "52f34b46-f823-43bb-b1a6-5dc673f5b2ae"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/52f34b46-f823-43bb-b1a6-5dc673f5b2ae"
     }
   }
 }
