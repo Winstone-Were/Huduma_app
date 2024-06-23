@@ -1,3 +1,5 @@
+// CustomerHomepage.js
+
 import React, { useState, useEffect } from 'react';
 import { createMaterialBottomTabNavigator } from 'react-native-paper/react-navigation';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -30,10 +32,10 @@ const CustomerHomepage = ({ navigation }) => {
         setUsername(storedUsername);
         fetchProfilePic();
       } else {
-        const response = await fetch('http://192.168.100.91:3000/api/getusers/username', {
+        const response = await fetch('http://192.168.100.91:3000/api/profile', {
           method: 'GET',
           headers: {
-            
+           
           },
         });
         if (response.ok) {
@@ -77,7 +79,7 @@ const CustomerHomepage = ({ navigation }) => {
       console.error('Error fetching profile picture:', error);
     }
   };
-
+ 
   return (
     <>
       <Appbar.Header style={styles.header}>
@@ -86,7 +88,7 @@ const CustomerHomepage = ({ navigation }) => {
         </View>
         <View style={styles.iconContainer}>
           <Appbar.Action icon="cog" onPress={() => navigation.push('Settings')} />
-          <Appbar.Action icon="bell" onPress={() => {/* Handle notification icon press */}} />
+          <Appbar.Action icon="bell" onPress={() => navigation.push('NotificationScreen')} />
           <View style={styles.profileIconContainer}>
             {profilePic ? (
               <Image source={{ uri: profilePic }} style={styles.profileIcon} />
