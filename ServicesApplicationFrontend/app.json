@@ -11,7 +11,7 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "The app accesses your photos to let you share them with your friends."
+          "photosPermission": "The app accesses your photos to let you upload a profile photo"
         }
       ]
     ],
@@ -41,12 +41,6 @@
       "eas": {
         "projectId": "52f34b46-f823-43bb-b1a6-5dc673f5b2ae"
       }
-    },
-    "runtimeVersion": {
-      "policy": "appVersion"
-    },
-    "updates": {
-      "url": "https://u.expo.dev/52f34b46-f823-43bb-b1a6-5dc673f5b2ae"
     }
   }
 }
