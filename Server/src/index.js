@@ -141,5 +141,63 @@ app.get('/api/getusers', (req, res) => {
             res.send(err);
         })
 });
+// sends Expo Push Token to document
+app.post('/api/expoPushTokens', (req, res) => {
+    const { token, userId } = req.body;
+    if (!token || !userId) {
+        return res.status(400).json({ error: "Token and userId are required" });
+    }
+
+    const userDoc = doc(FIRESTORE_DB, 'Users', userId);
+    setDoc(userDoc, { expoPushToken: token }, { merge: true })
+        .then(() => res.status(200).json({ message: "Expo push token saved successfully" }))
+        .catch(error => res.status(500).json({ error: error.message }));
+});
+// Send Notification
+app.post('/api/sendNotification', async (req, res) => {
+    const { userId, message } = req.body;
+    if (!userId || !message) {
+        return res.status(400).json({ error: "UserId and message are required" });
+    }
+
+    try {
+        const userDoc = doc(FIRESTORE_DB, 'Users', userId);
+        const userSnap = await getDoc(userDoc);
+
+        if (!userSnap.exists()) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        const expoPushToken = userSnap.data().expoPushToken;
+        if (!expoPushToken) {
+            return res.status(400).json({ error: "Expo push token not found for user" });
+        }
+
+        const expo = new Expo();
+        const messages = [{
+            to: expoPushToken,
+            sound: 'default',
+            body: message,
+        }];
+
+        const chunks = expo.chunkPushNotifications(messages);
+        const tickets = [];
+
+        for (const chunk of chunks) {
+            try {
+                const ticketChunk = await expo.sendPushNotificationsAsync(chunk);
+                tickets.push(...ticketChunk);
+            } catch (error) {
+                console.error(error);
+                return res.status(500).json({ error: "Error sending push notification" });
+            }
+        }
+
+        res.status(200).json({ message: "Notification sent successfully", tickets });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: error.message });
+    }
+});
 
 app.listen(port, () => console.log(`Server listening on port ${port}!`));

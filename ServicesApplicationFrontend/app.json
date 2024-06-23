@@ -7,12 +7,14 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "entryPoint": "./App.js",
-    "plugins": [[
-      "expo-image-picker",
-      {
-        "photosPermission": "The app accesses your photos to let you upload a profile photo"
-      }
-    ]],
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you upload a profile photo"
+        }
+      ]
+    ],
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -27,10 +29,18 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.anonymous.ServicesApplicationFrontend"
+      "package": "com.anonymous.ServicesApplicationFrontend",
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "d0f6691d-761f-4580-9e64-76db35acf437"
+      }
     }
   }
 }

@@ -1,6 +1,5 @@
 
-import React from "react";
-import { useEffect } from "react";
+import React,{ useEffect } from "react";
 import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -18,7 +17,7 @@ import Settings from "../Screens/SettingScreens/Settings";
 import ChangePassword from "../Screens/SettingScreens/ChangePassword";
 import ChangeEmail from "../Screens/SettingScreens/ChangeEmail";
 import * as Notifications from 'expo-notifications';
-import expoPushTokensApi from './expoPushToken';
+import expoPushToken from "../expoPushToken";
 
 
 const Stack = createNativeStackNavigator();
