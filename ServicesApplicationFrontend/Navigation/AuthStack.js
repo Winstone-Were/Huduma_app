@@ -16,6 +16,7 @@ import CustomerHomepage from "../Screens/CustomerScreens/CustomerHomepage";
 import Settings from "../Screens/SettingScreens/Settings";
 import ChangePassword from "../Screens/SettingScreens/ChangePassword";
 import ChangeEmail from "../Screens/SettingScreens/ChangeEmail";
+import MapScreen from "../Screens/CustomerScreens/MapScreen";
 
 
 const Stack = createNativeStackNavigator();
@@ -25,23 +26,23 @@ const theme = {
     ...DefaultTheme,
     roundness: 0,
     colors: {
-      ...DefaultTheme.colors,
-      primary: '#ED7D27',          
-      accent: '#f1c40f',          
-      background: '#FFFFFF',       
-      surface: '#FFFFFF',          
-      text: '#141414',             
-      placeholder: '#a1b2c3',      
-      onSurface: '#141414',        
+        ...DefaultTheme.colors,
+        primary: '#ED7D27',
+        accent: '#f1c40f',
+        background: '#FFFFFF',
+        surface: '#FFFFFF',
+        text: '#141414',
+        placeholder: '#a1b2c3',
+        onSurface: '#141414',
     },
-  };
+};
 const AuthStack = () => {
     return (
 
         <PaperProvider theme={theme}>
             <NavigationContainer>
 
-                <Stack.Navigator initialRouteName="SplashScreen">
+                <Stack.Navigator initialRouteName="LoginScreen">
 
                     <Stack.Screen
                         name="LoginScreen"
@@ -96,6 +97,10 @@ const AuthStack = () => {
                         name="ChangeEmailScreen"
                         component={ChangeEmail}
                         options={noHeader}
+                    />
+                    <Stack.Screen
+                        name="MapScreen"
+                        component={MapScreen}
                     />
                 </Stack.Navigator>
             </NavigationContainer>

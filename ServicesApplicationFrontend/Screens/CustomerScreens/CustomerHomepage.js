@@ -7,7 +7,6 @@ import { Text, TextInput, Button, ActivityIndicator } from 'react-native-paper';
 import JobScreen from './Jobs';
 import ProfileScreen from './Profile';
 import ActivityScreen from './Activity';
-import CustomHeader from '../../components/CustomHeader'; 
 import { Appbar, List, Switch } from 'react-native-paper';
 import CustomHeader from '../../components/CustomHeader';
 

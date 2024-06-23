@@ -1,7 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Alert, StyleSheet, View, Image, TouchableOpacity } from 'react-native';
 import { Text, TextInput, Button, Switch, HelperText, Menu, Divider, ActivityIndicator, Appbar } from 'react-native-paper';
+
+import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
+import * as Location from "expo-location";
 
 import axios from 'axios';
 import { app, auth } from '../firebaseConfig';
@@ -12,6 +15,7 @@ import { STORAGE, AUTH, FIRESTORE_DB } from '../firebaseConfig';
 import { addDoc, collection, setDoc, doc, getDoc } from 'firebase/firestore'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { updateProfile } from 'firebase/auth';
+import MapScreen from './CustomerScreens/MapScreen';
 
 import * as ImagePicker from 'expo-image-picker';
 
@@ -29,9 +33,36 @@ export default function BuildProfile({ navigation }) {
   const [image, setImage] = useState();
   const [date, setDate] = useState();
   const [open, setOpen] = useState(false);
-
-
+  const [mapViewOpen, setMapViewOpen] = useState(false);
   const recaptchaVerifier = useRef(null);
+
+  const [currentLocation, setCurrentLocation] = useState(null);
+  const [initialRegion, setInitialRegion] = useState(null);
+  const [locationName, setLocationName] = useState('');
+
+  useEffect(() => {
+    const getLocation = async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        console.log("Permission to access location was denied");
+        return;
+      }
+      let location = await Location.getCurrentPositionAsync({});
+      setCurrentLocation(location.coords);
+      //console.log(location);
+      let { latitude, longitude } = location.coords;
+      //console.log(await (Location.reverseGeocodeAsync({location, longitude})));
+      let AreaName = await Location.reverseGeocodeAsync({ latitude, longitude });
+      setLocationName(AreaName[0].formattedAddress);
+      setInitialRegion({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        latitudeDelta: 0.005,
+        longitudeDelta: 0.005,
+      });
+    }
+    getLocation();
+  }, []);
 
 
   const verifyCode = async (code) => {
@@ -75,19 +106,6 @@ export default function BuildProfile({ navigation }) {
     } else {
     }
   };
-
-
-  /*const handleRegister = () => {
-    signInWithPhoneNumber(auth, phone_number, recaptchaVerifier.current)
-      .then(result => {
-        console.log(result);
-        setLoading(!loading);
-        setConfirmationResult(result);
-      }).catch(err => {
-        console.error(err);
-      })
-  }
-*/
 
   const handleNext = async () => {
 
@@ -216,7 +234,7 @@ export default function BuildProfile({ navigation }) {
       const UserObject = await AsyncStorage.getItem('user');
       const user = JSON.parse(UserObject);
       let uid = user.user.uid;
-      setDoc(doc(FIRESTORE_DB, 'Users', uid), { username, phone_number, date, }, { merge: true });
+      setDoc(doc(FIRESTORE_DB, 'Users', uid), { username, phone_number, date, currentLocation}, { merge: true });
     } catch (err) {
       console.error(err)
     }
@@ -237,22 +255,35 @@ export default function BuildProfile({ navigation }) {
     })
   }
 
+  const handleLocationUpdate = () => {
+    setMapViewOpen(!mapViewOpen)
+    if (currentLocation) {
+      console.log(currentLocation);
+    }
+  }
+
   return (
-    <View>
+    <View style={styles.container}>
+
       <Appbar.Header mode='small' collapsable={true}>
         <Appbar.BackAction onPress={() => navigation.goBack()} />
-        <Appbar.Content title="Customer Homepage" />
+        <Appbar.Content title="Build Profile" />
         <Appbar.Action icon="cog" onPress={() => { navigation.push("Settings") }} />
       </Appbar.Header>
+
       {loading ?
         (<>
           <View style={styles.textContainer}>
-            <Text>
-              Tell us about Yourself
+            <Text style={styles.headerText}>
+              Let's get you going
             </Text>
           </View>
 
-          {image && <Image source={{ uri: image }} style={styles.image} />}
+          {image &&
+            <TouchableOpacity onPress={() => pickImage()}>
+              <Image source={{ uri: image }} style={styles.image} />
+            </TouchableOpacity>
+          }
 
           <TextInput
             style={{ ...styles.input, backgroundColor: "white" }}
@@ -288,8 +319,31 @@ export default function BuildProfile({ navigation }) {
             date={date}
             onConfirm={onConfirmSingle}
           />
+          {image ?
+            (<>
+            </>) :
+            (<>
+              <Button mode='elevated' style={styles.input} onPress={() => pickImage()}> Select Profile Image </Button>
 
-          <Button mode='elevated' style={styles.input} onPress={() => pickImage()}> Select Image </Button>
+            </>)}
+          <Button mode='elevated' style={styles.input} onPress={() => pickImage()}> Select Profile Image </Button>
+          {mapViewOpen ?
+            (<>
+              <MapScreen
+                setState={(val) => setLocationName(val)}
+                setStateCurrentLocation={(val) => setCurrentLocation(val)}
+              />
+            </>) :
+            (<>
+            </>)}
+
+          {locationName ? (<>
+            <Text style={styles.centerText}> Location : {locationName} </Text>
+          </>) : (<>
+            <ActivityIndicator />
+          </>)}
+
+          <Button onPress={() => handleLocationUpdate()}> {mapViewOpen ? ('USE THIS LOCATION') : ('SET HOME LOCATION')} </Button>
 
           <Button mode='contained' style={styles.input} onPress={() => updateUserProfile()}> Continue </Button>
         </>) :
@@ -317,7 +371,7 @@ export default function BuildProfile({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "", marginHorizontal: 10 },
+  container: { flex: 1 },
   input: { marginVertical: 5, borderRadius: 0 },
   row: {
     alignItems: "center",
@@ -325,7 +379,12 @@ const styles = StyleSheet.create({
     marginVertical: 20,
     justifyContent: "space-between",
   },
-  textContainer: { alignContent: 'center', alignItems: 'center' },
+  textContainer: { padding: 10 },
+  headerText: { fontSize: 40 },
+  centerText: {
+    fontSize: 20,
+    fontStyle: '',
+  },
   image: {
     width: 200,
     height: 200,
