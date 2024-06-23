@@ -1,5 +1,6 @@
 
 import React from "react";
+import { useEffect } from "react";
 import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -16,6 +17,8 @@ import CustomerHomepage from "../Screens/CustomerScreens/CustomerHomepage";
 import Settings from "../Screens/SettingScreens/Settings";
 import ChangePassword from "../Screens/SettingScreens/ChangePassword";
 import ChangeEmail from "../Screens/SettingScreens/ChangeEmail";
+import * as Notifications from 'expo-notifications';
+import expoPushTokensApi from './expoPushToken';
 
 
 const Stack = createNativeStackNavigator();
@@ -35,7 +38,37 @@ const theme = {
       onSurface: '#141414',        
     },
   };
+
+  async function registerForPushNotificationsAsync() {
+    let token;
+
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+
+    if (existingStatus !== 'granted') {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+    }
+    if (finalStatus !== 'granted') {
+        alert('Failed to get push token for push notification!');
+        return;
+    }
+    token = (await Notifications.getExpoPushTokenAsync()).data;
+    console.log(token);
+
+    return token;
+}
+Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true
+    }),
+  });
 const AuthStack = () => {
+    useEffect(() => {
+        registerForPushNotificationsAsync()
+            .then(token => expoPushTokensApi.register(token))
+            .catch(err => console.error('Failed to register for push notifications:', err));//to tell me what error
+    }, []);
     return (
 
         <PaperProvider theme={theme}>
