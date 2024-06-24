@@ -1,5 +1,11 @@
 import * as React from 'react';
-import { View, TouchableOpacity, Text, StyleSheet, Image, SafeAreaView, ScrollView } from 'react-native';
+import { useState } from 'react';
+import { View, TouchableOpacity, Text, StyleSheet, Image, SafeAreaView, ScrollView, Alert } from 'react-native';
+import { Dialog, Portal, Button, ActivityIndicator } from 'react-native-paper';
+
+import { AUTH, FIRESTORE_DB } from '../../firebaseConfig';
+import { doc, setDoc } from "firebase/firestore"; 
+
 
 const occupations = [
   { id: '1', name: 'Electrician', icon: require('../../assets/Icons/electrician.png') },
@@ -20,23 +26,67 @@ const OccupationItem = ({ name, icon, onPress }) => (
 );
 
 const JobScreen = ({ navigation }) => {
+
+  const [visible, setVisible] = useState(false);
+  const [loadingJobRequest, setLoadingJobRequest] = useState(false);
+  const showDialog = () => setVisible(true);
+  const hideDialog = () => setVisible(false);
+
+  const [serviceWanted, setServiceWanted] = useState('');
+
   const handleJobPress = (jobType) => {
     console.log("Selected job type:", jobType);
+    setServiceWanted(jobType);
+    showDialog();
     // Navigation logic or further actions based on jobType
   };
 
+  const handleJobRequest = async () => {
+    setLoadingJobRequest(true);
+    console.log(AUTH.currentUser);
+    const jobRequestRef = doc(FIRESTORE_DB, 'JobRequests', AUTH.currentUser.uid);
+    setDoc(jobRequestRef, {serviceRequested: serviceWanted})
+      .then(()=>{
+        Alert.prompt('Success','Job requested');
+        setLoadingJobRequest(false);
+        hideDialog();
+      }).catch(()=>{
+        setLoadingJobRequest(false);
+        hideDialog();
+        Alert.alert('Error');
+      })
+  }
+
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.grid}>
-        {occupations.map((occupation) => (
-          <OccupationItem
-            key={occupation.id}
-            name={occupation.name}
-            icon={occupation.icon}
-            onPress={() => handleJobPress(occupation.name)}
-          />
-        ))}
-      </ScrollView>
+      {loadingJobRequest ?
+        (<>
+          <ActivityIndicator style={{alignSelf:'center'}} animating size={80}/>
+        </>) :
+        (<>
+          <ScrollView contentContainerStyle={styles.grid}>
+            {occupations.map((occupation) => (
+              <OccupationItem
+                key={occupation.id}
+                name={occupation.name}
+                icon={occupation.icon}
+                onPress={() => handleJobPress(occupation.name)}
+              />
+            ))}
+            <Portal>
+              <Dialog visible={visible} onDismiss={hideDialog}>
+                <Dialog.Title>Alert</Dialog.Title>
+                <Dialog.Content>
+                  <Text variant="bodyMedium">Do you want to get a {serviceWanted}</Text>
+                </Dialog.Content>
+                <Dialog.Actions>
+                  <Button onPress={() => handleJobRequest()}>Yes</Button>
+                  <Button onPress={hideDialog}>Cancel</Button>
+                </Dialog.Actions>
+              </Dialog>
+            </Portal>
+          </ScrollView>
+        </>)}
     </SafeAreaView>
   );
 };

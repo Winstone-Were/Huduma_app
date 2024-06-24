@@ -1,13 +1,30 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { Alert, StyleSheet, Text, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { Card, ActivityIndicator, Button } from 'react-native-paper';
 import { FIRESTORE_DB } from '../../firebaseConfig';
-import { setDoc, doc, getDoc } from 'firebase/firestore';
+import { setDoc, doc, getDoc, collection, onSnapshot } from 'firebase/firestore';
+import { AUTH } from '../../firebaseConfig';
 
-
-const JobRequests = () => {
-  const [availableJobs, setAvailableJobs] = useState();
+const JobRequests = ({ navigation }) => {
+  const [availableJobs, setAvailableJobs] = useState([]);
+  const [occupation, setOccupation] = useState();
   useEffect(() => {
+    const DocRef = doc(FIRESTORE_DB, "Users", AUTH.currentUser.uid);
+    getDoc(DocRef)
+      .then((res) => {
+        setOccupation(res.data().occupation);
+      }).catch((err) => console.error);
+      onSnapshot(collection(FIRESTORE_DB, 'JobRequests'),
+        (snapshot) => {
+          snapshot.forEach(doc => {
+            if (doc.data()['serviceRequested'] == occupation) {
+              setAvailableJobs([doc.data()]);
+              console.log(availableJobs); 
+            }
+          })
+        }, (error) => {
+
+        }) 
     const getJobs = async () => {
       const DocRef = doc(FIRESTORE_DB, "AvailableJobs", 'PendingJobjs');
       getDoc(DocRef)
@@ -18,20 +35,21 @@ const JobRequests = () => {
           console.error(err);
         })
     }
-    getJobs();
+    //getJobs();
   }, []);
   return (
     <View style={styles.container}>
+      <Button> Refresh </Button>
       {availableJobs ?
         (<>
           {
-            availableJobs.map((job) => {
+            availableJobs.map((job, index) => {
               return (
-                <Card>
+                <Card key={index}>
                   <Card.Title title="Requested Job" />
                   <Card.Content>
                     <Text variant="titleLarge">Description</Text>
-                    <Text variant="bodyMedium">Area : {job['Area']}</Text>
+                    <Text variant="bodyMedium">Area : {job['serviceRequested']}</Text>
                   </Card.Content>
                   <Card.Actions>
                     <Button>Cancel</Button>

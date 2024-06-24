@@ -2,19 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { createMaterialBottomTabNavigator } from 'react-native-paper/react-navigation';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Alert, StyleSheet, View } from 'react-native';
-import { Text, TextInput, Button, ActivityIndicator } from 'react-native-paper';
+import { Text, TextInput, Button, ActivityIndicator, Dialog, Appbar, List, Switch } from 'react-native-paper';
 
 import JobScreen from './Jobs';
 import ProfileScreen from './Profile';
 import ActivityScreen from './Activity';
-import { Appbar, List, Switch } from 'react-native-paper';
-import CustomHeader from '../../components/CustomHeader';
-
+import { AUTH, FIRESTORE_DB } from '../../firebaseConfig';
 
 const Tab = createMaterialBottomTabNavigator();
 
 const CustomerHomepage = ({ navigation }) => {
   const [username, setUsername] = useState('');
+  const [dialogVisible, setDialogVisible] = useState(false);
 
   useEffect(() => {
     // Function to fetch username from AsyncStorage or backend API

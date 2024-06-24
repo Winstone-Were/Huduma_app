@@ -7,6 +7,7 @@ import { createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailA
 import { addDoc, collection, setDoc, doc, getDoc } from 'firebase/firestore'
 import Firebase from '../firebaseConfig';
 import { FIRESTORE_DB } from '../firebaseConfig'
+import { IosAlertStyle } from 'expo-notifications';
 
 const PasswordModal = ({ visible, hideModal }) => {
   const containerStyle = { backgroundColor: 'white', padding: 20, margin: 20 };
@@ -50,8 +51,13 @@ export default function Register({ navigation }) {
             sendEmailVerification(Firebase.auth.currentUser)
               .then(() => {
                 let uid = userCredential.user.uid;
-                setDoc(doc(FIRESTORE_DB, 'Users', uid), { role });
-                Alert.alert("Verification Email sent, Click the link in your email address to verify your account");
+                console.log(role);
+                setDoc(doc(FIRESTORE_DB, 'Users', uid), { role }, {merge:true})
+                  .then(()=>{
+                    Alert.alert("Verification Email sent, Click the link in your email address to verify your account");
+                  }).catch((err)=>{
+                    console.error(err);
+                  })
                 setLoading(false);
               })
               .catch((error) => {
@@ -169,7 +175,7 @@ export default function Register({ navigation }) {
             <Text style={styles.textLink}> 
               Login Here
             </Text>
-          </TouchableOpacity>
+        </TouchableOpacity>
       </View>
     </>
   )

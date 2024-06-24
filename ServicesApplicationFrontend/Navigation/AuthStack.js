@@ -17,6 +17,7 @@ import Settings from "../Screens/SettingScreens/Settings";
 import ChangePassword from "../Screens/SettingScreens/ChangePassword";
 import ChangeEmail from "../Screens/SettingScreens/ChangeEmail";
 import MapScreen from "../Screens/CustomerScreens/MapScreen";
+import Profile from "../Screens/WorkerScreens/Profile";
 
 
 const Stack = createNativeStackNavigator();
@@ -42,7 +43,7 @@ const AuthStack = () => {
         <PaperProvider theme={theme}>
             <NavigationContainer>
 
-                <Stack.Navigator initialRouteName="WorkerHomepage">
+                <Stack.Navigator initialRouteName="LoginScreen">
 
                     <Stack.Screen
                         name="LoginScreen"
@@ -101,6 +102,11 @@ const AuthStack = () => {
                     <Stack.Screen
                         name="MapScreen"
                         component={MapScreen}
+                    />
+                    <Stack.Screen
+                        name="WorkerProfileScreen"
+                        component={Profile}
+                        options={noHeader}
                     />
                 </Stack.Navigator>
             </NavigationContainer>
