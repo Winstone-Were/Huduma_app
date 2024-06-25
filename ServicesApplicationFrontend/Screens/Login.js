@@ -77,10 +77,12 @@ export default function Login({ navigation }) {
         const DocRef = doc(FIRESTORE_DB, "Users", user.user.uid);
         getDoc(DocRef)
           .then(data => {
+            AsyncStorage.setItem('specific-user-object', JSON.stringify(data.data()));
             let user_role = data.data().role;
             if (user_role == 'client') {
               navigation.replace('CustomerHomepage')
             } else if (user_role == 'worker') {
+              
               navigation.replace('WorkerHomepage')
             }
           })

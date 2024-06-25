@@ -1,68 +1,99 @@
 import { Alert, StyleSheet, Text, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { Card, ActivityIndicator, Button } from 'react-native-paper';
+import { Card, ActivityIndicator, Button, Chip } from 'react-native-paper';
 import { FIRESTORE_DB } from '../../firebaseConfig';
-import { setDoc, doc, getDoc, collection, onSnapshot } from 'firebase/firestore';
+import { setDoc, doc, getDoc, collection, onSnapshot, query, where, getDocs } from 'firebase/firestore';
 import { AUTH } from '../../firebaseConfig';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const JobRequests = ({ navigation }) => {
   const [availableJobs, setAvailableJobs] = useState([]);
-  const [occupation, setOccupation] = useState();
-  useEffect(() => {
-    const DocRef = doc(FIRESTORE_DB, "Users", AUTH.currentUser.uid);
-    getDoc(DocRef)
-      .then((res) => {
-        setOccupation(res.data().occupation);
-      }).catch((err) => console.error);
-      onSnapshot(collection(FIRESTORE_DB, 'JobRequests'),
-        (snapshot) => {
-          snapshot.forEach(doc => {
-            if (doc.data()['serviceRequested'] == occupation) {
-              setAvailableJobs([doc.data()]);
-              console.log(availableJobs); 
-            }
-          })
-        }, (error) => {
+  const [loading, setLoading] = useState(true);
+  const [occ, setOcc] = useState('');
+  let occupation;
+  const getSpecificUserObject = async () => {
+    AsyncStorage.getItem('specific-user-object')
+      .then(result => {
+        const user = JSON.parse(result);
+        occupation = user.occupation;
+        setOcc(occupation);
+        getJobs();
+      })
+  }
 
-        }) 
-    const getJobs = async () => {
-      const DocRef = doc(FIRESTORE_DB, "AvailableJobs", 'PendingJobjs');
-      getDoc(DocRef)
-        .then((snapshot) => {
-          setAvailableJobs([[snapshot.data()][0]['LYZnSJKtT1TSTehkptLRLSfKuEg2']]);
-        })
-        .catch((err) => {
-          console.error(err);
-        })
+  const getJobs = async () => {
+    try {
+      const q = query(collection(FIRESTORE_DB, 'JobRequests'), where("serviceRequested", '==', occupation || occ));
+      const querySnapshot = await getDocs(q);
+      if (querySnapshot.empty) {
+        setAvailableJobs([])
+        setLoading(false);
+      }
+      querySnapshot.forEach((doc) => {
+        let emptyArray = [];
+        emptyArray.push(doc.data());
+        setAvailableJobs(emptyArray);
+        setLoading(false);
+      });
+    } catch (error) {
+      console.error(error);
     }
-    //getJobs();
+  }
+
+  useEffect(() => {
+    getSpecificUserObject();
+    const q = query(collection(FIRESTORE_DB, 'JobRequests'), where("serviceRequested", '==', occupation || occ));
+    onSnapshot(q,
+      (querySnapshot) => {
+        if (querySnapshot.empty) {
+          setAvailableJobs([])
+          setLoading(false);
+        }
+        querySnapshot.forEach((doc) => {
+          let emptyArray = [];
+          emptyArray.push(doc.data());
+          setAvailableJobs(emptyArray);
+          setLoading(false);
+        })
+      }
+    )
   }, []);
   return (
     <View style={styles.container}>
-      <Button> Refresh </Button>
-      {availableJobs ?
-        (<>
-          {
-            availableJobs.map((job, index) => {
-              return (
-                <Card key={index}>
-                  <Card.Title title="Requested Job" />
-                  <Card.Content>
-                    <Text variant="titleLarge">Description</Text>
-                    <Text variant="bodyMedium">Area : {job['serviceRequested']}</Text>
-                  </Card.Content>
-                  <Card.Actions>
-                    <Button>Cancel</Button>
-                    <Button>Ok</Button>
-                  </Card.Actions>
-                </Card>
-              )
-            })
-          }
-        </>) :
-        (<>
-          <ActivityIndicator animating />
-        </>)}
+      <Button onPress={() => { getJobs() }}> Refresh </Button>
+      {
+        loading ?
+          (<>
+            <ActivityIndicator animating />
+          </>)
+          :
+          (<>
+            {availableJobs ?
+              (<>
+                {
+                  availableJobs.map((job, index) => {
+                    return (
+                      <Card key={index}>
+                        <Card.Title title="Requested Job" />
+                        <Card.Content>
+                          <Text variant="titleLarge">Job : {job['serviceRequested']}</Text>
+                          <Text variant="bodyMedium">Description  </Text>
+                          <Chip style={{ marginTop: 10, width: 200 }} icon="account-hard-hat"> {occupation} </Chip>
+                        </Card.Content>
+                        <Card.Actions>
+                          <Button>Cancel</Button>
+                          <Button>Ok</Button>
+                        </Card.Actions>
+                      </Card>
+                    )
+                  })
+                }
+              </>) :
+              (<>
+                <ActivityIndicator animating />
+              </>)}
+          </>)
+      }
     </View>
   )
 }
