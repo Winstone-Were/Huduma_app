@@ -22,12 +22,14 @@ const JobRequests = ({ navigation }) => {
   }
 
   const getJobs = async () => {
+    setLoading(true);
     try {
       const q = query(collection(FIRESTORE_DB, 'JobRequests'), where("serviceRequested", '==', occupation || occ));
       const querySnapshot = await getDocs(q);
       if (querySnapshot.empty) {
         setAvailableJobs([])
         setLoading(false);
+        Alert.alert('Empty')
       }
       querySnapshot.forEach((doc) => {
         let emptyArray = [];

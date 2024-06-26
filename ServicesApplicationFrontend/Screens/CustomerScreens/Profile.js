@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Image } from 'expo-image';
-import { Text, Button, TextInput, Snackbar, Paragraph, Portal, Modal } from 'react-native-paper';
-import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { Text, Button, TextInput, Snackbar, Paragraph, Portal, Modal, ActivityIndicator } from 'react-native-paper';
+import { View, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { AUTH, FIRESTORE_DB } from '../../firebaseConfig';
 import { setDoc, doc, getDoc } from 'firebase/firestore';
 import { updateProfile } from 'firebase/auth';
-import DateTimePicker from '@react-native-community/datetimepicker'; // Import DateTimePicker
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { STORAGE } from '../../firebaseConfig';
+import * as LocalAuthentication from 'expo-local-authentication';
+
 
 const ProfileScreen = ({ navigation }) => {
   const [name, setName] = useState('');
@@ -16,69 +21,142 @@ const ProfileScreen = ({ navigation }) => {
   const [secEmail, setSecEmail] = useState('');
   const [dob, setDob] = useState(new Date()); // Default to current date
   const [username, setUsername] = useState('');
-  const [imageURL, setImageURL] = useState('');
+  const [imageURL, setImageURL] = useState();
+  const [image, setImage] = useState()
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [profileExists, setProfileExists] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false); // State to show/hide date picker
+  const [loading, setLoading] = useState(false);
   const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
 
-  useEffect(() => {
+  const loadUserProfile = async () => {
     if (AUTH.currentUser.displayName) {
       setProfileExists(true);
       setName(AUTH.currentUser.displayName);
-      setImageURL(AUTH.currentUser.photoURL);
-      console.log(AUTH.currentUser);
-      setSecEmail(AUTH.currentUser.email);
+      getPhotoURL();
+      setEmail(AUTH.currentUser.email);
       const DocRef = doc(FIRESTORE_DB, "Users", AUTH.currentUser.uid);
       getDoc(DocRef)
         .then((res) => {
           setPhone_number(res.data().phone_number);
-          setAddress(res.data().address);
-          setSecEmail(res.data().secEmail);
+          setAddress(res.data().locationName);
+          setSecEmail(res.data().secondaryEmail);
+          console.log(new Date(res.data().date).getDate());
+          setDob(res.data().date.toString());
         }).catch((err) => console.error);
     } else {
       setProfileExists(false);
     }
+  
+  }
 
+
+  useEffect(() => {
+    loadUserProfile();
   }, []);
 
   const handleSaveProfile = async () => {
-    updateProfile(AUTH.currentUser, {
-      displayName: name
-    }).then((res)=>{
-      setDoc(doc(FIRESTORE_DB, 'Users', AUTH.currentUser.uid), {phone_number, address, secEmail}, {merge:true})
-        .then((resp)=>{
-          console.log(resp);
-        })
-        .catch((err)=> console.error);
-    }).catch((err)=>{
-      console.error(err);
-    })
+    setLoading(true);
+    LocalAuthentication.authenticateAsync({ promptMessage: "Scan your Biometrics to continue" })
+      .then(async(biometrics)=>{
+        if(biometrics.success){
+          uploadImage();
+          let uploadURL = await getPhotoURL();
+          updateProfile(AUTH.currentUser, {
+            displayName: name, photoURL: uploadURL
+          }).then((res) => {
+            setDoc(doc(FIRESTORE_DB, 'Users', AUTH.currentUser.uid), { phone_number, address, secEmail }, { merge: true })
+              .then((resp) => {
+                setLoading(false);
+                setEditMode(false);
+              })
+              .catch((err) => console.error);
+          }).catch((err) => {
+            console.error(err);
+          })
+        }else{
+          Alert.alert('Biometrics scan failed');
+        }
+      })
+
 
   };
 
   const pickImage = async () => {
+    let result = ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 0.7,
+      base64: true
+    });
+
+    setImageURL((await result).assets[0].uri);
+    setImage((await result).assets[0].uri)
+  }
+
+  const getUploadPath = async () => {
     try {
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
-        allowsEditing: true,
-        aspect: [1, 1],
-        quality: 1,
-      });
-      if (!result.cancelled) {
-        setImageURL(result.uri);
-        setSnackbarMessage('Profile picture updated successfully');
-        setSnackbarVisible(true);
-      }
+      const UserObject = await AsyncStorage.getItem('user');
+      const user = JSON.parse(UserObject);
+      return `profilePhotos/${user.user.uid}`;
     } catch (err) {
-      console.error('Error picking image:', err);
-      setSnackbarMessage('Failed to update profile picture');
-      setSnackbarVisible(true);
+      console.error(err);
     }
-  };
+  }
+
+  const getPhotoURL = async () => {
+    try {
+      const refPath = await getUploadPath();
+      const pathReference = ref(STORAGE, refPath);
+      const URL = await getDownloadURL(pathReference);
+      setImageURL(URL);
+      return URL;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  const uploadImage = async () => {
+    console.log('I get called')
+    if (image == null) {
+      return null;
+    }
+    const uploadUri = image;
+    let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
+
+    // Add timestamp to File Name
+    const extension = filename.split('.').pop();
+    const name = filename.split('.').slice(0, -1).join('.');
+    filename = name + Date.now() + '.' + extension;
+    console.log(filename);
+
+    const path = await getUploadPath();
+    console.log(path);
+    const profilePhotoStorage = ref(STORAGE, `${path}`);
+
+    const metadata = {
+      contentType: 'image/jpeg'
+    }
+
+    fetch(image)
+      .then((resp) => {
+        resp.blob().then(res => {
+          uploadBytes(profilePhotoStorage, res, metadata)
+            .then(async (snap) => {
+              console.log('uploaded profile photo');
+              console.log(await getPhotoURL());
+              setImageURL(await getPhotoURL());
+            })
+            .catch((err) => {
+              console.error(err);
+            })
+        })
+      })
+  }
 
   const showDatePickerModal = () => {
     setShowDatePicker(true);
@@ -98,33 +176,20 @@ const ProfileScreen = ({ navigation }) => {
     <ScrollView style={styles.container}>
       {profileExists ? (
         <View style={styles.profileContainer}>
-          <TouchableOpacity onPress={pickImage} style={styles.avatarContainer}>
-            {imageURL ? (
-              <Image
-                style={styles.image}
-                source={{ uri: imageURL }}
-                placeholder={{ blurhash }}
-                contentFit="cover"
-                transition={1000}
-              />
-            ) : (
-              <Text>Loading Image</Text>
-            )}
+          <TouchableOpacity onPress={() => pickImage()}>
+            <Image
+              style={styles.image}
+              source={{ uri: imageURL }}
+              placeholder={{ blurhash }}
+              contentFit="cover"
+              transition={1000}
+            />
           </TouchableOpacity>
           <View style={styles.header}>
             <Text style={styles.userName}>{name}</Text>
             <Text style={styles.userEmail}>{email}</Text>
           </View>
           <View style={styles.content}>
-            <TextInput
-              label="Username"
-              value={username}
-              onChangeText={(text) => setUsername(text)}
-              editable={editMode}
-              keyboardType="default"
-              style={styles.input}
-              mode="outlined"
-            />
             <TextInput
               label="Name"
               value={name}
@@ -162,7 +227,7 @@ const ProfileScreen = ({ navigation }) => {
             <TouchableOpacity onPress={showDatePickerModal}>
               <TextInput
                 label="Date of Birth"
-                value={dob ? dob.toLocaleDateString() : ''}
+                value={dob}
                 editable={false}
                 style={styles.input}
                 mode="outlined"
@@ -185,14 +250,20 @@ const ProfileScreen = ({ navigation }) => {
               </Modal>
             </Portal>
 
-            <Button mode="contained" style={styles.editButton} onPress={() => setEditMode(!editMode)}>
-              {editMode ? 'Cancel' : 'Edit Profile'}
-            </Button>
-            {editMode && (
-              <Button mode="contained" style={styles.saveButton} onPress={handleSaveProfile}>
-                Save Changes
-              </Button>
-            )}
+            {loading ?
+              (<>
+                <ActivityIndicator />
+              </>) : (<>
+                <Button mode="contained" style={styles.editButton} onPress={() => setEditMode(!editMode)}>
+                  {editMode ? 'Cancel' : 'Edit Profile'}
+                </Button>
+                {editMode && (
+                  <Button mode="contained" style={styles.saveButton} onPress={()=> handleSaveProfile()}>
+                    Save Changes
+                  </Button>
+                )}
+              </>)}
+
           </View>
         </View>
       ) : (

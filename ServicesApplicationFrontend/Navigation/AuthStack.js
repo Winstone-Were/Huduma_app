@@ -18,6 +18,7 @@ import ChangePassword from "../Screens/SettingScreens/ChangePassword";
 import ChangeEmail from "../Screens/SettingScreens/ChangeEmail";
 import MapScreen from "../Screens/CustomerScreens/MapScreen";
 import Profile from "../Screens/WorkerScreens/Profile";
+import AskServiceScreen from "../Screens/CustomerScreens/AskServiceScreen";
 
 
 const Stack = createNativeStackNavigator();
@@ -108,6 +109,7 @@ const AuthStack = () => {
                         component={Profile}
                         options={noHeader}
                     />
+                    <Stack.Screen name="AskServiceScreen" component={AskServiceScreen} options={noHeader} />
                 </Stack.Navigator>
             </NavigationContainer>
         </PaperProvider>

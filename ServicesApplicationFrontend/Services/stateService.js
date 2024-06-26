@@ -1,0 +1,56 @@
+let CustomerState = {};
+let WorkerState = {};
+let AskForJobState = {
+    uid: '',
+    clientName :'',
+    workerTypeWanted:'',
+    location:'',
+    description:'',
+    images: []
+}
+
+//pass in Objects
+//Customer
+
+export const writeToCustomerState = async (value) =>{
+    CustomerState = {...CustomerState, ...value}
+}
+
+export const readCustomerState = ()=>{
+    return CustomerState;
+}
+
+export const clearCustomerState = () => {
+    CustomerState = {};
+}
+
+export const writeToWorkerState = async (value) =>{
+    WorkerState = {...WorkerState, ...value}
+}
+
+export const readWorkerState = () =>{
+    return WorkerState;
+}
+
+export const clearWorkerState = () =>{
+    WorkerState = {};
+}
+
+export const writeAskForJobState = async (value) =>{
+    AskForJobState = {...AskForJobState, ...value}
+}
+
+export const getAskForJobState = ()=>{
+    return AskForJobState;
+}
+
+export const cleatAskForJobState = ()=>{
+    AskForJobState = {
+        uid: '',
+        clientName :'',
+        serviceWanted:'',
+        location:'',
+        description:'',
+        images: []
+    }
+}

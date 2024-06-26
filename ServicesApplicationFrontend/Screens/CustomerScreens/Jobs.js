@@ -5,7 +5,7 @@ import { Dialog, Portal, Button, ActivityIndicator } from 'react-native-paper';
 
 import { AUTH, FIRESTORE_DB } from '../../firebaseConfig';
 import { doc, setDoc } from "firebase/firestore"; 
-
+import {writeAskForJobState} from '../../Services/stateService'
 
 const occupations = [
   { id: '1', name: 'Electrician', icon: require('../../assets/Icons/electrician.png') },
@@ -43,18 +43,8 @@ const JobScreen = ({ navigation }) => {
 
   const handleJobRequest = async () => {
     setLoadingJobRequest(true);
-    console.log(AUTH.currentUser);
-    const jobRequestRef = doc(FIRESTORE_DB, 'JobRequests', AUTH.currentUser.uid);
-    setDoc(jobRequestRef, {serviceRequested: serviceWanted})
-      .then(()=>{
-        Alert.prompt('Success','Job requested');
-        setLoadingJobRequest(false);
-        hideDialog();
-      }).catch(()=>{
-        setLoadingJobRequest(false);
-        hideDialog();
-        Alert.alert('Error');
-      })
+    writeAskForJobState({serviceWanted});
+    navigation.push("AskServiceScreen");
   }
 
   return (

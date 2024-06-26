@@ -1,7 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState, useRef, useEffect } from 'react';
-import { Alert, StyleSheet, View, Image, TouchableOpacity } from 'react-native';
+import { Alert, StyleSheet, View, TouchableOpacity, ScrollView } from 'react-native';
 import { Text, TextInput, Button, Switch, HelperText, Menu, Divider, ActivityIndicator, Appbar } from 'react-native-paper';
+import { Image } from 'expo-image';
 
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import * as Location from "expo-location";
@@ -24,13 +25,15 @@ export default function BuildProfile({ navigation }) {
   const [uid, setUID] = useState('');
   const [username, setUserName] = useState('');
   const [phone_number, setPhone_number] = useState('+254');
-  const [imageURL, setImageURL] = useState('');
+  const [image, setImage] = useState();
+  const [imageURL, setImageURL] = useState();
+
   const [email, setEmail] = useState('');
+  const [secondaryEmail, setSecondaryEmail] = useState('');
   const [waitVerify, setWaitVerify] = useState(true);
   const [loading, setLoading] = useState(true);
   const [confirmationResult, setConfirmationResult] = useState('');
   const [verifyLoading, setVerifyLoading] = useState(false);
-  const [image, setImage] = useState();
   const [date, setDate] = useState();
   const [open, setOpen] = useState(false);
   const [mapViewOpen, setMapViewOpen] = useState(false);
@@ -39,6 +42,10 @@ export default function BuildProfile({ navigation }) {
   const [currentLocation, setCurrentLocation] = useState(null);
   const [initialRegion, setInitialRegion] = useState(null);
   const [locationName, setLocationName] = useState('');
+
+  const blurhash =
+    '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
+
 
   useEffect(() => {
     const getLocation = async () => {
@@ -178,8 +185,8 @@ export default function BuildProfile({ navigation }) {
     });
 
     setImage((await result).assets[0].uri);
+    setImageURL((await result).assets[0].uri);
   }
-
 
   const onDismissSingle = React.useCallback(() => {
     setOpen(false);
@@ -234,7 +241,7 @@ export default function BuildProfile({ navigation }) {
       const UserObject = await AsyncStorage.getItem('user');
       const user = JSON.parse(UserObject);
       let uid = user.user.uid;
-      setDoc(doc(FIRESTORE_DB, 'Users', uid), { username, phone_number, date, currentLocation}, { merge: true });
+      setDoc(doc(FIRESTORE_DB, 'Users', uid), { username, phone_number, date, currentLocation, locationName, secondaryEmail }, { merge: true });
     } catch (err) {
       console.error(err)
     }
@@ -278,12 +285,15 @@ export default function BuildProfile({ navigation }) {
               Let's get you going
             </Text>
           </View>
-
-          {image &&
-            <TouchableOpacity onPress={() => pickImage()}>
-              <Image source={{ uri: image }} style={styles.image} />
-            </TouchableOpacity>
-          }
+          <TouchableOpacity onPress={() => pickImage()}>
+            <Image
+              style={styles.image}
+              source={{ uri: imageURL }}
+              placeholder={{ blurhash }}
+              contentFit="cover"
+              transition={1000}
+            />
+          </TouchableOpacity>
 
           <TextInput
             style={{ ...styles.input, backgroundColor: "white" }}
@@ -296,6 +306,12 @@ export default function BuildProfile({ navigation }) {
             value={phone_number}
             label='Phone Number'
             onChangeText={(text) => setPhone_number(text)}
+          />
+          <TextInput
+            style={{ ...styles.input, backgroundColor: "white" }}
+            value={secondaryEmail}
+            label='Secondary Email'
+            onChangeText={(text) => setSecondaryEmail(text)}
           />
           <TouchableOpacity onPress={() => setOpen(true)}>
             {date ?
@@ -319,14 +335,7 @@ export default function BuildProfile({ navigation }) {
             date={date}
             onConfirm={onConfirmSingle}
           />
-          {image ?
-            (<>
-            </>) :
-            (<>
-              <Button mode='elevated' style={styles.input} onPress={() => pickImage()}> Select Profile Image </Button>
 
-            </>)}
-          <Button mode='elevated' style={styles.input} onPress={() => pickImage()}> Select Profile Image </Button>
           {mapViewOpen ?
             (<>
               <MapScreen

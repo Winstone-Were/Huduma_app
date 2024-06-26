@@ -150,6 +150,18 @@ export default function Profile({ navigation }) {
       console.error(err);
     })
   }
+
+  const editProfile = async () => {
+    setLoading(true);
+    updateProfile(AUTH.currentUser, {
+      displayName: name, photoURL: await getPhotoURL(),
+    }).then((res) => {
+      navigation.push("LoginScreen");
+    }).catch((err) => {
+      setLoading(false);
+      console.error(err);
+    })
+  }
   return (
     <View style={{ flex: 1, backgroundColor: 'white' }}>
       {profileSet ?
@@ -178,7 +190,8 @@ export default function Profile({ navigation }) {
               label='phone number'
               disabled={loading}
             />
-            <Chip style={{marginTop:10}} icon="account-hard-hat"> {occupation} </Chip>
+            <Chip style={{ marginTop: 10 }} icon="account-hard-hat"> {occupation} </Chip>
+            <Button onPress={() => editProfile()}> Update Profile </Button>
           </ScrollView>
         </>) :
         (<>

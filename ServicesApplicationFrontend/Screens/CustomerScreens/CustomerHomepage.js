@@ -9,48 +9,31 @@ import ProfileScreen from './Profile';
 import ActivityScreen from './Activity';
 import { AUTH, FIRESTORE_DB } from '../../firebaseConfig';
 
+import {readCustomerState, writeToCustomerState, clearCustomerState} from '../../Services/stateService'
+
+
 const Tab = createMaterialBottomTabNavigator();
 
 const CustomerHomepage = ({ navigation }) => {
+  let customerUser = readCustomerState();
   const [username, setUsername] = useState('');
   const [dialogVisible, setDialogVisible] = useState(false);
 
   useEffect(() => {
     // Function to fetch username from AsyncStorage or backend API
-    //fetchUsername();
+    fetchUsername();
   }, []);
 
   const fetchUsername = async () => {
-    try {
-      //  Fetch username from AsyncStorage
-      const storedUsername = await AsyncStorage.getItem('username');
-      if (storedUsername) {
-        setUsername(storedUsername);
-      } else {
-        // If username not found in AsyncStorage
-        const response = await fetch('http://192.168.100.91:3000/api/profile', {
-          method: 'GET',
-          headers: {
-            // create usernames retrieval
-          },
-        });
-        if (response.ok) {
-          const userData = await response.json();
-          setUsername(userData.username);
-        } else {
-          console.error('Failed to fetch username');
-        }
-      }
-    } catch (error) {
-      console.error('Error fetching username:', error);
-    }
+    setUsername(AUTH.currentUser.displayName);
+    console.log(customerUser);
   };
 
   return (
     <>
       <Appbar.Header mode='small' collapsable={true}>
         <Appbar.BackAction onPress={() => navigation.goBack()} />
-        <Appbar.Content title="Customer Homepage" />
+        <Appbar.Content title={username} />
         <Appbar.Action icon="cog" onPress={() => {navigation.push("Settings")}} />
       </Appbar.Header>
       <Tab.Navigator

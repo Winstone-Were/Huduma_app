@@ -1,6 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
-import { Provider as StoreProvider } from 'react-native-paper';
 
 import AuthStack from './Navigation/AuthStack'; 
 import { SafeAreaProvider } from 'react-native-safe-area-context';
