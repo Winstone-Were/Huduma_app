@@ -1,4 +1,4 @@
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import { Alert, StyleSheet, Text, View, ScrollView } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { Card, ActivityIndicator, Button, Chip } from 'react-native-paper';
 import { FIRESTORE_DB } from '../../firebaseConfig';
@@ -24,7 +24,7 @@ const JobRequests = ({ navigation }) => {
   const getJobs = async () => {
     setLoading(true);
     try {
-      const q = query(collection(FIRESTORE_DB, 'JobRequests'), where("serviceRequested", '==', occupation || occ));
+      const q = query(collection(FIRESTORE_DB, 'ServiceRequest'), where("ServiceWanted", '==', occupation || occ));
       const querySnapshot = await getDocs(q);
       if (querySnapshot.empty) {
         setAvailableJobs([])
@@ -34,6 +34,7 @@ const JobRequests = ({ navigation }) => {
       querySnapshot.forEach((doc) => {
         let emptyArray = [];
         emptyArray.push(doc.data());
+        console.log(emptyArray)
         setAvailableJobs(emptyArray);
         setLoading(false);
       });
@@ -71,28 +72,30 @@ const JobRequests = ({ navigation }) => {
           :
           (<>
             {availableJobs ?
-              (<>
+              (<ScrollView style={{flex:1, marginHorizontal:10  }}>
                 {
                   availableJobs.map((job, index) => {
                     return (
-                      <Card key={index}>
-                        <Card.Title title="Requested Job" />
+                      <Card key={index} mode='elevated' style={styles.card}>
+                        <Card.Title title={job['clientName']} />
+                        <Card.Cover source={{uri:job['imageURL']}}/>
                         <Card.Content>
-                          <Text variant="titleLarge">Job : {job['serviceRequested']}</Text>
-                          <Text variant="bodyMedium">Description  </Text>
-                          <Chip style={{ marginTop: 10, width: 200 }} icon="account-hard-hat"> {occupation} </Chip>
+                          <Text variant="bodyMedium"> Description  </Text>
+                          <Text> {job['description']} </Text>
+                          <Chip style={{ marginTop: 10, width: 200 }} icon="account-hard-hat"> {job['ServiceWanted']} </Chip>
                         </Card.Content>
                         <Card.Actions>
-                          <Button>Cancel</Button>
-                          <Button>Ok</Button>
+                          <Button mode='outlined'>Accept</Button>
+                          <Button mode='outlined'>Reject</Button>
                         </Card.Actions>
                       </Card>
                     )
                   })
                 }
-              </>) :
+              </ScrollView>) :
               (<>
                 <ActivityIndicator animating />
+                <Text> Loading Jobs </Text>
               </>)}
           </>)
       }
@@ -103,7 +106,7 @@ const JobRequests = ({ navigation }) => {
 export default JobRequests
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
+  container: { flex: 1},
   input: { marginVertical: 5, borderRadius: 0 },
   row: {
     alignItems: "center",
@@ -123,5 +126,7 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     alignSelf: "center"
   },
-
+  card: {
+    width:500
+  }
 });
