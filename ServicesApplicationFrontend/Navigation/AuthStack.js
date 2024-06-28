@@ -17,7 +17,9 @@ import Settings from "../Screens/SettingScreens/Settings";
 import ChangePassword from "../Screens/SettingScreens/ChangePassword";
 import ChangeEmail from "../Screens/SettingScreens/ChangeEmail";
 import * as Notifications from 'expo-notifications';
-import expoPushToken from "../expoPushToken";
+import expoPushTokenApi from "../notifications/expoPushToken";
+import { getAuth } from 'firebase/auth';
+import { useRef } from "react";
 
 
 const Stack = createNativeStackNavigator();
@@ -63,10 +65,39 @@ Notifications.setNotificationHandler({
     }),
   });
 const AuthStack = () => {
+    const auth = getAuth();//firebase instance
+    const responseListener = useRef(); 
+
     useEffect(() => {
+        const registerPushToken = async () => {
+            try {
+                const token = await registerForPushNotificationsAsync();
+                const user = auth.currentUser;
+                if (user && token) {
+                    await expoPushTokenApi.register(token, user.uid);
+                }
+            } catch (err) {
+                console.error('Failed to register for push notifications:', err);
+            }
+        };
+
+        registerPushToken();
+
+        //handler
         registerForPushNotificationsAsync()
-            .then(token => expoPushTokensApi.register(token))
-            .catch(err => console.error('Failed to register for push notifications:', err));//to tell me what error
+            .then(token => expoPushTokenApi.register(token));
+
+        // Works when app is foregrounded, backgrounded, or killed
+        responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+            console.log('--- notification tapped ---');
+            console.log(response);
+            console.log('------');
+        });
+
+       //kuitoa
+        return () => {
+            Notifications.removeNotificationSubscription(responseListener.current);
+        };
     }, []);
     return (
 

@@ -5,6 +5,7 @@ const sendPushNotification = async (targetExpoPushToken, message) => {
   const messages = [{
     to: targetExpoPushToken,
     sound: "default",
+    title: "Huduma app", // Default title for all notifications
     body: message,
     data: { message }
   }];
