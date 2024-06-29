@@ -142,7 +142,9 @@ export default function AskServiceScreen({navigation}) {
         let clientName = AUTH.currentUser.displayName
         let imageURL = await getPhotoURL();
         let ServiceWanted = await getAskForJobState().serviceWanted;
-        setDoc(ServiceRequestRef, {uid, clientName, imageURL, ServiceWanted, description, locationName}, {merge:true})
+        let DateObject = new Date();
+        let date = DateObject.toISOString();
+        setDoc(ServiceRequestRef, {uid, clientName, imageURL, ServiceWanted, description, locationName, date, currentLocation}, {merge:true})
             .then(()=>{
                 setLoading(false);
                 navigation.push("CustomerHomepage");

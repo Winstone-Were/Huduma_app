@@ -2,13 +2,15 @@ import { Alert, StyleSheet, Text, View, ScrollView } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { Card, ActivityIndicator, Button, Chip } from 'react-native-paper';
 import { FIRESTORE_DB } from '../../firebaseConfig';
-import { setDoc, doc, getDoc, collection, onSnapshot, query, where, getDocs } from 'firebase/firestore';
+import { setDoc, doc, getDoc, collection, onSnapshot, query, where, getDocs, deleteDoc } from 'firebase/firestore';
 import { AUTH } from '../../firebaseConfig';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import {writeWorkerJobState} from '../../Services/stateService'
+
 const JobRequests = ({ navigation }) => {
   const [availableJobs, setAvailableJobs] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [occ, setOcc] = useState('');
   let occupation;
   const getSpecificUserObject = async () => {
@@ -45,22 +47,32 @@ const JobRequests = ({ navigation }) => {
 
   useEffect(() => {
     getSpecificUserObject();
-    const q = query(collection(FIRESTORE_DB, 'JobRequests'), where("serviceRequested", '==', occupation || occ));
-    onSnapshot(q,
-      (querySnapshot) => {
-        if (querySnapshot.empty) {
-          setAvailableJobs([])
-          setLoading(false);
-        }
-        querySnapshot.forEach((doc) => {
-          let emptyArray = [];
-          emptyArray.push(doc.data());
-          setAvailableJobs(emptyArray);
-          setLoading(false);
-        })
-      }
-    )
   }, []);
+
+  const onAcceptJob = async (jobObject) => {
+    setLoading(true);
+    console.log(jobObject);
+    //create a document in accepted jobs for the job selected then go to active
+    let collectionName = AUTH.currentUser.uid+"::"+jobObject.uid+"::"+jobObject.date;
+    console.log(collectionName);
+    let ServiceRequestRef = doc(FIRESTORE_DB, 'AcceptedRequests', collectionName);
+    let DateObject = new Date();
+    let dateAccepted = DateObject.toISOString();
+    setDoc(ServiceRequestRef,{...jobObject,dateAccepted},{merge:true})
+      .then(async ()=>{
+        writeWorkerJobState(jobObject);
+        await deleteDoc(doc(FIRESTORE_DB,'ServiceRequest', jobObject.uid));
+        setLoading(false);
+      })
+      .catch((error)=>{
+        console.error(error);
+        setLoading(false);
+      })
+
+  }
+
+ 
+
   return (
     <View style={styles.container}>
       <Button onPress={() => { getJobs() }}> Refresh </Button>
@@ -85,8 +97,8 @@ const JobRequests = ({ navigation }) => {
                           <Chip style={{ marginTop: 10, width: 200 }} icon="account-hard-hat"> {job['ServiceWanted']} </Chip>
                         </Card.Content>
                         <Card.Actions>
-                          <Button mode='outlined'>Accept</Button>
-                          <Button mode='outlined'>Reject</Button>
+                          <Button mode='outlined' onPress={()=> onAcceptJob(job)} >Accept</Button>
+                          <Button mode='contained'>Reject</Button>
                         </Card.Actions>
                       </Card>
                     )

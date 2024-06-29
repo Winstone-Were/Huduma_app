@@ -9,6 +9,19 @@ let AskForJobState = {
     images: []
 }
 
+let workerJobState = {};
+export const writeWorkerJobState = async(value) => {
+    workerJobState = {...workerJobState, ...value}
+}
+
+export const readWorkerJobState = () =>{
+    return workerJobState;
+}
+
+export const clearWorkerJobState = () => {
+    workerJobState = {};
+}
+
 //pass in Objects
 //Customer
 
