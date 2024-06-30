@@ -7,8 +7,10 @@ import { AUTH } from '../../firebaseConfig';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import openMap from 'react-native-open-maps'
 
+import {writeToChatPartyState} from '../../Services/stateService'
 
-const Activity = () => {
+
+const Activity = ({navigation}) => {
 
   useEffect(() => {
     getActivity();
@@ -53,16 +55,19 @@ const Activity = () => {
   }
 
   const getActivity = async () => {
-    getDocs(collection(FIRESTORE_DB, "AcceptedRequests"))
-      .then((result) => {
-        result.forEach((doc) => {
-          if (doc.id.split("::")[0] == AUTH.currentUser.uid) {
-            setJobQueryString(doc.id);
-            setJobObject(doc.data())
-            setLoading(false);
-          }
-        })
+    let q = collection(FIRESTORE_DB, "AcceptedRequests");
+    onSnapshot(q,(querySnapshot)=> {
+      querySnapshot.forEach((doc)=>{
+        if (doc.id.split("::")[0] == AUTH.currentUser.uid) {
+          let workerId = doc.id.split("::")[0];
+          let userId = doc.id.split("::")[1];
+          writeToChatPartyState({sentBy:userId,sentTo:workerId})
+          setJobQueryString(doc.id);
+          setJobObject(doc.data())
+          setLoading(false);
+        }
       })
+    })
   }
 
   return (
@@ -99,6 +104,7 @@ const Activity = () => {
             </Card>
             <Button mode='contained' onPress={() => openGoogleMaps()}> Open Location </Button>
             <Button mode='elevated'> Arrived At Location </Button>
+            <Button onPress={()=> navigation.push('WorkerChatScreen')}> Chat </Button>
           </View>
         )}
 

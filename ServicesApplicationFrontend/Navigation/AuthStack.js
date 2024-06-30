@@ -19,7 +19,8 @@ import ChangeEmail from "../Screens/SettingScreens/ChangeEmail";
 import MapScreen from "../Screens/CustomerScreens/MapScreen";
 import Profile from "../Screens/WorkerScreens/Profile";
 import AskServiceScreen from "../Screens/CustomerScreens/AskServiceScreen";
-
+import CustomerChat from "../Screens/CustomerScreens/CustomerChat";
+import WorkerChat from "../Screens/WorkerScreens/WorkerChat";
 
 const Stack = createNativeStackNavigator();
 const noHeader = { headerShown: false };
@@ -107,6 +108,16 @@ const AuthStack = () => {
                     <Stack.Screen
                         name="WorkerProfileScreen"
                         component={Profile}
+                        options={noHeader}
+                    />
+                    <Stack.Screen
+                        name="CustomerChatScreen"
+                        component={CustomerChat}
+                        options={noHeader}
+                    />
+                    <Stack.Screen
+                        name="WorkerChatScreen"
+                        component={WorkerChat}
                         options={noHeader}
                     />
                     <Stack.Screen name="AskServiceScreen" component={AskServiceScreen} options={noHeader} />

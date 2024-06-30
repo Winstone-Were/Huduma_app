@@ -8,8 +8,24 @@ let AskForJobState = {
     description:'',
     images: []
 }
-
 let workerJobState = {};
+let chatPartyState = {
+    sentBy:'',
+    sentTo:''
+}
+
+export const writeToChatPartyState = async(value) => {
+    chatPartyState = {...chatPartyState, ...value};
+}
+
+export const getChatPartyState = () =>{
+    return chatPartyState;
+}
+
+export const clearChatPartyState = () => {
+    chatPartyState = {};
+}
+
 export const writeWorkerJobState = async(value) => {
     workerJobState = {...workerJobState, ...value}
 }
