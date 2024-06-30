@@ -3,26 +3,15 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 require("dotenv").config();
 
-const {collection, getDocs} = require('firebase/firestore')
-
-const {
-    getAuth,
-    createUserWithEmailAndPassword,
-    signInWithEmailAndPassword,
-    signOut,
-    sendEmailVerification,
-    sendPasswordResetEmail,
-    db,
-    linkWithPhoneNumber,
-    FIRESTORE_DB
-} = require('../config/firebase');
+const {collection, getDocs} = require('firebase/firestore');
+const {getUser, listAllUsers }= require("./manage_users")
 
 const verifyToken = require("../middleware/index");
-
-const auth = getAuth();
+const cors = require("cors")
 const app = express();
 app.use(cookieParser());
 app.use(express.json());
+app.use(cors());
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.urlencoded({ limit: '50mb' }));
@@ -80,6 +69,16 @@ app.post('/api/login', (req, res) => {
         });
 });
 
+
+app.get('/admin/listallusers',(req,res)=>{
+    listAllUsers()
+    .then((users) => {
+        res.json(users);
+    })
+    .catch((error) => {
+        console.error(error)
+    })
+})
 app.post('/api/resetpassword', (req, res) => {
     const { email } = req.body;
     if (!email) {
