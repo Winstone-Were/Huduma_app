@@ -18,6 +18,9 @@ async function getUser(uid) {
   try {
     const userRecord = await getAuth().getUser(uid);
     const userDoc = await db.collection('Users').doc(uid).get();
+    console.log(userDoc)
+    return(userDoc.data());
+    console.log(userRecord);
     if (!userDoc.exists) {
       console.log('No such document in Firestore!');
     } else {
@@ -117,4 +120,4 @@ async function listAllUsers() {
   }
 }
 
-module.exports = {getUser, listAllUsers};
+module.exports = {getUser, listAllUsers, createUser};
