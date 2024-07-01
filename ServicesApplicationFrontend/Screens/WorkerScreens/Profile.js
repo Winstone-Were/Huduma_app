@@ -17,7 +17,7 @@ export default function Profile({ navigation }) {
       setProfileSet(true);
       setName(AUTH.currentUser.displayName);
       setImageURL(AUTH.currentUser.photoURL);
-      console.log(AUTH.currentUser);
+      //console.log(AUTH.currentUser);
       const DocRef = doc(FIRESTORE_DB, "Users", AUTH.currentUser.uid);
       getDoc(DocRef)
         .then((res) => {
@@ -27,7 +27,7 @@ export default function Profile({ navigation }) {
     } else {
       setProfileSet(false);
     }
-  })
+  }, [])
   const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
   const [profileSet, setProfileSet] = useState(false);
@@ -89,9 +89,14 @@ export default function Profile({ navigation }) {
   }
 
   const uploadImage = async () => {
+    setLoading(true);
     if (image == null) {
+      console.log('no image');
+      setLoading(false);
       return null;
     }
+    
+  
     const uploadUri = image;
     let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
 
@@ -101,7 +106,7 @@ export default function Profile({ navigation }) {
     filename = name + Date.now() + '.' + extension;
     console.log(filename);
 
-    const path = await getUploadPath();
+    const path = `profilePhotos/${AUTH.currentUser.uid}`
     console.log(path);
     const profilePhotoStorage = ref(STORAGE, `${path}`);
 
@@ -116,6 +121,7 @@ export default function Profile({ navigation }) {
             .then((snap) => {
               console.log('uploaded profile photo');
               getPhotoURL();
+              setLoading(false);
             })
             .catch((err) => {
               console.error(err);
@@ -136,7 +142,7 @@ export default function Profile({ navigation }) {
   }
 
   const updateUserProfile = async () => {
-    console.log(AUTH.currentUser);
+    //console.log(AUTH.currentUser);
     setLoading(true);
     updateProfile(AUTH.currentUser, {
       displayName: name, photoURL: await getPhotoURL(),
@@ -156,7 +162,10 @@ export default function Profile({ navigation }) {
     updateProfile(AUTH.currentUser, {
       displayName: name, photoURL: await getPhotoURL(),
     }).then((res) => {
-      navigation.push("LoginScreen");
+      let uid = AUTH.currentUser.uid;
+      let photoURL = imageURL;
+      uploadImage();
+      setDoc(doc(FIRESTORE_DB, 'Users', uid), { name, phoneNumber, photoURL}, { merge: true });
     }).catch((err) => {
       setLoading(false);
       console.error(err);
@@ -166,33 +175,39 @@ export default function Profile({ navigation }) {
     <View style={{ flex: 1, backgroundColor: 'white' }}>
       {profileSet ?
         (<>
-          <ScrollView style={styles.container}>
-            <TouchableOpacity onPress={() => pickImage()}>
-              <Image
-                style={styles.image}
-                source={{ uri: imageURL }}
-                placeholder={{ blurhash }}
-                contentFit="cover"
-                transition={1000}
-              />
-            </TouchableOpacity>
-            <TextInput
-              value={name}
-              onChangeText={(text) => setName(text)}
-              mode='outlined'
-              label='user name'
-              disabled={loading}
-            />
-            <TextInput
-              value={phoneNumber}
-              onChangeText={(text) => setPhoneNumber(text)}
-              mode='outlined'
-              label='phone number'
-              disabled={loading}
-            />
-            <Chip style={{ marginTop: 10 }} icon="account-hard-hat"> {occupation} </Chip>
-            <Button onPress={() => editProfile()}> Update Profile </Button>
-          </ScrollView>
+          {loading ?
+            (<>
+              <ActivityIndicator animating />
+            </>) :
+            (<>
+              <ScrollView style={styles.container}>
+                <TouchableOpacity onPress={() => pickImage()}>
+                  <Image
+                    style={styles.image}
+                    source={{ uri: imageURL }}
+                    placeholder={{ blurhash }}
+                    contentFit="cover"
+                    transition={1000}
+                  />
+                </TouchableOpacity>
+                <TextInput
+                  value={name}
+                  onChangeText={(text) => setName(text)}
+                  mode='outlined'
+                  label='user name'
+                  disabled={loading}
+                />
+                <TextInput
+                  value={phoneNumber}
+                  onChangeText={(text) => setPhoneNumber(text)}
+                  mode='outlined'
+                  label='phone number'
+                  disabled={loading}
+                />
+                <Chip style={{ marginTop: 10 }} icon="account-hard-hat"> {occupation} </Chip>
+                <Button disabled={loading} onPress={() => editProfile()}> Update Profile </Button>
+              </ScrollView>
+            </>)}
         </>) :
         (<>
           {

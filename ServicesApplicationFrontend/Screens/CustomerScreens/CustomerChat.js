@@ -1,17 +1,18 @@
 import { View, Text, Alert } from 'react-native';
 import React, { useState, useEffect, useCallback } from 'react';
 import { Appbar } from 'react-native-paper';
-import { GiftedChat } from 'react-native-gifted-chat';
+import { GiftedChat, Avatar } from 'react-native-gifted-chat';
 import { collection, addDoc, query, orderBy, onSnapshot } from 'firebase/firestore';
 
 
 import { AUTH, FIRESTORE_DB } from '../../firebaseConfig';
 import { getChatPartyState } from '../../Services/stateService';
 
-export default function CustomerChat() {
+export default function CustomerChat({navigation}) {
+  uid = AUTH.currentUser.uid;
   const [messages, setMessages] = useState([]);
   const { sentBy, sentTo } = getChatPartyState();
-  const [uid, setUid] = useState('');
+  //const [uid, setUid] = useState('');
   const getMessages = async () => {
 
   }
@@ -46,14 +47,10 @@ export default function CustomerChat() {
 
   useEffect(() => {
     getAllMessages();
-    setUid(AUTH.currentUser.uid);
+    //setUid(AUTH.currentUser.uid);
   }, [])
-  const onSend = useCallback((messages = []) => {
-    Alert.alert("I call");
-    setMessages(previousMessages =>
-      GiftedChat.append(previousMessages, messages),
-    )
-  }, [])
+
+
   return (
     <View style={{ flex: 1 }}>
       <Appbar.Header mode='small' collapsable={true} style={{ backgroundColor: 'white' }}>
@@ -67,6 +64,8 @@ export default function CustomerChat() {
         user={{
           _id: uid,
         }}
+        showUserAvatar={false}
+        showAvatarForEveryMessage={false}
       />
     </View>
   )

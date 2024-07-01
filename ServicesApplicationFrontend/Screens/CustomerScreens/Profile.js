@@ -68,7 +68,7 @@ const ProfileScreen = ({ navigation }) => {
           updateProfile(AUTH.currentUser, {
             displayName: name, photoURL: uploadURL
           }).then((res) => {
-            setDoc(doc(FIRESTORE_DB, 'Users', AUTH.currentUser.uid), { phone_number, address, secEmail }, { merge: true })
+            setDoc(doc(FIRESTORE_DB, 'Users', AUTH.currentUser.uid), { phone_number, address, secEmail, photoURL: uploadURL }, { merge: true })
               .then((resp) => {
                 setLoading(false);
                 setEditMode(false);
@@ -177,7 +177,7 @@ const ProfileScreen = ({ navigation }) => {
       {profileExists ? (
         <View style={styles.profileContainer}>
           <TouchableOpacity onPress={() => pickImage()}>
-            <Image
+          <Image
               style={styles.image}
               source={{ uri: imageURL }}
               placeholder={{ blurhash }}

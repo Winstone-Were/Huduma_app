@@ -6,43 +6,41 @@ import { setDoc, doc, getDoc, collection, onSnapshot, query, where, getDocs, del
 import { AUTH } from '../../firebaseConfig';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import {writeWorkerJobState} from '../../Services/stateService'
+import { writeWorkerJobState, readWorkerState } from '../../Services/stateService'
 
 const JobRequests = ({ navigation }) => {
   const [availableJobs, setAvailableJobs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [occ, setOcc] = useState('');
+
   let occupation;
+
+  occupation = (readWorkerState().occupation);
+
   const getSpecificUserObject = async () => {
-    AsyncStorage.getItem('specific-user-object')
-      .then(result => {
-        const user = JSON.parse(result);
-        occupation = user.occupation;
-        setOcc(occupation);
-        getJobs();
-      })
+    getJobs();  
   }
 
   const getJobs = async () => {
     setLoading(true);
-    try {
-      const q = query(collection(FIRESTORE_DB, 'ServiceRequest'), where("ServiceWanted", '==', occupation || occ));
-      const querySnapshot = await getDocs(q);
+    const q = query(collection(FIRESTORE_DB, 'ServiceRequest'), where("ServiceWanted", '==', occupation || occ));
+
+    onSnapshot(q, (querySnapshot) => {
       if (querySnapshot.empty) {
         setAvailableJobs([])
         setLoading(false);
-        Alert.alert('Empty')
+      } else {
+        querySnapshot.forEach((doc) => {
+          let emptyArray = [];
+          emptyArray.push(doc.data());
+          console.log(emptyArray)
+          setAvailableJobs(emptyArray);
+          setLoading(false);
+        })
       }
-      querySnapshot.forEach((doc) => {
-        let emptyArray = [];
-        emptyArray.push(doc.data());
-        console.log(emptyArray)
-        setAvailableJobs(emptyArray);
-        setLoading(false);
-      });
-    } catch (error) {
-      console.error(error);
-    }
+    },(onerror)=>{
+      console.error(onerror.message);
+    })
   }
 
   useEffect(() => {
@@ -51,27 +49,23 @@ const JobRequests = ({ navigation }) => {
 
   const onAcceptJob = async (jobObject) => {
     setLoading(true);
-    console.log(jobObject);
     //create a document in accepted jobs for the job selected then go to active
-    let collectionName = AUTH.currentUser.uid+"::"+jobObject.uid+"::"+jobObject.date;
-    console.log(collectionName);
+    let collectionName = AUTH.currentUser.uid + "::" + jobObject.uid + "::" + jobObject.date;
     let ServiceRequestRef = doc(FIRESTORE_DB, 'AcceptedRequests', collectionName);
     let DateObject = new Date();
     let dateAccepted = DateObject.toISOString();
-    setDoc(ServiceRequestRef,{...jobObject,dateAccepted},{merge:true})
-      .then(async ()=>{
+    let uid = AUTH.currentUser.uid;
+    setDoc(ServiceRequestRef, { ...jobObject, dateAccepted, acceptedBy: uid }, { merge: true })
+      .then(async () => {
         writeWorkerJobState(jobObject);
-        await deleteDoc(doc(FIRESTORE_DB,'ServiceRequest', jobObject.uid));
+        await deleteDoc(doc(FIRESTORE_DB, 'ServiceRequest', jobObject.uid));
         setLoading(false);
       })
-      .catch((error)=>{
+      .catch((error) => {
         console.error(error);
         setLoading(false);
       })
-
   }
-
- 
 
   return (
     <View style={styles.container}>
@@ -84,20 +78,20 @@ const JobRequests = ({ navigation }) => {
           :
           (<>
             {availableJobs ?
-              (<ScrollView style={{flex:1, marginHorizontal:10  }}>
+              (<ScrollView style={{ flex: 1, marginHorizontal: 10 }}>
                 {
                   availableJobs.map((job, index) => {
                     return (
                       <Card key={index} mode='elevated' style={styles.card}>
                         <Card.Title title={job['clientName']} />
-                        <Card.Cover source={{uri:job['imageURL']}}/>
+                        <Card.Cover source={{ uri: job['imageURL'] }} />
                         <Card.Content>
                           <Text variant="bodyMedium"> Description  </Text>
                           <Text> {job['description']} </Text>
                           <Chip style={{ marginTop: 10, width: 200 }} icon="account-hard-hat"> {job['ServiceWanted']} </Chip>
                         </Card.Content>
                         <Card.Actions>
-                          <Button mode='outlined' onPress={()=> onAcceptJob(job)} >Accept</Button>
+                          <Button mode='outlined' onPress={() => onAcceptJob(job)} >Accept</Button>
                           <Button mode='contained'>Reject</Button>
                         </Card.Actions>
                       </Card>
@@ -118,7 +112,7 @@ const JobRequests = ({ navigation }) => {
 export default JobRequests
 
 const styles = StyleSheet.create({
-  container: { flex: 1},
+  container: { flex: 1 },
   input: { marginVertical: 5, borderRadius: 0 },
   row: {
     alignItems: "center",
@@ -139,6 +133,6 @@ const styles = StyleSheet.create({
     alignSelf: "center"
   },
   card: {
-    width:500
+    width: 500
   }
 });
