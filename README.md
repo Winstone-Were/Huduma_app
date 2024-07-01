@@ -47,7 +47,8 @@ Huduma is a centralized service provision mobile application that connects users
 
     * Create a firebase project through the console
     * Add the firebase config to the firebase.js file in the ServicesApplicationFrontend folder
-    [Sample configurations found in firebase](../../Pictures/Screenshots)
+  [Sample Firebase configuration found in project settings](https://github.com/TijaniTatu/huduma/assets/131201362/f1bdc2fc-8295-42d8-b246-025d85b87ccf)
+
 
 ## Usage Instructions
 ### How to Run the application:
