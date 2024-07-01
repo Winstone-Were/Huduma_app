@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Appbar } from 'react-native-paper';
 import { createMaterialBottomTabNavigator } from 'react-native-paper/react-navigation';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import JobRequestsScreen from './JobRequests';
@@ -12,7 +13,7 @@ const WorkerHomepage = ({ navigation }) => {
   const [username, setUsername] = useState('');
 
   useEffect(() => {
-    fetchUsername();
+    //fetchUsername();
   }, []);
 
   const fetchUsername = async () => {
@@ -41,10 +42,11 @@ const WorkerHomepage = ({ navigation }) => {
 
   return (
     <>
-      <CustomHeader
-        username={username}
-        onSettingsPress={() => navigation.navigate('Settings')}
-      />
+      <Appbar.Header mode='small' collapsable={true} style={{backgroundColor:'white'}}>
+        <Appbar.BackAction onPress={() => navigation.goBack()} />
+        <Appbar.Content title="Get Work" />
+        <Appbar.Action icon="cog" onPress={() => {navigation.push("Settings")}} />
+      </Appbar.Header>
       <Tab.Navigator
         initialRouteName="Requests"
         activeColor="#ED7D27"

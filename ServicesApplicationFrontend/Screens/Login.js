@@ -11,6 +11,8 @@ import { signInWithEmailAndPassword, sendEmailVerification } from "firebase/auth
 import { addDoc, collection, setDoc, doc, getDoc, getDocs } from 'firebase/firestore'
 import { FIRESTORE_DB } from '../firebaseConfig';
 
+import {writeToCustomerState, writeToWorkerState} from '../Services/stateService'
+
 export default function Login({ navigation }) {
   const [loading, setLoading] = useState(false);
   useEffect(() => {
@@ -33,8 +35,10 @@ export default function Login({ navigation }) {
                       .then(data => {
                         let user_role = data.data().role;
                         if (user_role == 'client') {
+                          writeToCustomerState(data.data())
                           navigation.replace('CustomerHomepage')
                         } else if (user_role == 'worker') {
+                          writeToWorkerState(data.data());
                           navigation.replace('WorkerHomepage')
                         }
                       })
@@ -77,10 +81,13 @@ export default function Login({ navigation }) {
         const DocRef = doc(FIRESTORE_DB, "Users", user.user.uid);
         getDoc(DocRef)
           .then(data => {
+            AsyncStorage.setItem('specific-user-object', JSON.stringify(data.data()));
             let user_role = data.data().role;
             if (user_role == 'client') {
+              writeToCustomerState(data.data());
               navigation.replace('CustomerHomepage')
             } else if (user_role == 'worker') {
+              writeToWorkerState(data.data())
               navigation.replace('WorkerHomepage')
             }
           })

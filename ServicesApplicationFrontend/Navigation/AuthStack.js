@@ -1,5 +1,5 @@
 
-import React,{ useEffect } from "react";
+import React from "react";
 import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -16,11 +16,11 @@ import CustomerHomepage from "../Screens/CustomerScreens/CustomerHomepage";
 import Settings from "../Screens/SettingScreens/Settings";
 import ChangePassword from "../Screens/SettingScreens/ChangePassword";
 import ChangeEmail from "../Screens/SettingScreens/ChangeEmail";
-import * as Notifications from 'expo-notifications';
-import expoPushTokenApi from "../notifications/expoPushToken";
-import { getAuth } from 'firebase/auth';
-import { useRef } from "react";
-
+import MapScreen from "../Screens/CustomerScreens/MapScreen";
+import Profile from "../Screens/WorkerScreens/Profile";
+import AskServiceScreen from "../Screens/CustomerScreens/AskServiceScreen";
+import CustomerChat from "../Screens/CustomerScreens/CustomerChat";
+import WorkerChat from "../Screens/WorkerScreens/WorkerChat";
 
 const Stack = createNativeStackNavigator();
 const noHeader = { headerShown: false };
@@ -29,82 +29,49 @@ const theme = {
     ...DefaultTheme,
     roundness: 0,
     colors: {
-      ...DefaultTheme.colors,
-      primary: '#ED7D27',          
-      accent: '#f1c40f',          
-      background: '#FFFFFF',       
-      surface: '#FFFFFF',          
-      text: '#141414',             
-      placeholder: '#a1b2c3',      
-      onSurface: '#141414',        
-    },
-  };
-
-  async function registerForPushNotificationsAsync() {
-    let token;
-
-    const { status: existingStatus } = await Notifications.getPermissionsAsync();
-    let finalStatus = existingStatus;
-
-    if (existingStatus !== 'granted') {
-        const { status } = await Notifications.requestPermissionsAsync();
-        finalStatus = status;
-    }
-    if (finalStatus !== 'granted') {
-        alert('Failed to get push token for push notification!');
-        return;
-    }
-    token = (await Notifications.getExpoPushTokenAsync()).data;
-    console.log(token);
-
-    return token;
-}
-Notifications.setNotificationHandler({
-    handleNotification: async () => ({
-      shouldShowAlert: true
-    }),
-  });
+        ...DefaultTheme.colors,
+        primary: "#FF0000",
+        primaryContainer: "#7FAF73",
+        secondary: "#00FF00",
+        secondaryContainer: "#FFFF00",
+        tertiary: "#800080",
+        tertiaryContainer: "#FFA500",
+        surface: "#FFC0CB",
+        surfaceVariant: "#008080",
+        surfaceDisabled: "#808080",
+        background: "#FFFFFF",
+        error: "#A52A2A",
+        errorContainer: "#808080",
+        onPrimary: "#00FFFF",
+        onPrimaryContainer: "#FFFFFF",
+        onSecondary: "#00FF00",
+        onSecondaryContainer: "#808000",
+        onTertiary: "#800000",
+        onTertiaryContainer: "#000080",
+        onSurface: "#C0C0C0",
+        onSurfaceVariant: "#FFD700",
+        onSurfaceDisabled: "#808080",
+        onError: "#4B0082",
+        onErrorContainer: "#FF7F50",
+        onBackground: "#F5F5DC",
+        outline: "#CD853F",
+        outlineVariant: "#708090",
+        inverseSurface: "#7FFFD4",
+        inverseOnSurface: "#BDB76B",
+        inversePrimary: "#DA70D6",
+        shadow: "#E6E6FA",
+        scrim: "#D8BFD8",
+        backdrop: "#808080",
+      },
+    
+};
 const AuthStack = () => {
-    const auth = getAuth();//firebase instance
-    const responseListener = useRef(); 
-
-    useEffect(() => {
-        const registerPushToken = async () => {
-            try {
-                const token = await registerForPushNotificationsAsync();
-                const user = auth.currentUser;
-                if (user && token) {
-                    await expoPushTokenApi.register(token, user.uid);
-                }
-            } catch (err) {
-                console.error('Failed to register for push notifications:', err);
-            }
-        };
-
-        registerPushToken();
-
-        //handler
-        registerForPushNotificationsAsync()
-            .then(token => expoPushTokenApi.register(token));
-
-        // Works when app is foregrounded, backgrounded, or killed
-        responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-            console.log('--- notification tapped ---');
-            console.log(response);
-            console.log('------');
-        });
-
-       //kuitoa
-        return () => {
-            Notifications.removeNotificationSubscription(responseListener.current);
-        };
-    }, []);
     return (
 
-        <PaperProvider theme={theme}>
+        <PaperProvider theme={DefaultTheme}>
             <NavigationContainer>
 
-                <Stack.Navigator initialRouteName="SplashScreen">
+                <Stack.Navigator initialRouteName="LoginScreen">
 
                     <Stack.Screen
                         name="LoginScreen"
@@ -160,6 +127,26 @@ const AuthStack = () => {
                         component={ChangeEmail}
                         options={noHeader}
                     />
+                    <Stack.Screen
+                        name="MapScreen"
+                        component={MapScreen}
+                    />
+                    <Stack.Screen
+                        name="WorkerProfileScreen"
+                        component={Profile}
+                        options={noHeader}
+                    />
+                    <Stack.Screen
+                        name="CustomerChatScreen"
+                        component={CustomerChat}
+                        options={noHeader}
+                    />
+                    <Stack.Screen
+                        name="WorkerChatScreen"
+                        component={WorkerChat}
+                        options={noHeader}
+                    />
+                    <Stack.Screen name="AskServiceScreen" component={AskServiceScreen} options={noHeader} />
                 </Stack.Navigator>
             </NavigationContainer>
         </PaperProvider>

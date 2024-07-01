@@ -185,6 +185,10 @@ app.post('/api/linkphone', (req, res) => {
     let phoneNumber = req.body.phoneNumber;
 });
 
+app.get('/api/getuser/:id',(req,res)=>{
+    res.send(req.params['id'])
+})
+
 app.get('/api/getusers', (req, res) => {
     let users = [];
     getDocs(collection(FIRESTORE_DB, 'Users'))

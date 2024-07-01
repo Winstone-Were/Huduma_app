@@ -13,6 +13,20 @@
         {
           "photosPermission": "The app accesses your photos to let you upload a profile photo"
         }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow Huduma to use your location."
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
+          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
+          "recordAudioAndroid": true
+        }
       ]
     ],
     "splash": {
@@ -39,12 +53,8 @@
     },
     "extra": {
       "eas": {
-        "projectId": "d0f6691d-761f-4580-9e64-76db35acf437"
+        "projectId": "52f34b46-f823-43bb-b1a6-5dc673f5b2ae"
       }
-    },
-    "notification": {
-      "icon": "./assets/icon.png",  
-      "color": "#ffffff"  
     }
   }
 }

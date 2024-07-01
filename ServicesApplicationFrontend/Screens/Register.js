@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Alert, StyleSheet, View } from 'react-native';
-import { Text, TextInput, Button, ActivityIndicator, Portal, Modal, Menu } from 'react-native-paper';
+import { Alert, StyleSheet, View, TouchableOpacity } from 'react-native';
+import { Text, TextInput, Button, ActivityIndicator, Portal, Modal, Menu, SegmentedButtons, Appbar } from 'react-native-paper';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword } from 'firebase/auth';
-import {addDoc, collection, setDoc, doc, getDoc} from 'firebase/firestore'
+import { addDoc, collection, setDoc, doc, getDoc } from 'firebase/firestore'
 import Firebase from '../firebaseConfig';
-import {FIRESTORE_DB} from '../firebaseConfig'
-
+import { FIRESTORE_DB } from '../firebaseConfig'
+import { IosAlertStyle } from 'expo-notifications';
 
 const PasswordModal = ({ visible, hideModal }) => {
   const containerStyle = { backgroundColor: 'white', padding: 20, margin: 20 };
@@ -47,21 +47,26 @@ export default function Register({ navigation }) {
         setLoading(false);//to not show loading sign
       } else {
         createUserWithEmailAndPassword(Firebase.auth, email, password)
-          .then((userCredential)=>{
+          .then((userCredential) => {
             sendEmailVerification(Firebase.auth.currentUser)
-              .then(()=>{
+              .then(() => {
                 let uid = userCredential.user.uid;
-                setDoc(doc(FIRESTORE_DB, 'Users', uid), {role});
-                Alert.alert("Verification Email sent, Click the link in your email address to verify your account");
+                console.log(role);
+                setDoc(doc(FIRESTORE_DB, 'Users', uid), { role }, {merge:true})
+                  .then(()=>{
+                    Alert.alert("Verification Email sent, Click the link in your email address to verify your account");
+                  }).catch((err)=>{
+                    console.error(err);
+                  })
                 setLoading(false);
               })
-            .catch((error)=>{
-              console.error(error)
-              Alert.alert('Another Error');
-              setLoading(false);
-            })
+              .catch((error) => {
+                console.error(error)
+                Alert.alert('Another Error');
+                setLoading(false);
+              })
           })
-          .catch((error)=> {
+          .catch((error) => {
             console.error(error);
             Alert.alert('Email Already Used');
             setLoading(false);
@@ -106,12 +111,11 @@ export default function Register({ navigation }) {
   const closeMenu = () => setMenuVisible(false);
 
   return (
-    //+paperprovider to maintai
-    
+    <>
+      <Appbar.Header>
+        <Appbar.Content title="Create an account" />
+      </Appbar.Header>
       <View style={styles.container}>
-        <View style={styles.textContainer}>
-          <Text>Create An Account</Text>
-        </View>
         {loading ? (
           <ActivityIndicator animating={true} />
         ) : (
@@ -139,46 +143,59 @@ export default function Register({ navigation }) {
               secureTextEntry={true}
             />
 
-            <Menu
-              visible={menuVisible}
-              onDismiss={closeMenu}
-              anchor={
-                <Button onPress={openMenu} mode="outlined">
-                  Select Role: {role}
-                </Button>
+            <SegmentedButtons
+              value={role}
+              onValueChange={setRole}
+              buttons={
+                [
+                  {
+                    value: 'client',
+                    label: 'I want help'
+                  },
+                  {
+                    value: 'worker',
+                    label: 'I want to work'
+                  }
+                ]
               }
-            >
-              <Menu.Item onPress={() => { setRole('client'); closeMenu(); }} title="client" />
-              <Menu.Item onPress={() => { setRole('worker'); closeMenu(); }} title="Worker" />
-            </Menu>
-
+            />
             <Button mode='contained' style={styles.input} onPress={handleRegister}> Send Email Verification </Button>
-            <Button style={styles.input} onPress={() => navigation.push('LoginScreen')}> Login </Button>
           </>
         )}
         {accountCreated ?
-          <Button style={styles.input} mode='elevated' onPress={()=>handleRegisterNext()}> Next </Button> :<></>}
-        
+          <Button style={styles.input} mode='elevated' onPress={() => handleRegisterNext()}> Next </Button> : <></>}
+
         <PasswordModal visible={modalVisible} hideModal={hideModal} />
       </View>
-    
+      <View style={styles.row}>
+        <Text style={styles.Information}>
+          Already have an account ? 
+        </Text>
+        <TouchableOpacity onPress={()=> navigation.replace("LoginScreen")}>
+            <Text style={styles.textLink}> 
+              Login Here
+            </Text>
+        </TouchableOpacity>
+      </View>
+    </>
   )
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", marginHorizontal: 30 },
+  container: { flex: 1, marginHorizontal: 20, marginTop: 40 },
   input: { marginVertical: 5, borderRadius: 0 },
   row: {
     alignItems: "center",
     flexDirection: "row",
     marginVertical: 20,
-    justifyContent: "space-between",
   },
   textContainer: { alignContent: 'center', alignItems: 'center' },
   Information: {
-
     color: 'purple',
     fontSize: 15,
-
+  },
+  textLink: {
+    color:'orange',
+    marginLeft:2
   }
 });
