@@ -3,8 +3,8 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 require("dotenv").config();
 
-const {collection, getDocs} = require('firebase/firestore');
-const {getUser, listAllUsers,createUser }= require("./manage_users")
+const {collection, getDocs, count} = require('firebase/firestore');
+const {getUser, listAllUsers,createUser,countUsers,getAcceptedRequests,getWorkers }= require("./manage_users")
 
 const verifyToken = require("../middleware/index");
 const cors = require("cors")
@@ -69,16 +69,25 @@ app.post('/api/login', (req, res) => {
         });
 });
 
-
-app.get('/admin/listallusers',(req,res)=>{
-    listAllUsers()
-    .then((users) => {
-        res.json(users);
-    })
+app.get('/admin/countusers', (req,res)=>{
+    countUsers()
+    .then((count) => {
+        res.json( count);
+        })
     .catch((error) => {
-        console.error(error)
-    })
-})
+      console.error(error)
+            })
+  });
+
+
+  app.get('/admin/getworkers', async (req, res) => {
+    try {
+      const { workers, count } = await getWorkers();
+      res.json({ workers, count });
+    } catch (error) {
+      res.status(500).json({ error: 'Unable to fetch workers' });
+    }
+  });
 app.get('/admin/user/:uid', async (req, res) => {
     const { uid } = req.params;
     console.log(uid);
@@ -94,6 +103,26 @@ app.get('/admin/user/:uid', async (req, res) => {
       res.status(500).json({ error: 'Internal Server Error' });
     }
   });
+
+  app.get('/admin/getworkers', async (req, res) => {
+    try {
+      const workers = await getWorkers();
+      res.json(workers);
+    } catch (error) {
+      res.status(500).json({ error: 'Unable to fetch workers' });
+    }
+  });
+
+  app.get('/admin/acceptedRequests', async (req, res) => {
+    try {
+      const { acceptedRequests, totalAcceptedRequests } = await getAcceptedRequests();
+      res.json({ acceptedRequests, totalAcceptedRequests });
+    } catch (error) {
+      console.error('Error handling request:', error);
+      res.status(500).json({ error: 'Failed to retrieve accepted requests' });
+    }
+  });
+  
   app.post('/admin/createuser', async (req, res) => {
     const userData = req.body;
   
@@ -229,5 +258,6 @@ app.post('/api/sendNotification', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+
 
 app.listen(port, () => console.log(`Server listening on port ${port}!`));

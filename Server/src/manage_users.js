@@ -112,12 +112,55 @@ async function listAllUsers() {
       }
     }
     return (UserArray);
-    if (listUsersResult.pageToken) {
-      listAllUsers(listUsersResult.pageToken);
-    }
   } catch (error) {
     console.log('Error listing users:', error);
   }
 }
+async function countUsers() {
+  try {
+    const listUsersResult = await getAuth().listUsers(1000);
+    const totalUsers = listUsersResult.users.length;
+    return(totalUsers);
 
-module.exports = {getUser, listAllUsers, createUser};
+  } catch (error) {
+    console.error('Error counting users:', error);
+    res.status(500).send('Error counting users');
+  }
+}
+async function getWorkers() {
+  try {
+    const snapshot = await db.collection('Users').where('role', '==', 'worker').get();
+    let workers = [];
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      workers.push({ id: doc.id, name: data.name, role: data.role });
+    });
+    return { workers, count: workers.length };
+  } catch (error) {
+    console.error('Error fetching workers:', error);
+    throw new Error('Unable to fetch workers');
+  }
+}
+async function getAcceptedRequests() {
+  try {
+    const snapshot = await db.collection('AcceptedRequests').get();
+    const acceptedRequests = [];
+
+    snapshot.forEach(doc => {
+      acceptedRequests.push({
+        id: doc.id,
+        ...doc.data()
+      });
+    });
+
+    const count = acceptedRequests.length;
+
+    return { acceptedRequests, totalAcceptedRequests: count };
+  } catch (error) {
+    console.error('Error fetching accepted requests:', error);
+    throw new Error('Unable to fetch accepted requests');
+  }
+}
+
+
+module.exports = {getUser, listAllUsers, createUser, countUsers, getAcceptedRequests,getWorkers};
