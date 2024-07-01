@@ -5,14 +5,14 @@ Huduma is a centralized service provision mobile application that connects users
 
 ## Installation
 ### Dependencies and Libraries 
-*Node.js
-*React Native
-*Vite
-*Firebase
-*Google Maps API
-*Material UI
-*React Native Paper
-*Expo Notifications
+* Node.js
+* React Native
+* Vite
+* Firebase
+* Google Maps API
+* Material UI
+* React Native Paper
+* Expo Notifications
 
 
 
@@ -41,48 +41,48 @@ Huduma is a centralized service provision mobile application that connects users
     npm i```
 
 3. **Configure firebase:**
-    *Install firrebase 
+    * Install firrebase 
         ```bash
         npm install firebase```
 
-    *Create a firebase project through the console
-    *Add the firebase config to the firebase.js file in the ServicesApplicationFrontend folder
+    * Create a firebase project through the console
+    * Add the firebase config to the firebase.js file in the ServicesApplicationFrontend folder
     [Sample configurations found in firebase](../../Pictures/Screenshots)
 
 ## Usage Instructions
 ### How to Run the application:
-*For the mobile app:
+* For the mobile app:
     ```bash
     cd ServicesApplicationFrontend
     npm start
     ```
-*For the server:
+* For the server:
     ```bash
     cd Server
     cd src
     node index.js
     ```
-*For the admin:
+* For the admin:
     ```bash
     cd Admin
     npm start
     ````
 ### Usage Examples
 Finding a Worker:
-*Open the mobile app and login.
-*go to the job screen.
-*Pick the type of worker you need (e.g., electrician).
-*Browse through the list of available workers.
-*Click on the worker you want to hire.
+* Open the mobile app and login.
+* go to the job screen.
+* Pick the type of worker you need (e.g., electrician).
+* Browse through the list of available workers.
+* Click on the worker you want to hire.
 
 Managing Users (Admin Panel):
-*Open the admin panel in your browser.
-*Use the sidebar to navigate to the "Users" tab.
-*Perform CRUD operations on user data.
+* Open the admin panel in your browser.
+* Use the sidebar to navigate to the "Users" tab.
+*  Perform CRUD operations on user data.
 
 ### Input/Output
-*Input: User details, job requests, worker profiles.
-*Output: Matched workers, job confirmations, user management data
+* Input: User details, job requests, worker profiles.
+* Output: Matched workers, job confirmations, user management data
 ```
 Huduma_app
 ├─ .git
@@ -235,7 +235,7 @@ Huduma_app
 * Server/src/index.js: Firebase cloud functions for backend logic.
 
 ## Known Issues
-Some UI components may not render correctly on older devices.
+Some UI components may not render correctly on older devices.<br>
 Firebase authentication may require additional configuration for certain providers.
 
 ## Acknowledgent
