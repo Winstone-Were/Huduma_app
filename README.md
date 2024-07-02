@@ -1,4 +1,6 @@
 # HUDUMA: A Service Delivery Mobile Application
+![NPM Version](https://img.shields.io/npm/v/react)
+
 ## Description
 
 Huduma is a centralized service provision mobile application that connects users with verified local service providers, such as electricians,maids and plumbers. Traditional methods of finding service providers often lack credibility and traceability, leading to issues like theft, poor service, and property damage. Huduma addresses these challenges by requiring service providers to submit credentials and proof of identity for verification, ensuring that users are matched with qualified and trustworthy professionals. Additionally, the app features a rating system where users can rate their experience, helping to maintain high standards of service quality. Designed with simplicity and ease of use in mind, Huduma aims to cater to the diverse needs of the local community, enhancing service delivery and reliability in the local service industry.
