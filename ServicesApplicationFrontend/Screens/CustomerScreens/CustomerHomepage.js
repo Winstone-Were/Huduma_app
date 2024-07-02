@@ -38,7 +38,7 @@ const CustomerHomepage = ({ navigation }) => {
       </Appbar.Header>
       <Tab.Navigator
         initialRouteName="Jobs"
-        activeColor="#ED7D27" // Active tab color (orange)
+        activeColor="#6200ee" // Active tab color (orange)
         inactiveColor="#888888" // Inactive tab color (grey)
         barStyle={{ backgroundColor: '#ffffff' }} // Background color of the tab bar
       >
