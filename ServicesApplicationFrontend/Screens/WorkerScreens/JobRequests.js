@@ -21,6 +21,16 @@ const JobRequests = ({ navigation }) => {
     getJobs();  
   }
 
+  const checkBan = async () => {
+    let userRef = doc(FIRESTORE_DB,'Users',AUTH.currentUser.uid)
+    getDoc(userRef)
+      .then(doc=>{
+        if(doc.data().ban){
+          navigation.replace("BanScreen");
+        }
+      })
+  }
+
   const getJobs = async () => {
     setLoading(true);
     const q = query(collection(FIRESTORE_DB, 'ServiceRequest'), where("ServiceWanted", '==', occupation || occ));
@@ -45,6 +55,7 @@ const JobRequests = ({ navigation }) => {
 
   useEffect(() => {
     getSpecificUserObject();
+    checkBan();
   }, []);
 
   const onAcceptJob = async (jobObject) => {
@@ -55,6 +66,7 @@ const JobRequests = ({ navigation }) => {
     let DateObject = new Date();
     let dateAccepted = DateObject.toISOString();
     let uid = AUTH.currentUser.uid;
+    checkBan();
     setDoc(ServiceRequestRef, { ...jobObject, dateAccepted, acceptedBy: uid }, { merge: true })
       .then(async () => {
         writeWorkerJobState(jobObject);

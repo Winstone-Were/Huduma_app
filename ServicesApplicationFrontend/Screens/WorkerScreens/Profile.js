@@ -135,7 +135,8 @@ export default function Profile({ navigation }) {
       const UserObject = await AsyncStorage.getItem('user');
       const user = JSON.parse(UserObject);
       let uid = user.user.uid;
-      setDoc(doc(FIRESTORE_DB, 'Users', uid), { name, phoneNumber, date, occupation }, { merge: true });
+      let photoURL = await getPhotoURL();
+      setDoc(doc(FIRESTORE_DB, 'Users', uid), { name, phoneNumber, date, occupation, photoURL }, { merge: true });
     } catch (err) {
       console.error(err)
     }
@@ -287,7 +288,7 @@ export default function Profile({ navigation }) {
                       <ActivityIndicator animating />
                     </>) :
                       (<>
-                        <Button onPress={() => updateUserProfile()} mode='elevated'> BUILD PROFILE </Button>
+                        <Button onPress={() => navigation.push('WorkerBuildProfileScreen')} mode='elevated'> BUILD PROFILE </Button>
                       </>)}
                   </KeyboardAvoidingView>
                 </ScrollView>
@@ -298,7 +299,7 @@ export default function Profile({ navigation }) {
                   <Text style={styles.Information}>
                     Seems you dont have a built profile
                   </Text>
-                  <TouchableOpacity onPress={() => setBuildProfile(true)}>
+                  <TouchableOpacity onPress={()=>navigation.push('WorkerBuildProfileScreen')}>
                     <Text style={styles.textLink}>
                       Build it Now
                     </Text>

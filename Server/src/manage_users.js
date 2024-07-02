@@ -19,7 +19,7 @@ async function getUser(uid) {
     const userRecord = await getAuth().getUser(uid);
     const userDoc = await db.collection('Users').doc(uid).get();
     console.log(userDoc)
-    return(userDoc.data());
+    return (userDoc.data());
     console.log(userRecord);
     if (!userDoc.exists) {
       console.log('No such document in Firestore!');
@@ -87,7 +87,7 @@ async function updateUser(uid, data) {
 // Function to delete a user
 async function deleteUser(uid) {
   try {
-    await getAuth().deleteUser(uid);  
+    await getAuth().deleteUser(uid);
     await db.collection('Users').doc(uid).delete();
     console.log('Successfully deleted user');
   } catch (error) {
@@ -120,7 +120,7 @@ async function countUsers() {
   try {
     const listUsersResult = await getAuth().listUsers(1000);
     const totalUsers = listUsersResult.users.length;
-    return(totalUsers);
+    return (totalUsers);
 
   } catch (error) {
     console.error('Error counting users:', error);
@@ -134,8 +134,25 @@ async function getWorkers() {
     snapshot.forEach(doc => {
       const data = doc.data();
       let uid = doc.id;
+      if(data.approved){
+        workers.push({ ...data, uid });
+      }
+    });
+    return { workers, count: workers.length };
+  } catch (error) {
+    console.error('Error fetching workers:', error);
+    throw new Error('Unable to fetch workers');
+  }
+}
+async function getUnapprovedWorkers() {
+  try {
+    const snapshot = await db.collection('Users').where('approved', '==', false).get();
+    let workers = [];
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      let uid = doc.id;
       console.log(data);
-      workers.push({...data, uid});
+      workers.push({ ...data, uid });
     });
     return { workers, count: workers.length };
   } catch (error) {
@@ -184,40 +201,84 @@ async function getAcceptedRequests() {
 }
 
 async function getJobHistory() {
-  try{
+  try {
     const snapshot = await db.collection('JobsHistory').get();
     let doneJobs = [];
-    snapshot.forEach((doc)=>{
-      doneJobs.push({id: doc.id, data: doc.data()});
+    snapshot.forEach((doc) => {
+      doneJobs.push({ id: doc.id, data: doc.data() });
     });
-    return(doneJobs)
+    return (doneJobs)
     console.log(doneJobs);
-  }catch(err){
+  } catch (err) {
     console.error(err);
   }
 }
 
 async function getComplaints() {
-  try{
+  try {
     const snapshot = await db.collection('Complaints').get();
     let Complaints = [];
-    snapshot.forEach((doc)=>{
-      Complaints.push({id:doc.id, data: doc.data()});
+    snapshot.forEach((doc) => {
+      Complaints.push({ id: doc.id, data: doc.data() });
     })
-    return Complaints;  
-  }catch(err){
+    return Complaints;
+  } catch (err) {
     console.error(err);
   }
 }
 
 async function clearComplaint(id) {
-  try{
+  try {
     const deleteRef = db.collection('Complaints').doc(id).delete();
     return "Success"
+  } catch (err) {
+    return err;
+  }
+}
+
+async function approveWorker(uid) {
+  try{
+    const workerRef = db.collection('Users').doc(uid);
+    await workerRef.update({approved:true});
+    return "success"; 
+  }catch(err){
+    return err;
+  }
+}
+
+async function banUser(uid) {
+  try{
+    const workerRef = db.collection('Users').doc(uid);
+    await workerRef.update({ban:true});
+    return "success"; 
+  }catch(err){
+    return err;
+  }
+}
+
+async function unBanUser(uid) {
+  try{
+    const workerRef = db.collection('Users').doc(uid);
+    await workerRef.update({ban:false});
+    return "success"; 
   }catch(err){
     return err;
   }
 }
 
 
-module.exports = {getUser, listAllUsers, createUser, getClients,countUsers, getAcceptedRequests,getWorkers, deleteUser, getJobHistory, getComplaints};
+module.exports = {
+  getUser,
+  listAllUsers,
+  createUser,
+  countUsers,
+  getAcceptedRequests,
+  getWorkers,
+  deleteUser,
+  getJobHistory,
+  getComplaints,
+  approveWorker,
+  banUser,
+  getUnapprovedWorkers,
+  unBanUser
+};

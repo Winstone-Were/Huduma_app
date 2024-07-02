@@ -24,10 +24,9 @@ import WorkerChat from "../Screens/WorkerScreens/WorkerChat";
 import CustomerHistory from "../Screens/CustomerScreens/CustomerHistory";
 import WorkerHistory from "../Screens/WorkerScreens/WorkerHistory";
 import ClientComplain from "../Screens/CustomerScreens/ClientComplain";
-import * as Notifications from 'expo-notifications';
-import expoPushTokenApi from "../notifications/expoPushToken";
-import { getAuth } from 'firebase/auth';
-import { useRef, useEffect } from "react";
+import BanScreen from "../Screens/SettingScreens/BanScreen";
+import NotApprovedScreen from "../Screens/SettingScreens/NotApprovedScreen";
+import WorkerBuildProfile from "../Screens/WorkerScreens/WorkerBuildProfile";
 
 const Stack = createNativeStackNavigator();
 const noHeader = { headerShown: false };
@@ -72,60 +71,9 @@ const theme = {
     },
 
 };
-async function registerForPushNotificationsAsync() {
-    let token;
-  
-    const { status: existingStatus } = await Notifications.getPermissionsAsync();
-    let finalStatus = existingStatus;
-  
-    if (existingStatus !== 'granted') {
-      const { status } = await Notifications.requestPermissionsAsync();
-      finalStatus = status;
-    }
-    if (finalStatus !== 'granted') {
-      alert('Failed to get push token for push notification!');
-      return;
-    }
-    token = (await Notifications.getExpoPushTokenAsync()).data;
-    console.log(token);
-  
-    return token;
-  }
+
 const AuthStack = () => {
-    const auth = getAuth();
-    const responseListener = useRef(); // Firebase Auth instance
 
-    useEffect(() => {
-        const registerPushToken = async () => {
-            try {
-                const token = await registerForPushNotificationsAsync();
-                const user = auth.currentUser;
-                if (user && token) {
-                    await expoPushTokenApi.register(token, user.uid);
-                }
-            } catch (err) {
-                console.error('Failed to register for push notifications:', err);
-            }
-        };
-
-        registerPushToken();
-
-        //handler
-        registerForPushNotificationsAsync()
-            .then(token => expoPushTokenApi.register(token));
-
-        // Works when app is foregrounded, backgrounded, or killed
-        responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-            console.log('--- notification tapped ---');
-            console.log(response);
-            console.log('------');
-        });
-
-        // Unsubscribe from events
-        return () => {
-            Notifications.removeNotificationSubscription(responseListener.current);
-        };
-    }, []);
     return (
 
         <PaperProvider theme={DefaultTheme}>
@@ -222,6 +170,9 @@ const AuthStack = () => {
                         options={noHeader}
                     />
                     <Stack.Screen name="AskServiceScreen" component={AskServiceScreen} options={noHeader} />
+                    <Stack.Screen name="BanScreen" component={BanScreen} options={noHeader} />
+                    <Stack.Screen name="NotApprovedScreen" component={NotApprovedScreen} options={noHeader} />
+                    <Stack.Screen name="WorkerBuildProfileScreen" component={WorkerBuildProfile} options={noHeader} />
                 </Stack.Navigator>
             </NavigationContainer>
         </PaperProvider>
