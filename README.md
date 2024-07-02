@@ -157,9 +157,9 @@ huduma
 ```
 
 ### Key Files
-* <span style="blue">ServicesApplicationFrontend/Navigation/AuthStack.js</span>:   #Main entry point for the mobile application.
-* admin/src/App.jsx: Main entry point for the admin panel.
-* Server/src/index.js: Firebase cloud functions for backend logic.
+* <mark>ServicesApplicationFrontend/Navigation/AuthStack.js</mark>:   Main entry point for the mobile application.
+* <mark>admin/src/App.jsx</mark>: Main entry point for the admin panel.
+* <mark>Server/src/index.js</mark>: Firebase cloud functions for backend logic.
 
 ## Known Issues
 
