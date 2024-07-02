@@ -102,17 +102,17 @@ Managing Users (Admin Panel):
 ## Project Structure
 
 ```
-Huduma_app
+huduma
 ├─ .git
+
 ├─ .gitignore
-├─ .idea
 ├─ .vscode
-│ 
+├─ AdminFrontend
 ├─ package-lock.json
 ├─ README.md
 ├─ Server
-│  ├─ .gitignore
 │  ├─ middleware
+│  │  └─ index.js
 │  ├─ package-lock.json
 │  ├─ package.json
 │  └─ src
@@ -120,11 +120,16 @@ Huduma_app
 └─ ServicesApplicationFrontend
    ├─ .expo
    │  ├─ devices.json
+   │  └─ README.md
    ├─ .gitignore
    ├─ Actions
+   │  ├─ auth.js
+   │  └─ type.js
    ├─ App.js
    ├─ app.json
    ├─ assets
+   │  ├─ adaptive-icon.png
+   │  ├─ animations
    ├─ components
    │  └─ CustomHeader.js
    ├─ eas.json
@@ -142,12 +147,15 @@ Huduma_app
    │  ├─ CustomerScreens
    │  │  ├─ Activity.js
    │  │  ├─ AskServiceScreen.js
+   │  ├─ ForgotPassword.js
    │  ├─ Home.js
    │  ├─ Login.js
    │  ├─ NotificationScreen.js
    │  ├─ Register.js
    │  ├─ SettingScreens
    │  │  ├─ ChangeEmail.js
+   │  │  ├─ ChangePassword.js
+   │  │  └─ Settings.js
    │  ├─ SplashScreen.js
    │  ├─ VerifyPhone.js
    │  └─ WorkerScreens
@@ -178,7 +186,9 @@ Firebase authentication may require additional configuration for certain provide
 * [Firebase Documentation](https://firebase.google.com/docs)
 * [React Documentation](https://legacy.reactjs.org/docs/getting-started.html)
 * [React Native Paper](https://reactnativepaper.com/)
+* [React Expo Documentation](https://docs.expo.dev/)
 
 ## Contact Us
 
 For questions or feedback, please open an issue on the GitHub repository or contact us at [HudumaApp@gmail.com].
+
