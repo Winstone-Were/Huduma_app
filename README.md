@@ -87,101 +87,48 @@ Managing Users (Admin Panel):
 ## Project Structure
 ```
 huduma
-├─ .git
-│  ├─ description
-│  ├─ FETCH_HEAD
-│  ├─ HEAD
-│  ├─ hooks
-│  ├─ index
-│  ├─ info
-│  │  └─ exclude
-│  ├─ logs
-│  │  ├─ HEAD
-│  │  └─ refs
-│  │     ├─ heads
-│  │     │  └─ main
-│  │     └─ remotes
-|  |     └─ tags
-│  ├─ objects 
-│  ├─ packed-refs
-├─ .gitignore
-├─ .vscode
-│  └─ settings.json
+
 ├─ AdminFrontend
+│  ├─ index.html
+│  ├─ package-lock.json
+│  ├─ package.json
 │  ├─ public
-│  │  |_index.html
-|  |  
-│  ├─ README.md
+|  |
 │  └─ src
 │     ├─ App.js
 │     ├─ App.jsx
-│     ├─ assets
 │     ├─ components
-│     ├─ index.css
 │     ├─ index.js
-│     ├─ main.jsx
 │     └─ tabs
-│        ├─ Complaints.js
-│        ├─ Dashboard
-│        ├─ JobsHistory.js
-│        ├─ Settings.js
-│        └─ Users
-│           ├─ Users.js
-│           └─ Workers.js
-├─ package-lock.json
-├─ README.md
+|
+|
 ├─ Server
-│  ├─ middleware
-│  │  └─ index.js
 │  ├─ package-lock.json
 │  ├─ package.json
 │  └─ src
 │     ├─ index.js
 │     └─ manage_users.js
+|
 └─ ServicesApplicationFrontend
    ├─ .expo
    │  ├─ devices.json
-   │  └─ README.md
-   ├─ .gitignore
+   |
    ├─ Actions
-   │  ├─ auth.js
-   │  └─ type.js
-   ├─ App.js
-   ├─ app.json
    ├─ assets
-   │  ├─ adaptive-icon.png
-   │  ├─ animations
    ├─ components
-   │  └─ CustomHeader.js
-   ├─ eas.json
    ├─ firebaseConfig.js
    ├─ Index.js
    ├─ Navigation
    │  └─ AuthStack.js
    ├─ notifications
-   ├─ package-lock.json
-   ├─ package.json
-   ├─ Reducers
    │  └─ auth.js
    ├─ Screens
-   │  ├─ BuildProfile.js
    │  ├─ CustomerScreens
-   │  │  ├─ Activity.js
-   │  │  ├─ AskServiceScreen.js
-   │  ├─ ForgotPassword.js
-   │  ├─ Home.js
-   │  ├─ Login.js
-   │  ├─ NotificationScreen.js
-   │  ├─ Register.js
    │  ├─ SettingScreens
-   │  │  ├─ ChangeEmail.js
-   │  │  ├─ ChangePassword.js
    │  │  └─ Settings.js
    │  ├─ SplashScreen.js
-   │  ├─ VerifyPhone.js
    │  └─ WorkerScreens
    │     ├─ Activity.js
-   │     ├─ JobRequests.js
    ├─ Services
    │  ├─ authService.js
    │  └─ stateService.js
@@ -191,7 +138,7 @@ huduma
 ```
 
 ### Key Files
-* ServicesApplicationFrontend/Navigation/AuthStack.js:   #Main entry point for the mobile application.
+* <mark>ServicesApplicationFrontend/Navigation/AuthStack.js</mark>:   #Main entry point for the mobile application.
 * admin/src/App.jsx: Main entry point for the admin panel.
 * Server/src/index.js: Firebase cloud functions for backend logic.
 
@@ -207,4 +154,5 @@ Firebase authentication may require additional configuration for certain provide
 
 ## Contact Us
 For questions or feedback, please open an issue on the GitHub repository or contact us at [HudumaApp@gmail.com].
+
 
