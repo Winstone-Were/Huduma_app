@@ -1,0 +1,13 @@
+.image {
+    border-radius: 100%;
+    height: 100px;
+    width: 100px;
+}
+
+.row {
+    display: flex;
+}
+
+.user-typography {
+    margin-left: 10px;
+}

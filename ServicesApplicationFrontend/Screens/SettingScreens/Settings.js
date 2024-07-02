@@ -13,7 +13,7 @@ const Settings = ({ navigation }) => {
   const handleLogOut = async ()=>{
     AsyncStorage.clear();
     Alert.alert("You've been logged out");
-    navigation.push('LoginScreen');
+    navigation.replace('LoginScreen');
   }
 
   return (

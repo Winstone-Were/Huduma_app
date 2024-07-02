@@ -105,6 +105,7 @@ const JobRequests = ({ navigation }) => {
               </>)}
           </>)
       }
+      <Button onPress={()=> navigation.push('WorkerHistoryScreen')}> View History </Button>
     </View>
   )
 }

@@ -3,8 +3,18 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 require("dotenv").config();
 
-const {collection, getDocs, count} = require('firebase/firestore');
-const {getUser, listAllUsers,createUser,countUsers,getAcceptedRequests,getWorkers }= require("./manage_users")
+const { collection, getDocs, count } = require('firebase/firestore');
+const { getUser, 
+    listAllUsers
+    , createUser
+    , countUsers,
+     getAcceptedRequests, 
+     getWorkers
+     ,deleteUser, 
+     getJobHistory,
+    getComplaints } = require("./manage_users")
+
+
 
 const verifyToken = require("../middleware/index");
 const cors = require("cors")
@@ -69,76 +79,6 @@ app.post('/api/login', (req, res) => {
         });
 });
 
-app.get('/admin/countusers', (req,res)=>{
-    countUsers()
-    .then((count) => {
-        res.json( count);
-        })
-    .catch((error) => {
-      console.error(error)
-            })
-  });
-
-
-  app.get('/admin/getworkers', async (req, res) => {
-    try {
-      const { workers, count } = await getWorkers();
-      res.json({ workers, count });
-    } catch (error) {
-      res.status(500).json({ error: 'Unable to fetch workers' });
-    }
-  });
-app.get('/admin/user/:uid', async (req, res) => {
-    const { uid } = req.params;
-    console.log(uid);
-    try {
-      const userData = await getUser(uid);
-      if (userData) {
-        res.json(userData);
-      } else {
-        res.status(404).json({ error: 'User not found' });
-      }
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Internal Server Error' });
-    }
-  });
-
-  app.get('/admin/getworkers', async (req, res) => {
-    try {
-      const workers = await getWorkers();
-      res.json(workers);
-    } catch (error) {
-      res.status(500).json({ error: 'Unable to fetch workers' });
-    }
-  });
-
-  app.get('/admin/acceptedRequests', async (req, res) => {
-    try {
-      const { acceptedRequests, totalAcceptedRequests } = await getAcceptedRequests();
-      res.json({ acceptedRequests, totalAcceptedRequests });
-    } catch (error) {
-      console.error('Error handling request:', error);
-      res.status(500).json({ error: 'Failed to retrieve accepted requests' });
-    }
-  });
-  
-  app.post('/admin/createuser', async (req, res) => {
-    const userData = req.body;
-  
-    try {
-      const result = await createUser(userData);
-      if (result.success) {
-        res.status(201).json({ message: 'User created successfully', uid: result.uid });
-      } else {
-        res.status(500).json({ error: result.error });
-      }
-    } catch (error) {
-      console.error('Error creating user:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
-    }
-  });
-
 app.post('/api/resetpassword', (req, res) => {
     const { email } = req.body;
     if (!email) {
@@ -181,25 +121,17 @@ app.post('/api/buildprofile', (req, res) => {
 
 });
 
-app.post('/api/linkphone', (req, res) => {
-    let phoneNumber = req.body.phoneNumber;
-});
-
-app.get('/api/getuser/:id',(req,res)=>{
-    res.send(req.params['id'])
-})
-
 app.get('/api/getusers', (req, res) => {
     let users = [];
     getDocs(collection(FIRESTORE_DB, 'Users'))
-        .then((snapshot)=>{
-            snapshot.forEach((doc)=>{
+        .then((snapshot) => {
+            snapshot.forEach((doc) => {
                 let uid = doc.id
-                users.push({uid , ...doc.data()});
-                console.log(doc.id,'=>',doc.data());
+                users.push({ uid, ...doc.data() });
+                console.log(doc.id, '=>', doc.data());
             })
             res.json(users);
-        }).catch(err=>{
+        }).catch(err => {
             console.error(err);
             res.send(err);
         })
@@ -263,5 +195,107 @@ app.post('/api/sendNotification', async (req, res) => {
     }
 });
 
+app.get('/admin/complaints',(req,res)=>{
+    getComplaints()
+        .then((resp)=>{
+            res.json(resp)
+        }).catch(err=>{
+            res.status(200).send(err);
+        })
+})
+
+app.get('/admin/jobhistory',(req,res)=>{
+    getJobHistory()
+        .then((resp)=>{
+            res.json(resp)
+        }).catch(err=> res.send)
+})
+
+app.get('/admin/countusers', (req, res) => {
+    countUsers()
+        .then((count) => {
+            res.json(count);
+        })
+        .catch((error) => {
+            console.error(error)
+        })
+});
+
+app.get('/admin/listallusers',(req,res)=>{
+    listAllUsers()
+        .then(result=>{
+            res.json(result);
+        }).catch(err=>{
+            res.status(400).send(err);
+        })
+})
+
+app.get('/admin/getworkers', async (req, res) => {
+    try {
+        const { workers, count } = await getWorkers();
+        res.json({ workers, count });
+    } catch (error) {
+        res.status(500).json({ error: 'Unable to fetch workers' });
+    }
+});
+app.get('/admin/user/:uid', async (req, res) => {
+    const { uid } = req.params;
+    console.log(uid);
+    try {
+        const userData = await getUser(uid);
+        if (userData) {
+            res.json(userData);
+        } else {
+            res.status(404).json({ error: 'User not found' });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+app.get('/admin/getworkers', async (req, res) => {
+    try {
+        const workers = await getWorkers();
+        res.json(workers);
+    } catch (error) {
+        res.status(500).json({ error: 'Unable to fetch workers' });
+    }
+});
+
+app.get('/admin/acceptedRequests', async (req, res) => {
+    try {
+        const { acceptedRequests, totalAcceptedRequests } = await getAcceptedRequests();
+        res.json({ acceptedRequests, totalAcceptedRequests });
+    } catch (error) {
+        console.error('Error handling request:', error);
+        res.status(500).json({ error: 'Failed to retrieve accepted requests' });
+    }
+});
+
+app.post('/admin/createuser', async (req, res) => {
+    const userData = req.body;
+
+    try {
+        const result = await createUser(userData);
+        if (result.success) {
+            res.status(201).json({ message: 'User created successfully', uid: result.uid });
+        } else {
+            res.status(500).json({ error: result.error });
+        }
+    } catch (error) {
+        console.error('Error creating user:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+
+app.get('/admin/deleteuser/:uid',(req,res)=>{
+    let {uid} =  req.params;
+    deleteUser(uid)
+        .then(()=>{
+            res.status(200).send('User Deleted')
+        }).catch(err=> res.status(400).send(err));
+})
 
 app.listen(port, () => console.log(`Server listening on port ${port}!`));

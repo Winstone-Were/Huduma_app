@@ -21,6 +21,9 @@ import Profile from "../Screens/WorkerScreens/Profile";
 import AskServiceScreen from "../Screens/CustomerScreens/AskServiceScreen";
 import CustomerChat from "../Screens/CustomerScreens/CustomerChat";
 import WorkerChat from "../Screens/WorkerScreens/WorkerChat";
+import CustomerHistory from "../Screens/CustomerScreens/CustomerHistory";
+import WorkerHistory from "../Screens/WorkerScreens/WorkerHistory";
+import ClientComplain from "../Screens/CustomerScreens/ClientComplain";
 
 const Stack = createNativeStackNavigator();
 const noHeader = { headerShown: false };
@@ -62,8 +65,8 @@ const theme = {
         shadow: "#E6E6FA",
         scrim: "#D8BFD8",
         backdrop: "#808080",
-      },
-    
+    },
+
 };
 const AuthStack = () => {
     return (
@@ -144,6 +147,21 @@ const AuthStack = () => {
                     <Stack.Screen
                         name="WorkerChatScreen"
                         component={WorkerChat}
+                        options={noHeader}
+                    />
+                    <Stack.Screen
+                        name="CustomerHistoryScreen"
+                        component={CustomerHistory}
+                        options={noHeader}
+                    />
+                    <Stack.Screen
+                        name="WorkerHistoryScreen"
+                        component={WorkerHistory}
+                        options={noHeader}
+                    />
+                    <Stack.Screen
+                        name="ClientComplainScreen"
+                        component={ClientComplain}
                         options={noHeader}
                     />
                     <Stack.Screen name="AskServiceScreen" component={AskServiceScreen} options={noHeader} />

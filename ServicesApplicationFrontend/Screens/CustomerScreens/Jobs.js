@@ -77,6 +77,7 @@ const JobScreen = ({ navigation }) => {
             </Portal>
           </ScrollView>
         </>)}
+        <Button mode='outlined' onPress={()=>{ navigation.push('CustomerHistoryScreen')}}> View History </Button>
     </SafeAreaView>
   );
 };
