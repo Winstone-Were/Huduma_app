@@ -36,6 +36,7 @@ import Settings from './tabs/Settings';
 import UserDetails from '../src/components/Userdetails';
 import JobsHistory from './tabs/JobsHistory';
 import Complaints from './tabs/Complaints';
+import ViewWorker from './tabs/Users/ViewWorker'
 
 function Copyright(props) {
   return (
@@ -213,11 +214,12 @@ function App() {
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/users" element={<Users />} />
                 <Route path="/users/:uid" element={<UserDetails />} />
+                <Route path="/viewworker/:uid" element={<ViewWorker />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path='/workers' element={<Workers/>}/>
                 <Route path='/jobshistory' element={<JobsHistory/>}/>
                 <Route path='/complaints' element={<Complaints/>}/>
-              </Routes>
+              </Routes> 
               <Copyright sx={{ pt: 4 }} />
             </Container>
           </Box>

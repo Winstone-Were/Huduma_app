@@ -4,15 +4,19 @@ const bodyParser = require('body-parser');
 require("dotenv").config();
 
 const { collection, getDocs, count } = require('firebase/firestore');
-const { getUser, 
+const { getUser,
     listAllUsers
     , createUser
     , countUsers,
-     getAcceptedRequests, 
-     getWorkers
-     ,deleteUser, 
-     getJobHistory,
-    getComplaints } = require("./manage_users")
+    getAcceptedRequests,
+    getWorkers
+    , deleteUser,
+    getJobHistory,
+    getComplaints,
+    getUnapprovedWorkers,
+    approveWorker,
+    banUser, 
+    unBanUser} = require("./manage_users")
 
 
 
@@ -195,24 +199,66 @@ app.post('/api/sendNotification', async (req, res) => {
     }
 });
 
-app.get('/admin/complaints',(req,res)=>{
-    getComplaints()
-        .then((resp)=>{
-            res.json(resp)
+app.get('/admin/unbanuser/:id', (req,res)=>{
+    let { id } = req.params;
+    unBanUser(id)
+        .then(()=>{
+            res.status(200).send('success');
         }).catch(err=>{
+            console.error(err);
+            res.status(400).send(err);
+        })
+})
+
+
+app.get('/admin/banuser/:id', (req,res)=>{
+    let { id } = req.params;
+    banUser(id)
+        .then(()=>{
+            res.status(200).send('success');
+        }).catch(err=>{
+            console.error(err);
+            res.status(400).send(err);
+        })
+})
+
+app.get('/admin/approveworker/:id', (req, res) => {
+    let { id } = req.params;
+    approveWorker(id)
+        .then(() => {
+            res.status(200).send("success");
+        }).catch(err => {
+            console.error(err);
+        })
+})
+
+app.get('/admin/awaitingapproval', (req, res) => {
+    getUnapprovedWorkers()
+        .then(data => {
+            res.status(200).json(data);
+        }).catch(err => {
+            res.status(400).send(err);
+        })
+});
+
+app.get('/admin/complaints', (req, res) => {
+    getComplaints()
+        .then((resp) => {
+            res.json(resp)
+        }).catch(err => {
             res.status(200).send(err);
         })
 });
 
-app.get('/admin/clearcomplaint/:id', (req,res)=>{
-    
+app.get('/admin/clearcomplaint/:id', (req, res) => {
+
 })
 
-app.get('/admin/jobhistory',(req,res)=>{
+app.get('/admin/jobhistory', (req, res) => {
     getJobHistory()
-        .then((resp)=>{
+        .then((resp) => {
             res.json(resp)
-        }).catch(err=> res.send)
+        }).catch(err => res.send)
 })
 
 app.get('/admin/countusers', (req, res) => {
@@ -225,11 +271,11 @@ app.get('/admin/countusers', (req, res) => {
         })
 });
 
-app.get('/admin/listallusers',(req,res)=>{
+app.get('/admin/listallusers', (req, res) => {
     listAllUsers()
-        .then(result=>{
+        .then(result => {
             res.json(result);
-        }).catch(err=>{
+        }).catch(err => {
             res.status(400).send(err);
         })
 })
@@ -255,15 +301,6 @@ app.get('/admin/user/:uid', async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal Server Error' });
-    }
-});
-
-app.get('/admin/getworkers', async (req, res) => {
-    try {
-        const workers = await getWorkers();
-        res.json(workers);
-    } catch (error) {
-        res.status(500).json({ error: 'Unable to fetch workers' });
     }
 });
 
@@ -294,12 +331,12 @@ app.post('/admin/createuser', async (req, res) => {
 });
 
 
-app.get('/admin/deleteuser/:uid',(req,res)=>{
-    let {uid} =  req.params;
+app.get('/admin/deleteuser/:uid', (req, res) => {
+    let { uid } = req.params;
     deleteUser(uid)
-        .then(()=>{
+        .then(() => {
             res.status(200).send('User Deleted')
-        }).catch(err=> res.status(400).send(err));
+        }).catch(err => res.status(400).send(err));
 })
 
 app.listen(port, () => console.log(`Server listening on port ${port}!`));

@@ -6,7 +6,7 @@ import { Text, TextInput, Button, ActivityIndicator } from 'react-native-paper';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as LocalAuthentication from 'expo-local-authentication';
-import FirebaseConfig from '../firebaseConfig';
+import FirebaseConfig, { AUTH } from '../firebaseConfig';
 import { signInWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { addDoc, collection, setDoc, doc, getDoc, getDocs } from 'firebase/firestore'
 import { FIRESTORE_DB } from '../firebaseConfig';
@@ -38,8 +38,17 @@ export default function Login({ navigation }) {
                           writeToCustomerState(data.data())
                           navigation.replace('CustomerHomepage')
                         } else if (user_role == 'worker') {
-                          writeToWorkerState(data.data());
-                          navigation.replace('WorkerHomepage')
+                          console.log(data.data())
+                          if(!data.data().approved && AUTH.currentUser.displayName){
+                            navigation.push("NotApprovedScreen");
+                          }else{
+                            if(!data.data().ban){
+                              writeToWorkerState(data.data());
+                              navigation.push("WorkerHomepage");
+                            }else{
+                              navigation.push("BanScreen");
+                            }
+                          }
                         }
                       })
                       .catch(err => {
@@ -87,8 +96,16 @@ export default function Login({ navigation }) {
               writeToCustomerState(data.data());
               navigation.replace('CustomerHomepage')
             } else if (user_role == 'worker') {
-              writeToWorkerState(data.data())
-              navigation.replace('WorkerHomepage')
+              if(!data.data().approved && AUTH.currentUser.displayName){
+                navigation.push("NotApprovedScreen");
+              }else{
+                if(!data.data().ban){
+                  writeToWorkerState(data.data());
+                  navigation.push("WorkerHomepage");
+                }else{
+                  navigation.push("BanScreen");
+                }
+              }
             }
           })
           .catch(err => {

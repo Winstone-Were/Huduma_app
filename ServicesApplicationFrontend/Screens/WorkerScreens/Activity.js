@@ -15,7 +15,18 @@ const Activity = ({ navigation }) => {
   useEffect(() => {
     getActivity();
     getLocation();
+    checkBan();
   }, []);
+
+  const checkBan = async () => {
+    let userRef = doc(FIRESTORE_DB,'Users',AUTH.currentUser.uid)
+    getDoc(userRef)
+      .then(doc=>{
+        if(doc.data().ban){
+          navigation.replace("BanScreen");
+        }
+      })
+  }
 
   const getLocation = async () => {
     let location = await Location.getCurrentPositionAsync({});

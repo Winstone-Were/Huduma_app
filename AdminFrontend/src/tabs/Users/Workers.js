@@ -4,44 +4,58 @@ import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead
 import { Link } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete';
 import BlockIcon from '@mui/icons-material/Block';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 
 function WorkersList() {
   const [workers, setWorkers] = useState([]);
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [unapproved, setUnapproved] = useState([]);
+  const [unapprovedCount, setUnapprovedCount] = useState(0);
 
   useEffect(() => {
     fetch('http://localhost:3000/admin/getworkers', { method: 'GET' })
       .then(response => response.json())
       .then(data => {
         setWorkers(data.workers);
-        console.log(workers);
         setCount(data.count);
+        setLoading(false);
+        fetch('http://localhost:3000/admin/awaitingapproval', { method: 'GET' })
+          .then(response => response.json())
+          .then(Data => {
+            console.log(Data);
+            setUnapproved(Data.workers);
+            setUnapprovedCount(Data.count);
+            setLoading(false);
+          })
+          .catch(error => {
+            console.error('Error fetching workers:', error);
+          });
+      })
+      .catch(error => {
+        console.error('Error fetching workers:', error);
+        setLoading(false);
+      });
+
+
+  }, []);
+
+  const handleBanUser = async () => {
+
+  }
+
+  const handleDeleteUser = async (uid) => {
+    setLoading(true);
+    fetch(`http://localhost:3000/admin/deleteuser/${uid}`, { method: 'GET' })
+      .then(resp => {
+        alert('Worker Deleted');
         setLoading(false);
       })
       .catch(error => {
         console.error('Error fetching workers:', error);
         setLoading(false);
       });
-  }, []);
-
-  const handleBanUser = async () => {
-
-  } 
-
-  const handleDeleteUser = async (uid) => {
-    setLoading(true);
-    fetch(`http://localhost:3000/admin/deleteuser/${uid}`, { method: 'GET' })
-    .then(resp=> 
-      {
-        alert('Worker Deleted');
-        setLoading(false);
-      })
-    .catch(error => {
-      console.error('Error fetching workers:', error);
-      setLoading(false);
-    });
-  } 
+  }
 
   if (loading) {
     return <CircularProgress />;
@@ -85,18 +99,77 @@ function WorkersList() {
                       </Typography>
                     </TableCell>
                     <TableCell>
-                        <Typography>
-                          {user.name}
-                        </Typography>
+                      <Typography>
+                        {user.name}
+                      </Typography>
                     </TableCell>
                     <TableCell>
-                        <Typography>
-                          {user.occupation}
-                        </Typography>
+                      <Typography>
+                        {user.occupation}
+                      </Typography>
                     </TableCell>
                     <TableCell>
                       <IconButton onClick={() => handleBanUser(user.uid)} aria-label="ban">
                         <BlockIcon />
+                      </IconButton>
+                      <IconButton onClick={() => handleDeleteUser(user.uid)} aria-label="delete">
+                        <DeleteIcon />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </React.Fragment>)}
+      </TableContainer>
+      <Box>
+
+      </Box>
+      <Typography variant="h4" gutterBottom>
+        Awaiting Approval
+      </Typography>
+      <TableContainer component={Paper}>
+        {loading ?
+          (<React.Fragment>
+            <CircularProgress />
+          </React.Fragment>) :
+          (<React.Fragment>
+            <Table sx={{ minWidth: 650 }} aria-label="users table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>User ID</TableCell>
+                  <TableCell>Phone Number</TableCell>
+                  <TableCell> Name </TableCell>
+                  <TableCell> Occupation </TableCell>
+                  <TableCell>Actions</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {unapproved.map((user) => (
+                  <TableRow key={user.uid}>
+                    <TableCell>
+                      <Link to={`/viewworker/${user.uid}`}>
+                        {user.uid}
+                      </Link>
+                    </TableCell>
+                    <TableCell>
+                      <Typography>
+                        {user.phoneNumber}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography>
+                        {user.name}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography>
+                        {user.occupation}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <IconButton onClick={() => handleBanUser(user.uid)} aria-label="ban">
+                        <ThumbUpIcon/>
                       </IconButton>
                       <IconButton onClick={() => handleDeleteUser(user.uid)} aria-label="delete">
                         <DeleteIcon />

@@ -6,6 +6,8 @@ import JobRequestsScreen from './JobRequests';
 import ActivityScreen from './Activity';
 import ProfileScreen from './Profile';
 import CustomHeader from '../../components/CustomHeader'; 
+import { AUTH, FIRESTORE_DB } from '../../firebaseConfig';
+import { onSnapshot,doc, getDoc } from 'firebase/firestore';
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -13,33 +15,17 @@ const WorkerHomepage = ({ navigation }) => {
   const [username, setUsername] = useState('');
 
   useEffect(() => {
-    //fetchUsername();
+    checkBan();
   }, []);
-
-  const fetchUsername = async () => {
-    try {
-      const storedUsername = await AsyncStorage.getItem('username');
-      if (storedUsername) {
-        setUsername(storedUsername);
-      } else {
-        const response = await fetch('http://192.168.100.91:3000/api/profile', {
-          method: 'GET',
-          headers: {
-            
-          },
-        });
-        if (response.ok) {
-          const userData = await response.json();
-          setUsername(userData.username);
-        } else {
-          console.error('Failed to fetch username');
+  const checkBan = async () => {
+    let userRef = doc(FIRESTORE_DB,'Users',AUTH.currentUser.uid)
+    getDoc(userRef)
+      .then(doc=>{
+        if(doc.data().ban){
+          navigation.replace("BanScreen");
         }
-      }
-    } catch (error) {
-      console.error('Error fetching username:', error);
-    }
-  };
-
+      })
+  }
   return (
     <>
       <Appbar.Header mode='small' collapsable={true} style={{backgroundColor:'white'}}>

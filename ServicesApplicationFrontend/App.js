@@ -1,31 +1,52 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
 import Index from './Index';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { enGB, registerTranslation } from 'react-native-paper-dates'
+import { enGB, registerTranslation } from 'react-native-paper-dates';
+import * as Notifications from "expo-notifications";
 registerTranslation('en-GB', enGB);
+import { collection, addDoc, query, orderBy, onSnapshot } from 'firebase/firestore';
+import { View } from 'react-native';
+import { FIRESTORE_DB, AUTH } from "./firebaseConfig";
+import React, { useEffect, useState } from 'react';
+import { getChatPartyState } from './Services/stateService';
 
-Stack = createNativeStackNavigator();
-const noHeader = { headerShown: false };
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+});
 
-import Login from './Screens/Login';
-import Register from './Screens/Register';
-import BuildProfile from './Screens/BuildProfile';
-import Home from './Screens/Home';
+const generateNotification = async () => {
+  //show the notification to the user
+  Notifications.scheduleNotificationAsync({
+    //set the content of the notification
+    content: {
+      title: "Huduma App",
+      body: "You might have a new message",
+    },
+    trigger: null,
+  });
+};
 
 export default function App() {
+  useEffect(() => {
+    if (getChatPartyState() && AUTH.currentUser) {
+      let { sentBy, sentTo } = getChatPartyState();
+      if (sentBy == AUTH.currentUser.uid || sentTo == AUTH.currentUser.uid && sentTo != AUTH.currentUser.uid) {
+        let chatid = `${sentBy}::${sentTo}`;
+        console.log(chatid, AUTH.currentUser.uid)
+        const q = query(collection(FIRESTORE_DB, 'chats', chatid, 'messages'), orderBy('createdAt', "desc"));
+        onSnapshot(q, (snapshot) => {
+          generateNotification();
+        }
+        );
+      }
+    }
+  }, []);
   return (
-    <Index />
+    <View style={{flex:1}}>
+          <Index />
+    </View>
+
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
