@@ -203,6 +203,10 @@ app.get('/admin/complaints',(req,res)=>{
         }).catch(err=>{
             res.status(200).send(err);
         })
+});
+
+app.get('/admin/clearcomplaint/:id', (req,res)=>{
+    
 })
 
 app.get('/admin/jobhistory',(req,res)=>{

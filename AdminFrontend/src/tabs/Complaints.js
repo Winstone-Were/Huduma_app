@@ -20,6 +20,19 @@ export default function Complaints() {
             })
     }, [])
 
+    const clearComplaint = async (complaint_id) => {
+        fetch(`http://localhost:3000/admin/clearcomplaint/${complaint_id}`)
+            .then(()=>{
+                fetch('http://localhost:3000/admin/complaints')
+                .then(resp => resp.json())
+                .then(data => {
+                    setComplains(data);
+                    setLoading(false)
+                    console.log(data);
+                })
+            })
+    }
+
     return (
         <Box>
             <Typography variant="h5" gutterBottom>
@@ -37,6 +50,7 @@ export default function Complaints() {
                                     <TableCell>Requested By </TableCell>
                                     <TableCell>Worker </TableCell>
                                     <TableCell>Complaint </TableCell>
+                                    <TableCell> Clear Complaints </TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -57,6 +71,11 @@ export default function Complaints() {
                                                 {job.data.complaint}
                                             </Typography>
                                         </TableCell>
+                                        <TableCell>
+                                            <Button> 
+                                                Clear
+                                            </Button>
+                                        </TableCell> 
                                     </TableRow>
                                 ))}
                             </TableBody>

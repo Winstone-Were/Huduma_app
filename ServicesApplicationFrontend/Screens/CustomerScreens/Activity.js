@@ -137,9 +137,11 @@ const ActivityScreen = ({ navigation }) => {
     setFormLoading(true);
     let JobsHistoryRef = doc(FIRESTORE_DB, 'JobsHistory', collectionName);
     let DeleteRef = doc(FIRESTORE_DB, 'FinishedJobs', collectionName);
+    let DeleteRed = doc(FIRESTORE_DB, 'AcceptedRequests', collectionName);
     setDoc(JobsHistoryRef, {...jobObject, arrivaTime, satisfaction, payment}, {merge:true})
       .then(()=>{ 
         deleteDoc(DeleteRef);
+        deleteDoc(DeleteRed);
         navigation.replace('CustomerHomepage');
       }).catch(err=>{ 
         console.error(err);

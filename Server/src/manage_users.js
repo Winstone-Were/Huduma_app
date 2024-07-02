@@ -185,7 +185,7 @@ async function getComplaints() {
     snapshot.forEach((doc)=>{
       Complaints.push({id:doc.id, data: doc.data()});
     })
-    return Complaints
+    return Complaints;  
   }catch(err){
     console.error(err);
   }
@@ -199,6 +199,15 @@ async function getClients() {
   } catch (error) {
     console.error('Error fetching clients:', error);
     throw new Error('Unable to fetch clients');
+  }
+}
+
+async function clearComplaint(id) {
+  try{
+    const deleteRef = db.collection('Complaints').doc(id).delete();
+    return "Success"
+  }catch(err){
+    return err;
   }
 }
 
