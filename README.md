@@ -79,6 +79,8 @@ Managing Users (Admin Panel):
 ### Input/Output
 * Input: User details, job requests, worker profiles.
 * Output: Matched workers, job confirmations, user management data
+
+## Project Structure
 ```
 Huduma_app
 ├─ .git
