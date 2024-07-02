@@ -92,7 +92,6 @@ huduma
 │  ├─ FETCH_HEAD
 │  ├─ HEAD
 │  ├─ hooks
-│  │  ├─ applypatch-msg.sample
 │  ├─ index
 │  ├─ info
 │  │  └─ exclude
@@ -102,25 +101,18 @@ huduma
 │  │     ├─ heads
 │  │     │  └─ main
 │  │     └─ remotes
-│  ├─ objects
-│  │  
-│  │   
+|  |     └─ tags
+│  ├─ objects 
 │  ├─ packed-refs
-│  └─ refs
-│     ├─ heads
-│     │  └─ main
-│     └─ tags
 ├─ .gitignore
 ├─ .vscode
 │  └─ settings.json
 ├─ AdminFrontend
-│  ├─ .gitignore
 │  ├─ public
 │  │  |_index.html
 |  |  
 │  ├─ README.md
 │  └─ src
-│     ├─ App.css
 │     ├─ App.js
 │     ├─ App.jsx
 │     ├─ assets
@@ -139,7 +131,6 @@ huduma
 ├─ package-lock.json
 ├─ README.md
 ├─ Server
-│  ├─ .gitignore
 │  ├─ middleware
 │  │  └─ index.js
 │  ├─ package-lock.json
@@ -168,10 +159,6 @@ huduma
    ├─ Navigation
    │  └─ AuthStack.js
    ├─ notifications
-   │  ├─ expoPushToken.js
-   │  ├─ LocalNotifications.js
-   │  ├─ Messages.js
-   │  └─ pushNotification.js
    ├─ package-lock.json
    ├─ package.json
    ├─ Reducers
