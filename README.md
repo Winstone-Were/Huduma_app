@@ -8,12 +8,9 @@ Huduma is a centralized service provision mobile application that connects users
 
 ### Dependencies and Libraries
 
-* Node.js
-<https://nodejs.org/en/download/package-manager/current>
-* React Native
-<https://reactnative.dev/>
-* React
-<https://react.dev/>
+* [Node.js](https://nodejs.org/en/download/package-manager/current)
+* [React Native](https://reactnative.dev/)
+* [React](https://react.dev/)
 
 ## Installation steps
 
