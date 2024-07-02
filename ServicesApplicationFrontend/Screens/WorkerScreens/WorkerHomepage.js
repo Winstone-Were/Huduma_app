@@ -49,7 +49,7 @@ const WorkerHomepage = ({ navigation }) => {
       </Appbar.Header>
       <Tab.Navigator
         initialRouteName="Requests"
-        activeColor="#ED7D27"
+        activeColor="#6200ee" 
         inactiveColor="#888888"
         barStyle={{ backgroundColor: '#ffffff' }}
       >
