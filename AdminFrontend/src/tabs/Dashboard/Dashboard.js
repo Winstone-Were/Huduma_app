@@ -8,7 +8,7 @@ import PieChart from './PieChart';
 
 function Dashboard() {
   const [totalUsers, setTotalUsers] = useState(0);
-  const [customers, setCustomers] = useState(0);
+  const [clientCount, setClientCount] = useState(0);
   const [workerCount, setWorkerCount] = useState(0);
   const [jobsDone, setJobsDone] = useState(0);
   const [acceptedRequests, setAcceptedRequests] = useState(0);
@@ -44,8 +44,7 @@ function Dashboard() {
     fetch('http://localhost:3000/admin/getworkers', { method: 'GET' })
       .then(response => response.json())
       .then(data => {
-        setWorkerCount(data.count);
-        setCustomers(totalUsers-workerCount);
+        setWorkerCount(data.count); 
       })
       .catch(error => {
         console.error('Error fetching workers:', error);
@@ -57,7 +56,18 @@ function Dashboard() {
         setJobsDone(data.length);
         console.log(data);
       })
+
+    // Fetch clients data and count
+    fetch('http://localhost:3000/admin/getclients', { method: 'GET' })
+    .then(response => response.json())
+    .then(data => {
+      setClientCount(data.totalClients);
+    })
+    .catch(error => console.error('Error fetching clients:', error));
+
   }, []);
+  
+
 
   return (
     <Box p={3}>
@@ -66,7 +76,7 @@ function Dashboard() {
       </Typography>
       <Box display="flex" justifyContent="space-between" flexWrap="wrap">
         <SummaryCard title="Total Users" value={totalUsers} />
-        <SummaryCard title="Customers" value="3" /> {/* Placeholder for customers */}
+        <SummaryCard title="Clients" value={clientCount} /> {/* Placeholder for customers */}
         <SummaryCard title="Workers" value={workerCount} />
         <SummaryCard title="Jobs Done" value={jobsDone} />
       </Box>

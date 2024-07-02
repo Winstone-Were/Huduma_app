@@ -304,12 +304,13 @@ app.get('/admin/deleteuser/:uid',(req,res)=>{
 })
 app.get('/admin/getclients', async (req, res) => {
     try {
-        const { clients, count } = await getClients();
-        res.json({ clients, count });
+      const result = await getClients();
+      res.json(result);
     } catch (error) {
-        res.status(500).json({ error: 'Unable to fetch workers' });
+      console.error('Error fetching clients:', error);
+      res.status(500).json({ error: 'Error fetching clients' });
     }
-});
+  });
 
 
 app.listen(port, () => console.log(`Server listening on port ${port}!`));
