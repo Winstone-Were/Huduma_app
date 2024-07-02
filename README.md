@@ -163,8 +163,8 @@ huduma
 
 ## Known Issues
 
-Some UI components may not render correctly on older devices.<br>
-Firebase authentication may require additional configuration for certain providers.
+* Some UI components may not render correctly on older devices.<br>
+* Firebase authentication may require additional configuration for certain providers.
 
 ## Acknowledgent
 
