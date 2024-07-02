@@ -24,7 +24,7 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { AUTH, FIRESTORE_DB } from '../../firebaseConfig';
 import { setDoc, doc, getDoc } from 'firebase/firestore';
 
-import { writeAskForJobState, getAskForJobState, cleatAskForJobState } from '../../Services/stateService';
+import { writeAskForJobState, getAskForJobState, cleatAskForJobState, readCustomerState } from '../../Services/stateService';
 
 
 const TakePhotos = (props) => {
@@ -138,13 +138,14 @@ export default function AskServiceScreen({navigation}) {
         await uploadImage();
         console.log(description);
         let ServiceRequestRef = doc(FIRESTORE_DB, 'ServiceRequest', AUTH.currentUser.uid);
+        let phoneNumber = readCustomerState().phone_number;
         let uid = AUTH.currentUser.uid
-        let clientName = AUTH.currentUser.displayName
+        let clientName = AUTH.currentUser.displayName;
         let imageURL = await getPhotoURL();
         let ServiceWanted = await getAskForJobState().serviceWanted;
         let DateObject = new Date();
         let date = DateObject.toISOString();
-        setDoc(ServiceRequestRef, {uid, clientName, imageURL, ServiceWanted, description, locationName, date, currentLocation}, {merge:true})
+        setDoc(ServiceRequestRef, {uid, clientName, imageURL, ServiceWanted, description, locationName, date, currentLocation, phoneNumber}, {merge:true})
             .then(()=>{
                 setLoading(false);
                 navigation.push("CustomerHomepage");

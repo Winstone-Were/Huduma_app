@@ -178,5 +178,18 @@ async function getJobHistory() {
   }
 }
 
+async function getComplaints() {
+  try{
+    const snapshot = await db.collection('Complaints').get();
+    let Complaints = [];
+    snapshot.forEach((doc)=>{
+      Complaints.push({id:doc.id, data: doc.data()});
+    })
+    return Complaints
+  }catch(err){
+    console.error(err);
+  }
+}
 
-module.exports = {getUser, listAllUsers, createUser, countUsers, getAcceptedRequests,getWorkers, deleteUser, getJobHistory};
+
+module.exports = {getUser, listAllUsers, createUser, countUsers, getAcceptedRequests,getWorkers, deleteUser, getJobHistory, getComplaints};

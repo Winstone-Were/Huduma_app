@@ -4,7 +4,17 @@ const bodyParser = require('body-parser');
 require("dotenv").config();
 
 const { collection, getDocs, count } = require('firebase/firestore');
-const { getUser, listAllUsers, createUser, countUsers, getAcceptedRequests, getWorkers,deleteUser, getJobHistory } = require("./manage_users")
+const { getUser, 
+    listAllUsers
+    , createUser
+    , countUsers,
+     getAcceptedRequests, 
+     getWorkers
+     ,deleteUser, 
+     getJobHistory,
+    getComplaints } = require("./manage_users")
+
+
 
 const verifyToken = require("../middleware/index");
 const cors = require("cors")
@@ -184,6 +194,15 @@ app.post('/api/sendNotification', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+
+app.get('/admin/complaints',(req,res)=>{
+    getComplaints()
+        .then((resp)=>{
+            res.json(resp)
+        }).catch(err=>{
+            res.status(200).send(err);
+        })
+})
 
 app.get('/admin/jobhistory',(req,res)=>{
     getJobHistory()

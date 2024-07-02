@@ -1,7 +1,7 @@
 import './components.css'
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Box, Typography, Paper, CircularProgress } from '@mui/material';
+import { Box, Typography, Paper, CircularProgress, Button } from '@mui/material';
 
 function UserDetails() {
   const { uid } = useParams();
@@ -30,6 +30,19 @@ function UserDetails() {
     return <CircularProgress />;
   }
 
+  const handleDeleteUser = async () => {
+    setLoading(true);
+    fetch(`http://localhost:3000/admin/deleteuser/${uid}`, { method: 'GET' })
+    .then(resp=> 
+      {
+        alert('Worker Deleted');
+        setLoading(false);
+      })
+    .catch(error => {
+      console.error('Error fetching workers:', error);
+      setLoading(false);
+    });
+  } 
   return (
     <Box component={Paper} p={3}>
       <Typography variant="h4" gutterBottom>
@@ -38,7 +51,7 @@ function UserDetails() {
       {user ? (
         <>
           <div className='row'>
-            <img src={user.photoURL} className='image' />
+            <img src={user.photoURL} className='image' alt="user image"/>
             <div className='user-typography'>
               <Typography>
                 User Name : {user.username || user.name}
@@ -58,7 +71,7 @@ function UserDetails() {
               </Typography>
             </div>
           </div>
-
+          <Button onClick={()=> handleDeleteUser()}> Delete User </Button>
         </>
       ) : (
         <Typography variant="body1">User not found.</Typography>

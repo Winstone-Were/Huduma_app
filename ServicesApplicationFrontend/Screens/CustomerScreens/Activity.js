@@ -6,7 +6,7 @@ import { FIRESTORE_DB } from '../../firebaseConfig';
 import { setDoc, doc, getDoc, collection, onSnapshot, query, where, getDocs, deleteDoc, } from 'firebase/firestore';
 import { AUTH } from '../../firebaseConfig';
 
-import { writeToChatPartyState, writeToWorkerState, readWorkerState } from '../../Services/stateService';
+import { writeToChatPartyState, writeToWorkerState, readWorkerState, writeAskForJobState } from '../../Services/stateService';
 import call from 'react-native-phone-call';
 
 const ActivityScreen = ({ navigation }) => {
@@ -34,6 +34,7 @@ const ActivityScreen = ({ navigation }) => {
     onSnapshot(q, (querySnapshot) => {
       querySnapshot.forEach((doc) => {
         if (doc.id.split("::")[1] == AUTH.currentUser.uid) {
+          writeAskForJobState({collectionName:doc.id});
           setWorkURL(doc.id);
           work_url = doc.id;
           let workerId = doc.id.split("::")[0];
@@ -139,7 +140,7 @@ const ActivityScreen = ({ navigation }) => {
     setDoc(JobsHistoryRef, {...jobObject, arrivaTime, satisfaction, payment}, {merge:true})
       .then(()=>{ 
         deleteDoc(DeleteRef);
-        navigation.push('CustomerHomepage');
+        navigation.replace('CustomerHomepage');
       }).catch(err=>{ 
         console.error(err);
         setFormLoading(false);

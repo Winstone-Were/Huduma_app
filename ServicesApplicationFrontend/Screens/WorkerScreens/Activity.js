@@ -87,6 +87,7 @@ const Activity = ({ navigation }) => {
   }
 
   const getActivity = async () => {
+    setLoading(true);
     let q = collection(FIRESTORE_DB, "AcceptedRequests");
     onSnapshot(q, (querySnapshot) => {
       querySnapshot.forEach((doc) => {
@@ -100,7 +101,7 @@ const Activity = ({ navigation }) => {
           setLoading(false);
         }
         if (querySnapshot.empty) {
-          setJobObject(null);
+          setJobObject([]);
         }
       })
     })
@@ -141,15 +142,16 @@ const Activity = ({ navigation }) => {
 
   return (
     <View style={{ flex: 1 }}>
+                    <TouchableOpacity onPress={() => getActivity()}>
+                <Text style={styles.Information}> Click To Refresh</Text>
+              </TouchableOpacity>
       {loading ?
         (
           <>
             <ActivityIndicator animating />
             <View style={styles.row}>
               <Text style={{ fontSize: 15 }}>No Activity</Text>
-              <TouchableOpacity onPress={() => getActivity()}>
-                <Text style={styles.Information}> Click To Refresh</Text>
-              </TouchableOpacity>
+
             </View>
           </>
         ) :

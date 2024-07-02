@@ -25,6 +25,7 @@ import PeopleIcon from '@mui/icons-material/People';
 import SettingsIcon from '@mui/icons-material/Settings';
 import HistoryIcon from '@mui/icons-material/History';
 import EngineeringIcon from '@mui/icons-material/Engineering';
+import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 
 import { BrowserRouter as Router, Route, Routes, Link as RouterLink } from 'react-router-dom';
 
@@ -34,6 +35,7 @@ import Workers from './tabs/Users/Workers'
 import Settings from './tabs/Settings';
 import UserDetails from '../src/components/Userdetails';
 import JobsHistory from './tabs/JobsHistory';
+import Complaints from './tabs/Complaints';
 
 function Copyright(props) {
   return (
@@ -179,6 +181,12 @@ function App() {
                 </ListItemIcon>
                 <ListItemText primary="History" />
               </ListItem>
+              <ListItem button component={RouterLink} to="/complaints">
+                <ListItemIcon>
+                  <ReportProblemIcon />
+                </ListItemIcon>
+                <ListItemText primary="Complaints" /> 
+              </ListItem>
               <ListItem button component={RouterLink} to="/settings">
                 <ListItemIcon>
                   <SettingsIcon />
@@ -208,6 +216,7 @@ function App() {
                 <Route path="/settings" element={<Settings />} />
                 <Route path='/workers' element={<Workers/>}/>
                 <Route path='/jobshistory' element={<JobsHistory/>}/>
+                <Route path='/complaints' element={<Complaints/>}/>
               </Routes>
               <Copyright sx={{ pt: 4 }} />
             </Container>

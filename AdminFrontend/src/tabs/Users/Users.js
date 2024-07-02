@@ -18,10 +18,19 @@ function Users() {
       .catch(error => console.error('Error fetching users:', error));
   }, []);
 
-  const handleDeleteUser = (userId) => {
-    // yet to implement
-    console.log(`Deleting user with ID: ${userId}`);
-  };
+  const handleDeleteUser = async (uid) => {
+    setLoading(true);
+    fetch(`http://localhost:3000/admin/deleteuser/${uid}`, { method: 'GET' })
+    .then(resp=> 
+      {
+        alert('Worker Deleted');
+        setLoading(false);
+      })
+    .catch(error => {
+      console.error('Error fetching workers:', error);
+      setLoading(false);
+    });
+  } 
 
   const handleBanUser = (userId) => {
     //yet to implement
