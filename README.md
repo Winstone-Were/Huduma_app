@@ -175,6 +175,6 @@ Firebase authentication may require additional configuration for certain provide
 
 For questions or feedback, please open an issue on the GitHub repository or contact us at [HudumaApp@gmail.com].
 
-
+https://img.shields.io/badge/just%20the%20message-8A2BE2
 
 
