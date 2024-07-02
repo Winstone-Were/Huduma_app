@@ -4,7 +4,7 @@ const { initializeApp } = require('firebase-admin/app');
 const { getAuth } = require('firebase-admin/auth');
 const { getFirestore } = require('firebase-admin/firestore');
 
-const serviceAccount = require("../config/huduma-app-426919-91a1e983ff6b.json");
+const serviceAccount = require("../config/huduma-4bc13-firebase-adminsdk-ogdgh-c574cf7f69.json");
 const admin = require("firebase-admin");
 
 admin.initializeApp({
@@ -87,7 +87,7 @@ async function updateUser(uid, data) {
 // Function to delete a user
 async function deleteUser(uid) {
   try {
-    await getAuth().deleteUser(uid);
+    await getAuth().deleteUser(uid);  
     await db.collection('Users').doc(uid).delete();
     console.log('Successfully deleted user');
   } catch (error) {
@@ -133,7 +133,9 @@ async function getWorkers() {
     let workers = [];
     snapshot.forEach(doc => {
       const data = doc.data();
-      workers.push({ id: doc.id, name: data.name, role: data.role });
+      let uid = doc.id;
+      console.log(data);
+      workers.push({...data, uid});
     });
     return { workers, count: workers.length };
   } catch (error) {
@@ -162,5 +164,19 @@ async function getAcceptedRequests() {
   }
 }
 
+async function getJobHistory() {
+  try{
+    const snapshot = await db.collection('JobsHistory').get();
+    let doneJobs = [];
+    snapshot.forEach((doc)=>{
+      doneJobs.push({id: doc.id, data: doc.data()});
+    });
+    return(doneJobs)
+    console.log(doneJobs);
+  }catch(err){
+    console.error(err);
+  }
+}
 
-module.exports = {getUser, listAllUsers, createUser, countUsers, getAcceptedRequests,getWorkers};
+
+module.exports = {getUser, listAllUsers, createUser, countUsers, getAcceptedRequests,getWorkers, deleteUser, getJobHistory};
