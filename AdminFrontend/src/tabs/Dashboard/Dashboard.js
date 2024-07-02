@@ -66,7 +66,7 @@ function Dashboard() {
       </Typography>
       <Box display="flex" justifyContent="space-between" flexWrap="wrap">
         <SummaryCard title="Total Users" value={totalUsers} />
-        <SummaryCard title="Customers" value={customers} /> {/* Placeholder for customers */}
+        <SummaryCard title="Customers" value="3" /> {/* Placeholder for customers */}
         <SummaryCard title="Workers" value={workerCount} />
         <SummaryCard title="Jobs Done" value={jobsDone} />
       </Box>

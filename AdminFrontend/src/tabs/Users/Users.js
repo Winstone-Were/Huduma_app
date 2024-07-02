@@ -42,9 +42,6 @@ function Users() {
       <Typography variant="h5" gutterBottom>
         Users
       </Typography>
-      <Button variant="contained" color="primary" style={{ marginBottom: '16px' }}>
-        Create User
-      </Button>
       <TableContainer component={Paper}>
         {loading ?
           (<React.Fragment>

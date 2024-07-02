@@ -23,7 +23,7 @@ export default function Complaints() {
     return (
         <Box>
             <Typography variant="h5" gutterBottom>
-                History
+                Complaints
             </Typography>
             <TableContainer component={Paper}>
                 {loading ?
