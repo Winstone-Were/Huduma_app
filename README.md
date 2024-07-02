@@ -101,14 +101,9 @@ Huduma_app
 │  │     │  ├─ main
 │  │     ├─ remotes
 │  │     │  └─ origin
-│  │     │     ├─ develop
-│  │     │     ├─ HEAD
-│  │     │     └─ main
 │  │     └─ stash
 │  ├─objects
 |  |    
-│  ├─ ORIG_HEAD
-│  ├─ packed-refs
 │  └─ refs
 │     ├─ remotes
 │     │  └─ origin
@@ -126,7 +121,6 @@ Huduma_app
 ├─ Server
 │  ├─ .gitignore
 │  ├─ middleware
-│  │  └─ index.js
 │  ├─ package-lock.json
 │  ├─ package.json
 │  └─ src
@@ -135,15 +129,11 @@ Huduma_app
 └─ ServicesApplicationFrontend
    ├─ .expo
    │  ├─ devices.json
-   │  ├─ README.md
-   │  └─ web
    ├─ .gitignore
    ├─ Actions
    ├─ App.js
    ├─ app.json
    ├─ assets
-   │  ├─ adaptive-icon.png
-   │  ├─ animations
    ├─ components
    │  └─ CustomHeader.js
    ├─ eas.json
