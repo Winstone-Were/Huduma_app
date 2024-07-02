@@ -103,7 +103,7 @@ Managing Users (Admin Panel):
 
 ```
 huduma
-
+|
 ├─ AdminFrontend
 │  ├─ index.html
 │  ├─ package-lock.json
@@ -174,5 +174,7 @@ Firebase authentication may require additional configuration for certain provide
 ## Contact Us
 
 For questions or feedback, please open an issue on the GitHub repository or contact us at [HudumaApp@gmail.com].
+
+![Static Badge](https://img.shields.io/badge/:badgeContent)
 
 
