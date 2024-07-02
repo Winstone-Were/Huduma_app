@@ -1,4 +1,5 @@
 # HUDUMA: A Service Delivery Mobile Application
+![NPM License](https://img.shields.io/npm/l/react?logo=react&labelColor=black&color=red&link=https%3A%2F%2Fgithub.com%2FTijaniTatu%2Fhuduma%2Fblob%2Fmain%2FLICENSE)
 
 
 ## Description
