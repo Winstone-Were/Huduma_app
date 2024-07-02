@@ -15,13 +15,16 @@ Huduma is a centralized service provision mobile application that connects users
 ## Installation steps
 
 1. **Clone the repository:**
-
+   It can be cloned to any location of your choice 
     ```bash
-    git clone https://github.com/TijaniTatu/Huduma_app.git
-    cd Huduma_app
+    git clone https://github.com/TijaniTatu/Huduma_app.git <directory-path>
     ```
+    Then in the terminal change the directory
+   ```bash
+   cd Huduma_app
+   ````
 
-2. **Install dependencies:**
+3. **Install dependencies:**
     For the mobile app:
 
     ```bash
@@ -44,7 +47,7 @@ Huduma is a centralized service provision mobile application that connects users
     npm i
     ```
 
-3. **Configure firebase:**
+4. **Configure firebase:**
     * Create a firebase project through the console
     * Add the firebase config to the firebase.js file in the ServicesApplicationFrontend folder
   [Sample Firebase configuration found in project settings](https://github.com/TijaniTatu/huduma/assets/131201362/f1bdc2fc-8295-42d8-b246-025d85b87ccf)
@@ -100,10 +103,7 @@ Managing Users (Admin Panel):
 
 ```
 huduma
-├─ .git
 
-├─ .gitignore
-├─ .vscode
 ├─ AdminFrontend
 ├─ package-lock.json
 ├─ README.md
