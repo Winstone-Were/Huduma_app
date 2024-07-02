@@ -1,4 +1,4 @@
-![logo]("C:\Users\User\Desktop\bank\huduma\ServicesApplicationFrontend\assets\logo.png")
+![logo](https://github.com/TijaniTatu/huduma/assets/131201362/7ed3bc4d-2b04-4ef2-b900-3f184af573a8)
 # HUDUMA: A Service Delivery Mobile Application
 ![NPM License](https://img.shields.io/npm/l/react?logo=react&labelColor=black&color=red&link=https%3A%2F%2Fgithub.com%2FTijaniTatu%2Fhuduma%2Fblob%2Fmain%2FLICENSE)
 ![NPM Version](https://img.shields.io/npm/v/react?logo=nodedotjs&labelColor=white&color=green)
