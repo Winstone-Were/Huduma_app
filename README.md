@@ -1,5 +1,5 @@
 # HUDUMA: A Service Delivery Mobile Application
-![NPM Version](https://img.shields.io/npm/v/react)
+
 
 ## Description
 
