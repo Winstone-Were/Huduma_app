@@ -86,14 +86,13 @@ Managing Users (Admin Panel):
 
 ## Project Structure
 ```
-Huduma_app
+huduma
 ├─ .git
-│  ├─ COMMIT_EDITMSG
 │  ├─ description
 │  ├─ FETCH_HEAD
 │  ├─ HEAD
 │  ├─ hooks
-│  │ 
+│  │  ├─ applypatch-msg.sample
 │  ├─ index
 │  ├─ info
 │  │  └─ exclude
@@ -101,30 +100,48 @@ Huduma_app
 │  │  ├─ HEAD
 │  │  └─ refs
 │  │     ├─ heads
-│  │     │  ├─ develop
-│  │     │  ├─ main
-│  │     ├─ remotes
-│  │     │  └─ origin
-│  │     └─ stash
-│  ├─objects
-|  |    
+│  │     │  └─ main
+│  │     └─ remotes
+│  ├─ objects
+│  │  
+│  │   
+│  ├─ packed-refs
 │  └─ refs
-│     ├─ remotes
-│     │  └─ origin
-│     │     ├─ develop
-│     │     ├─ HEAD
-│     │     └─ main
-│     ├─ stash
+│     ├─ heads
+│     │  └─ main
 │     └─ tags
 ├─ .gitignore
-├─ .idea
 ├─ .vscode
 │  └─ settings.json
+├─ AdminFrontend
+│  ├─ .gitignore
+│  ├─ public
+│  │  |_index.html
+|  |  
+│  ├─ README.md
+│  └─ src
+│     ├─ App.css
+│     ├─ App.js
+│     ├─ App.jsx
+│     ├─ assets
+│     ├─ components
+│     ├─ index.css
+│     ├─ index.js
+│     ├─ main.jsx
+│     └─ tabs
+│        ├─ Complaints.js
+│        ├─ Dashboard
+│        ├─ JobsHistory.js
+│        ├─ Settings.js
+│        └─ Users
+│           ├─ Users.js
+│           └─ Workers.js
 ├─ package-lock.json
 ├─ README.md
 ├─ Server
 │  ├─ .gitignore
 │  ├─ middleware
+│  │  └─ index.js
 │  ├─ package-lock.json
 │  ├─ package.json
 │  └─ src
@@ -133,11 +150,16 @@ Huduma_app
 └─ ServicesApplicationFrontend
    ├─ .expo
    │  ├─ devices.json
+   │  └─ README.md
    ├─ .gitignore
    ├─ Actions
+   │  ├─ auth.js
+   │  └─ type.js
    ├─ App.js
    ├─ app.json
    ├─ assets
+   │  ├─ adaptive-icon.png
+   │  ├─ animations
    ├─ components
    │  └─ CustomHeader.js
    ├─ eas.json
@@ -146,6 +168,10 @@ Huduma_app
    ├─ Navigation
    │  └─ AuthStack.js
    ├─ notifications
+   │  ├─ expoPushToken.js
+   │  ├─ LocalNotifications.js
+   │  ├─ Messages.js
+   │  └─ pushNotification.js
    ├─ package-lock.json
    ├─ package.json
    ├─ Reducers
@@ -155,12 +181,15 @@ Huduma_app
    │  ├─ CustomerScreens
    │  │  ├─ Activity.js
    │  │  ├─ AskServiceScreen.js
+   │  ├─ ForgotPassword.js
    │  ├─ Home.js
    │  ├─ Login.js
    │  ├─ NotificationScreen.js
    │  ├─ Register.js
    │  ├─ SettingScreens
    │  │  ├─ ChangeEmail.js
+   │  │  ├─ ChangePassword.js
+   │  │  └─ Settings.js
    │  ├─ SplashScreen.js
    │  ├─ VerifyPhone.js
    │  └─ WorkerScreens
@@ -173,6 +202,7 @@ Huduma_app
       └─ index.js
 
 ```
+
 ### Key Files
 * ServicesApplicationFrontend/Navigation/AuthStack.js:   #Main entry point for the mobile application.
 * admin/src/App.jsx: Main entry point for the admin panel.
@@ -190,3 +220,4 @@ Firebase authentication may require additional configuration for certain provide
 
 ## Contact Us
 For questions or feedback, please open an issue on the GitHub repository or contact us at [HudumaApp@gmail.com].
+
