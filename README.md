@@ -204,6 +204,7 @@ Firebase authentication may require additional configuration for certain provide
 * [Firebase Documentation](https://firebase.google.com/docs)
 * [React Documentation](https://legacy.reactjs.org/docs/getting-started.html)
 * [React Native Paper](https://reactnativepaper.com/)
+* [React Expo Documentation](https://docs.expo.dev/)
 
 ## Contact Us
 For questions or feedback, please open an issue on the GitHub repository or contact us at [HudumaApp@gmail.com].
