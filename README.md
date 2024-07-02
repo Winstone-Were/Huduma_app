@@ -28,16 +28,20 @@ Huduma is a centralized service provision mobile application that connects users
     cd ServicesApplicationFrontend
     npx expo install
     npm i
+    ```
 
     For the server:
+
     ```bash
     cd Server
     npm i
     ```
     For the admin:
+
     ```bash
     cd Admin
-    npm i```
+    npm i
+    ```
 
 3. **Configure firebase:**
     * Create a firebase project through the console
