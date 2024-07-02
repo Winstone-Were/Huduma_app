@@ -1,19 +1,10 @@
-/*{ "address": "MRRC+V5G, Gandhi Ave, Nairobi, Kenya", 
-    "currentLocation": { "accuracy": 100, "altitude": 1647.800048828125, "altitudeAccuracy": 100, "heading": 0, "latitude": -1.3082526, "longitude": 36.8209864, "speed": 0 }, 
-    "date": { "nanoseconds": 0, "seconds": 1717448399 }, 
-    "locationName": "MF 11, Madaraka Estate, Karuri Gakure Rd, Nairobi, Kenya", 
-    "phone_number": "+254729291438", 
-    "role": "client", "secEmail":
-     "stoniedev@gmail.com", 
-     "secondaryEmail": "stonie2k17@gmail.com", 
-     "username": "Victus 16" }*/
 
-import { View, TouchableOpacity, KeyboardAvoidingView, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
-import { Text, Button, TextInput, Divider, Appbar, ActivityIndicator } from 'react-native-paper';
+import { View, TouchableOpacity, KeyboardAvoidingView, StyleSheet, SafeAreaView, ScrollView, Alert } from 'react-native';
+import { Text, Button, TextInput, Appbar, ActivityIndicator, Menu } from 'react-native-paper';
 import React, { useEffect, useRef, useState } from 'react';
 import { Image } from 'expo-image';
 
-
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { CameraView, useCameraPermissions, Camera } from 'expo-camera';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import MapScreen from './MapScreen';
@@ -35,6 +26,7 @@ const TakePhotos = (props) => {
         requestPermission();
         __startCamera();
     }, [])
+    
     const __startCamera = async () => {
         const { status } = await Camera.getCameraPermissionsAsync();
         if (status === 'granted') {
@@ -47,15 +39,13 @@ const TakePhotos = (props) => {
     const __takePicture = async () => {
         const photo = await cameraRef.current.takePictureAsync();
         props.setStateImage(photo.uri)
-        console.log(photo);
         props.closeCamera(false);
     }
 
     return (
 
         <View style={{ flex: 1 }}>
-            <CameraView ref={cameraRef} style={{ flex: 1 }}>
-            </CameraView>
+            <CameraView ref={cameraRef} style={{ flex: 1 }}/>
             <Button onPress={() => __takePicture()}> Take photo </Button>
             <Button onPress={() => props.closeCamera(false)}> Go Back </Button>
         </View>
@@ -63,6 +53,7 @@ const TakePhotos = (props) => {
 }
 
 let serviceWanted = getAskForJobState().serviceWanted;
+
 export default function AskServiceScreen({navigation}) {
     
     const [isPickingPhoto, setIsPickingPhoto] = useState(false);
@@ -73,6 +64,15 @@ export default function AskServiceScreen({navigation}) {
     const [image, setImage] = useState();
     const [imageURL, setImageURL] = useState();
     const [loading, setLoading] = useState();
+    const [urgency, setUrgency] = useState('');
+    const [showMenu, setShowMenu] = useState(false);
+    const [showTimePicker, setShowTimePicker] = useState(false);
+    const [selectedTime, setSelectedTime] = useState(new Date());
+    const [showDatePicker, setShowDatePicker] = useState(false);
+    const [selectedDate, setSelectedDate] = useState(new Date());
+    const [deviceBroken, setDeviceBroken] = useState(false);
+    const [deviceType, setDeviceType] = useState('');
+    const [deviceModel, setDeviceModel] = useState('');
     const blurhash =
         '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
 
@@ -91,7 +91,6 @@ export default function AskServiceScreen({navigation}) {
             const pathReference = ref(STORAGE, refPath);
             const URL = await getDownloadURL(pathReference);
             setImageURL(URL);
-            console.log(URL);
             return URL;
         } catch (err) {
             console.error(err);
@@ -117,13 +116,13 @@ export default function AskServiceScreen({navigation}) {
 
         const metadata = {
             contentType: 'image/jpeg'
-        }
+        };
 
         fetch(image)
             .then((resp) => {
                 resp.blob().then(res => {
                     uploadBytes(profilePhotoStorage, res, metadata)
-                        .then(async (snap) => {
+                        .then(async () => {
                             setImageURL(await getPhotoURL());
                         })
                         .catch((err) => {
@@ -136,7 +135,6 @@ export default function AskServiceScreen({navigation}) {
     const PushToFirestore = async () => {
         setLoading(true);
         await uploadImage();
-        console.log(description);
         let ServiceRequestRef = doc(FIRESTORE_DB, 'ServiceRequest', AUTH.currentUser.uid);
         let phoneNumber = readCustomerState().phone_number;
         let uid = AUTH.currentUser.uid
@@ -145,7 +143,12 @@ export default function AskServiceScreen({navigation}) {
         let ServiceWanted = await getAskForJobState().serviceWanted;
         let DateObject = new Date();
         let date = DateObject.toISOString();
-        setDoc(ServiceRequestRef, {uid, clientName, imageURL, ServiceWanted, description, locationName, date, currentLocation, phoneNumber}, {merge:true})
+        let time = selectedTime.toISOString().split('T')[1].split('.')[0];
+        let appointmentDate = selectedDate.toISOString().split('T')[0];
+
+        setDoc(ServiceRequestRef, {uid, clientName, imageURL, ServiceWanted, description, locationName, date,                deviceBroken,
+            deviceType,
+            deviceModel , currentLocation, phoneNumber}, {merge:true})
             .then(()=>{
                 setLoading(false);
                 navigation.push("CustomerHomepage");
@@ -154,13 +157,30 @@ export default function AskServiceScreen({navigation}) {
                 console.error(err);
             })
     }
+    const onTimeChange = (event, selectedDate) => {
+        const currentDate = selectedDate || selectedTime;
+        setShowTimePicker(false);
+        setSelectedTime(currentDate);
+    };
+    const onDateChange = (event, selectedDate) => {
+        const currentDate = selectedDate || selectedDate;
+        setShowDatePicker(false);
+        setSelectedDate(currentDate);
+    };
 
     return (
-        <SafeAreaView style={{ flex: 1 }}>
+        <SafeAreaView style={styles.container}>
+        <Appbar.Header>
+                    <Appbar.BackAction onPress={() => navigation.goBack()} />
+                        <Appbar.Content title="Request Details" />
+                        
+                    </Appbar.Header>
+                   
             {loading ?
-                (<View style={{ flex: 1, justifyContent: 'center' }}>
+                (<View style={styles.loadingContainer}>
                     <ActivityIndicator size={40} animating />
-                </View>) : (<>
+                </View>
+            ) : (<>
                     {isPickingPhoto || isSettingLocation ?
                         (<>
                             {isPickingPhoto ?
@@ -172,27 +192,14 @@ export default function AskServiceScreen({navigation}) {
                                         setState={(val) => setLocationName(val)}
                                         setStateCurrentLocation={(val) => setCurrentLocation(val)}
                                     />
-                                    <Text style={{ alignSelf: 'center', fontSize: 20 }}> {locationName} </Text>
+                                     <Text style={styles.locationText}> {locationName} </Text>
                                     <Button onPress={() => setIsSettingLocation(false)}> Select Location</Button>
                                 </>)}
                         </>) :
                         (<View>
-                            <Appbar.Header>
-                            <Appbar.BackAction onPress={() => navigation.goBack()} />
-                                <Appbar.Content title="Describe Your Situation" />
-                                
-                            </Appbar.Header>
-                            <ScrollView>
-                                <Text style={{alignSelf:'center'}}> {serviceWanted} Service </Text>
-                                <TextInput
-                                    multiline
-                                    label='Describe the issue'
-                                    numberOfLines={10}
-                                    onChangeText={(text) => setDescription(text)}
-                                    value={description}
-                                />
-                            </ScrollView>
-
+                     <ScrollView contentContainerStyle={styles.scrollViewContent}>
+                            
+                            <Text style={styles.title}>{serviceWanted} Service Details</Text>
                             <Image
                                 style={styles.image}
                                 source={{ uri: image }}
@@ -200,38 +207,163 @@ export default function AskServiceScreen({navigation}) {
                                 contentFit="cover"
                                 transition={1000}
                             />
-
                             <Button onPress={() => setIsPickingPhoto(!isPickingPhoto)}> ADD A PHOTO </Button>
-                            <Text style={{ alignSelf: 'center', fontSize: 20 }}> Location : {locationName} </Text>
-                            <Button onPress={() => setIsSettingLocation(true)}> PICK LOCATION </Button>
-                            <Button onPress={() => PushToFirestore()}> Ask for Service </Button>
-                        </View>)}
+                 <View style={styles.row}>
+                                    <Text style={styles.label}>Is it a broken device?</Text>
+                                    <Button
+                                        mode="contained"
+                                        onPress={() => setDeviceBroken(!deviceBroken)}
+                                        style={[styles.input, { backgroundColor: deviceBroken ? 'green' : 'red', marginVertical: 10 }]}
+                                    >
+                                        {deviceBroken ? 'Yes' : 'No'}
+                                    </Button>
+                                </View>
+                               <View style={styles.row}>
+                                    <Text style={styles.label}>Type of device:</Text>
+                                    <TextInput
+                                        style={[styles.input, { height: 40 }]}
+                                        label="Type of device"
+                                        onChangeText={(text) => setDeviceType(text)}
+                                    />
+                                </View>
+                                <View style={styles.row}>
+                                    <Text style={styles.label}>Model:</Text>
+                                    <TextInput
+                                        style={[styles.input, { height: 40 }]}
+                                        label="Model number"
+                                        onChangeText={(text) => setDeviceModel(text)}
+                                    />
+                                </View>
+                            <Text style={styles.descriptionLabel}>Detailed Description</Text>
+                            <TextInput
+                                    style={[styles.input, { height: 70 }]}
+                                    multiline
+                                    label='Details on what you want or what the issue is'
+                                    numberOfLines={10}
+                                    onChangeText={(text) => setDescription(text)}
+                                    value={description}
+                                />
+
+                                    <View style={styles.row}>
+                                    <Text style={styles.label}>Urgency:</Text>
+                                    <Menu
+                                        visible={showMenu}
+                                        onDismiss={() => setShowMenu(false)}
+                                        anchor={<Button onPress={() => setShowMenu(true)}>{urgency || "Select Urgency"}</Button>}
+                                    >
+                                        <Menu.Item onPress={() => { setUrgency("Low"); setShowMenu(false); }} title="Low" />
+                                        <Menu.Item onPress={() => { setUrgency("Medium"); setShowMenu(false); }} title="Medium" />
+                                        <Menu.Item onPress={() => { setUrgency("High"); setShowMenu(false); }} title="High" />
+                                    </Menu>
+                                </View>
+
+                                    {/* <View style={styles.row}>
+                                    <Text style={styles.label}>Appointment date:</Text>
+                                    <Button onPress={() => setShowDatePicker(true)}>{selectedDate.toLocaleDateString()}</Button>
+                                    {showDatePicker && (
+                                        <DateTimePicker
+                                        value={selectedDate}
+                                        mode="date"
+                                        display="default"
+                                        onChange={onDateChange}
+                                    />
+                                )}
+                                
+                                </View> */}
+                                {/* <View style={styles.row}>
+                                <Text style={styles.label}>Appointment time:</Text>
+                                <Button onPress={() => setShowTimePicker(true)}>{selectedTime.toLocaleTimeString()}</Button>
+                                {showTimePicker && (
+                                    <DateTimePicker
+                                        value={selectedTime}
+                                        mode="time"
+                                        s24Hour={true}
+                                        display="default"
+                                        onChange={onTimeChange}
+                                    />
+                                )}
+                            </View> */}
+
+                        
+                            <Button onPress={() => setIsSettingLocation(true)} style={styles.locationButton}>Pick Location</Button>
+                           
+                            <Button  mode="contained" style={styles.serviceButton} onPress={() => PushToFirestore()}> Ask for Service </Button>
+                            </ScrollView>
+                        </View>
+                    )}
                 </>)}
 
         </SafeAreaView>
     )
 }
-
 const styles = StyleSheet.create({
-    container: { flex: 1, marginHorizontal: 20, marginTop: 40 },
-    input: { marginVertical: 5, borderRadius: 0 },
+    container: {
+        flex: 1
+    },
+    scrollViewContent: {
+        flexGrow: 1,
+        paddingVertical: 20,
+        paddingHorizontal: 20
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    title: {
+        alignSelf: 'center',
+        fontSize: 24,
+        marginVertical: 10
+    },
     row: {
-        alignItems: "center",
-        flexDirection: "row",
-        marginVertical: 20,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginVertical: 10
     },
-    textContainer: { alignContent: 'center', alignItems: 'center' },
-    Information: {
-        color: 'purple',
-        fontSize: 15,
+    label: {
+        fontSize: 16,
+        flex: 1
     },
-    textLink: {
-        color: 'orange',
-        marginLeft: 2
+    descriptionLabel: {
+        fontSize: 16,
+        marginBottom: 5
+    },
+    input: {
+        flex: 1
+    },
+    textInput: {
+        backgroundColor: '#fff',
+        borderWidth: 1,
+        borderColor: '#ccc',
+        paddingHorizontal: 10,
+        paddingVertical: 8
     },
     image: {
         width: 300,
-        height: 400,
+        height: 200,
         alignSelf: 'center',
+        marginVertical: 20
     },
+    locationButton: {
+        marginVertical: 10
+    },
+    serviceButton: {
+        backgroundColor: 'green',
+        marginVertical: 20
+    }
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+

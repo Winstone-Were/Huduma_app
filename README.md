@@ -1,6 +1,10 @@
-# HUDUMA: A Service Delivery Mobile Application
 
-## Introduction
+# HUDUMA: A Service Delivery Mobile Application
+![NPM License](https://img.shields.io/npm/l/react?logo=react&labelColor=black&color=red&link=https%3A%2F%2Fgithub.com%2FTijaniTatu%2Fhuduma%2Fblob%2Fmain%2FLICENSE)
+![NPM Version](https://img.shields.io/npm/v/react?logo=nodedotjs&labelColor=white&color=green)
+
+
+## Description
 
 Huduma is a centralized service provision mobile application that connects users with verified local service providers, such as electricians,maids and plumbers. Traditional methods of finding service providers often lack credibility and traceability, leading to issues like theft, poor service, and property damage. Huduma addresses these challenges by requiring service providers to submit credentials and proof of identity for verification, ensuring that users are matched with qualified and trustworthy professionals. Additionally, the app features a rating system where users can rate their experience, helping to maintain high standards of service quality. Designed with simplicity and ease of use in mind, Huduma aims to cater to the diverse needs of the local community, enhancing service delivery and reliability in the local service industry.
 
@@ -8,23 +12,23 @@ Huduma is a centralized service provision mobile application that connects users
 
 ### Dependencies and Libraries
 
-* Node.js
-<https://nodejs.org/en/download/package-manager/current>
-* React Native
-<https://reactnative.dev/>
-* React
-<https://react.dev/>
+* [Node.js](https://nodejs.org/en/download/package-manager/current)
+* [React Native](https://reactnative.dev/)
+* [React](https://react.dev/)
 
 ## Installation steps
 
 1. **Clone the repository:**
-
+   It can be cloned to any location of your choice 
     ```bash
-    git clone https://github.com/TijaniTatu/Huduma_app.git
-    cd Huduma_app
+    git clone https://github.com/TijaniTatu/Huduma_app.git <directory-path>
     ```
+    Then in the terminal change the directory
+   ```bash
+   cd Huduma_app
+   ````
 
-2. **Install dependencies:**
+3. **Install dependencies:**
     For the mobile app:
 
     ```bash
@@ -47,7 +51,7 @@ Huduma is a centralized service provision mobile application that connects users
     npm i
     ```
 
-3. **Configure firebase:**
+4. **Configure firebase:**
     * Create a firebase project through the console
     * Add the firebase config to the firebase.js file in the ServicesApplicationFrontend folder
   [Sample Firebase configuration found in project settings](https://github.com/TijaniTatu/huduma/assets/131201362/f1bdc2fc-8295-42d8-b246-025d85b87ccf)
@@ -103,64 +107,48 @@ Managing Users (Admin Panel):
 
 ```
 huduma
-├─ .git
-
-├─ .gitignore
-├─ .vscode
+|
 ├─ AdminFrontend
-├─ package-lock.json
-├─ README.md
+│  ├─ index.html
+│  ├─ package-lock.json
+│  ├─ package.json
+│  ├─ public
+|  |
+│  └─ src
+│     ├─ App.js
+│     ├─ App.jsx
+│     ├─ components
+│     ├─ index.js
+│     └─ tabs
+|
+|
 ├─ Server
-│  ├─ middleware
-│  │  └─ index.js
 │  ├─ package-lock.json
 │  ├─ package.json
 │  └─ src
-│  
+│     ├─ index.js
+│     └─ manage_users.js
+|
 └─ ServicesApplicationFrontend
    ├─ .expo
    │  ├─ devices.json
-   │  └─ README.md
-   ├─ .gitignore
+   |
    ├─ Actions
-   │  ├─ auth.js
-   │  └─ type.js
-   ├─ App.js
-   ├─ app.json
    ├─ assets
-   │  ├─ adaptive-icon.png
-   │  ├─ animations
    ├─ components
-   │  └─ CustomHeader.js
-   ├─ eas.json
    ├─ firebaseConfig.js
    ├─ Index.js
    ├─ Navigation
    │  └─ AuthStack.js
    ├─ notifications
-   ├─ package-lock.json
-   ├─ package.json
-   ├─ Reducers
    │  └─ auth.js
    ├─ Screens
-   │  ├─ BuildProfile.js
    │  ├─ CustomerScreens
-   │  │  ├─ Activity.js
-   │  │  ├─ AskServiceScreen.js
-   │  ├─ ForgotPassword.js
-   │  ├─ Home.js
-   │  ├─ Login.js
-   │  ├─ NotificationScreen.js
-   │  ├─ Register.js
    │  ├─ SettingScreens
-   │  │  ├─ ChangeEmail.js
-   │  │  ├─ ChangePassword.js
    │  │  └─ Settings.js
    │  ├─ SplashScreen.js
-   │  ├─ VerifyPhone.js
    │  └─ WorkerScreens
    │     ├─ Activity.js
-   │     ├─ JobRequests.js
    ├─ Services
    │  ├─ authService.js
    │  └─ stateService.js
@@ -170,15 +158,14 @@ huduma
 ```
 
 ### Key Files
-
-* ServicesApplicationFrontend/Navigation/AuthStack.js:   #Main entry point for the mobile application.
-* admin/src/App.jsx: Main entry point for the admin panel.
-* Server/src/index.js: Firebase cloud functions for backend logic.
+* <mark>ServicesApplicationFrontend/Navigation/AuthStack.js</mark>:   Main entry point for the mobile application.
+* <mark>admin/src/App.jsx</mark>: Main entry point for the admin panel.
+* <mark>Server/src/index.js</mark>: Firebase cloud functions for backend logic.
 
 ## Known Issues
 
-Some UI components may not render correctly on older devices.<br>
-Firebase authentication may require additional configuration for certain providers.
+* Some UI components may not render correctly on older devices.<br>
+* Firebase authentication may require additional configuration for certain providers.
 
 ## Acknowledgent
 
@@ -190,5 +177,8 @@ Firebase authentication may require additional configuration for certain provide
 
 ## Contact Us
 
-For questions or feedback, please open an issue on the GitHub repository or contact us at [HudumaApp@gmail.com].
+For questions or feedback, please open an issue on the GitHub repository or contact us at [stoniedev@gmail.com] or [riekotijani@gmail.com]
+
+
+
 
