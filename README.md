@@ -10,9 +10,8 @@ Huduma is a centralized service provision mobile application that connects users
 * Vite
 * Firebase
 * Google Maps API
-* Material UI
 * React Native Paper
-* Expo Notifications
+* Expo 
 
 
 
@@ -41,10 +40,6 @@ Huduma is a centralized service provision mobile application that connects users
     npm i```
 
 3. **Configure firebase:**
-    * Install firrebase 
-        ```bash
-        npm install firebase```
-
     * Create a firebase project through the console
     * Add the firebase config to the firebase.js file in the ServicesApplicationFrontend folder
   [Sample Firebase configuration found in project settings](https://github.com/TijaniTatu/huduma/assets/131201362/f1bdc2fc-8295-42d8-b246-025d85b87ccf)
@@ -102,8 +97,6 @@ Huduma_app
 │  │     ├─ heads
 │  │     │  ├─ develop
 │  │     │  ├─ main
-│  │     │  └─ pr
-│  │     │     └─ 1
 │  │     ├─ remotes
 │  │     │  └─ origin
 │  │     │     ├─ develop
@@ -111,19 +104,10 @@ Huduma_app
 │  │     │     └─ main
 │  │     └─ stash
 │  ├─objects
-│  │  ├─ 00
-│  │  ├─ 01
-│  │  ├─ info
-│  │  └─ pack
 |  |    
 │  ├─ ORIG_HEAD
 │  ├─ packed-refs
 │  └─ refs
-│     ├─ heads
-│     │  ├─ develop
-│     │  ├─ main
-│     │  └─ pr
-│     │     └─ 1
 │     ├─ remotes
 │     │  └─ origin
 │     │     ├─ develop
@@ -133,15 +117,8 @@ Huduma_app
 │     └─ tags
 ├─ .gitignore
 ├─ .idea
-│  ├─ Huduma_app.iml
-│  ├─ misc.xml
-│  ├─ modules.xml
-│  ├─ vcs.xml
-│  └─ workspace.xml
 ├─ .vscode
 │  └─ settings.json
-├─ Admin.zip
-├─ Admin2.zip
 ├─ package-lock.json
 ├─ README.md
 ├─ Server
@@ -160,26 +137,13 @@ Huduma_app
    │  ├─ devices.json
    │  ├─ README.md
    │  └─ web
-   │     └─ cache
-   │        └─ production
-   │           └─ images
-   │              └
    ├─ .gitignore
    ├─ Actions
-   │  ├─ auth.js
-   │  └─ type.js
    ├─ App.js
    ├─ app.json
    ├─ assets
    │  ├─ adaptive-icon.png
    │  ├─ animations
-   │  │  └─ worker-customer.json
-   │  ├─ default-user.png
-   │  ├─ favicon.png
-   │  ├─ icon.png
-   │  ├─ Icons
-   │  ├─ logo.png
-   │  └─ splash.png
    ├─ components
    │  └─ CustomHeader.js
    ├─ eas.json
@@ -188,10 +152,6 @@ Huduma_app
    ├─ Navigation
    │  └─ AuthStack.js
    ├─ notifications
-   │  ├─ expoPushToken.js
-   │  ├─ LocalNotifications.js
-   │  ├─ Messages.js
-   │  └─ pushNotification.js
    ├─ package-lock.json
    ├─ package.json
    ├─ Reducers
@@ -202,10 +162,6 @@ Huduma_app
    │  │  ├─ Activity.js
    │  │  ├─ AskServiceScreen.js
    │  │  ├─ CustomerChat.js
-   │  │  ├─ CustomerHomepage.js
-   │  │  ├─ Jobs.js
-   │  │  ├─ MapScreen.js
-   │  │  └─ Profile.js
    │  ├─ ForgotPassword.js
    │  ├─ Home.js
    │  ├─ Login.js
@@ -220,9 +176,6 @@ Huduma_app
    │  └─ WorkerScreens
    │     ├─ Activity.js
    │     ├─ JobRequests.js
-   │     ├─ Profile.js
-   │     ├─ WorkerChat.js
-   │     └─ WorkerHomepage.js
    ├─ Services
    │  ├─ authService.js
    │  └─ stateService.js
