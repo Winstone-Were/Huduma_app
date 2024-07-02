@@ -338,5 +338,14 @@ app.get('/admin/deleteuser/:uid', (req, res) => {
             res.status(200).send('User Deleted')
         }).catch(err => res.status(400).send(err));
 })
+app.get('/admin/getclients', async (req, res) => {
+    try {
+        const { clients, count } = await getClients();
+        res.json({ clients, count });
+    } catch (error) {
+        res.status(500).json({ error: 'Unable to fetch workers' });
+    }
+});
+
 
 app.listen(port, () => console.log(`Server listening on port ${port}!`));
