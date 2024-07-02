@@ -176,7 +176,7 @@ huduma
 
 ## Contact Us
 
-For questions or feedback, please open an issue on the GitHub repository or contact us at [HudumaApp@gmail.com].
+For questions or feedback, please open an issue on the GitHub repository or contact us at [stoniedev@gmail.com] or [riekotijani@gmail.com]
 
 
 
