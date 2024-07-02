@@ -130,8 +130,6 @@ Huduma_app
 │  └─ src
 │     ├─ index.js
 │     └─ manage_users.js
-│  
-├
 └─ ServicesApplicationFrontend
    ├─ .expo
    │  ├─ devices.json
@@ -161,16 +159,12 @@ Huduma_app
    │  ├─ CustomerScreens
    │  │  ├─ Activity.js
    │  │  ├─ AskServiceScreen.js
-   │  │  ├─ CustomerChat.js
-   │  ├─ ForgotPassword.js
    │  ├─ Home.js
    │  ├─ Login.js
    │  ├─ NotificationScreen.js
    │  ├─ Register.js
    │  ├─ SettingScreens
    │  │  ├─ ChangeEmail.js
-   │  │  ├─ ChangePassword.js
-   │  │  └─ Settings.js
    │  ├─ SplashScreen.js
    │  ├─ VerifyPhone.js
    │  └─ WorkerScreens
