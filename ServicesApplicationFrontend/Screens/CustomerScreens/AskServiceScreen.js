@@ -26,7 +26,7 @@ const TakePhotos = (props) => {
         requestPermission();
         __startCamera();
     }, [])
-    
+
     const __startCamera = async () => {
         const { status } = await Camera.getCameraPermissionsAsync();
         if (status === 'granted') {
@@ -45,7 +45,7 @@ const TakePhotos = (props) => {
     return (
 
         <View style={{ flex: 1 }}>
-            <CameraView ref={cameraRef} style={{ flex: 1 }}/>
+            <CameraView ref={cameraRef} style={{ flex: 1 }} />
             <Button onPress={() => __takePicture()}> Take photo </Button>
             <Button onPress={() => props.closeCamera(false)}> Go Back </Button>
         </View>
@@ -54,8 +54,8 @@ const TakePhotos = (props) => {
 
 let serviceWanted = getAskForJobState().serviceWanted;
 
-export default function AskServiceScreen({navigation}) {
-    
+export default function AskServiceScreen({ navigation }) {
+
     const [isPickingPhoto, setIsPickingPhoto] = useState(false);
     const [isSettingLocation, setIsSettingLocation] = useState(false);
     const [currentLocation, setCurrentLocation] = useState('');
@@ -78,7 +78,7 @@ export default function AskServiceScreen({navigation}) {
 
     const getUploadPath = async () => {
         try {
-           const uid = AUTH.currentUser.uid;
+            const uid = AUTH.currentUser.uid;
             return `ServiceRequestPhotos/${uid}`;
         } catch (err) {
             console.error(err);
@@ -146,13 +146,14 @@ export default function AskServiceScreen({navigation}) {
         let time = selectedTime.toISOString().split('T')[1].split('.')[0];
         let appointmentDate = selectedDate.toISOString().split('T')[0];
 
-        setDoc(ServiceRequestRef, {uid, clientName, imageURL, ServiceWanted, description, locationName, date,                deviceBroken,
+        setDoc(ServiceRequestRef, {
+            uid, clientName, imageURL, ServiceWanted, description, locationName, date, deviceBroken,
             deviceType,
-            deviceModel , currentLocation, phoneNumber}, {merge:true})
-            .then(()=>{
-                setLoading(false);
-                navigation.push("CustomerHomepage");
-            }).catch(err=>{
+            deviceModel, currentLocation, phoneNumber
+        }, { merge: true })
+            .then(() => {
+            navigation.replace('CustomerActivity')
+            }).catch(err => {
                 setLoading(false);
                 console.error(err);
             })
@@ -170,17 +171,17 @@ export default function AskServiceScreen({navigation}) {
 
     return (
         <SafeAreaView style={styles.container}>
-        <Appbar.Header>
-                    <Appbar.BackAction onPress={() => navigation.goBack()} />
-                        <Appbar.Content title="Request Details" />
-                        
-                    </Appbar.Header>
-                   
+            <Appbar.Header>
+                <Appbar.BackAction onPress={() => navigation.goBack()} />
+                <Appbar.Content title="Request Details" />
+
+            </Appbar.Header>
+
             {loading ?
                 (<View style={styles.loadingContainer}>
                     <ActivityIndicator size={40} animating />
                 </View>
-            ) : (<>
+                ) : (<>
                     {isPickingPhoto || isSettingLocation ?
                         (<>
                             {isPickingPhoto ?
@@ -192,24 +193,24 @@ export default function AskServiceScreen({navigation}) {
                                         setState={(val) => setLocationName(val)}
                                         setStateCurrentLocation={(val) => setCurrentLocation(val)}
                                     />
-                                     <Text style={styles.locationText}> {locationName} </Text>
+                                    <Text style={styles.locationText}> {locationName} </Text>
                                     <Button onPress={() => setIsSettingLocation(false)}> Select Location</Button>
                                 </>)}
                         </>) :
                         (<View>
-                     <ScrollView contentContainerStyle={styles.scrollViewContent}>
-                            
-                            <Text style={styles.title}>{serviceWanted} Service Details</Text>
-                            <Image
-                                style={styles.image}
-                                source={{ uri: image }}
-                                placeholder={{ blurhash }}
-                                contentFit="cover"
-                                transition={1000}
-                            />
-                            <Button onPress={() => setIsPickingPhoto(!isPickingPhoto)}> ADD A PHOTO </Button>
-                 <View style={styles.row}>
-                                    <Text style={styles.label}>Is it a broken device?</Text>
+                            <ScrollView contentContainerStyle={styles.scrollViewContent}>
+
+                                <Text style={styles.title}>{serviceWanted} Service Details</Text>
+                                <Image
+                                    style={styles.image}
+                                    source={{ uri: image }}
+                                    placeholder={{ blurhash }}
+                                    contentFit="cover"
+                                    transition={1000}
+                                />
+                                <Button onPress={() => setIsPickingPhoto(!isPickingPhoto)}> ADD A PHOTO </Button>
+                                <View style={styles.row}>
+                                    <Text style={styles.label}>Is it a broken Appliance?</Text>
                                     <Button
                                         mode="contained"
                                         onPress={() => setDeviceBroken(!deviceBroken)}
@@ -218,7 +219,7 @@ export default function AskServiceScreen({navigation}) {
                                         {deviceBroken ? 'Yes' : 'No'}
                                     </Button>
                                 </View>
-                               <View style={styles.row}>
+                                <View style={styles.row}>
                                     <Text style={styles.label}>Type of device:</Text>
                                     <TextInput
                                         style={[styles.input, { height: 40 }]}
@@ -234,8 +235,8 @@ export default function AskServiceScreen({navigation}) {
                                         onChangeText={(text) => setDeviceModel(text)}
                                     />
                                 </View>
-                            <Text style={styles.descriptionLabel}>Detailed Description</Text>
-                            <TextInput
+                                <Text style={styles.descriptionLabel}>Detailed Description</Text>
+                                <TextInput
                                     style={[styles.input, { height: 70 }]}
                                     multiline
                                     label='Details on what you want or what the issue is'
@@ -244,7 +245,7 @@ export default function AskServiceScreen({navigation}) {
                                     value={description}
                                 />
 
-                                    <View style={styles.row}>
+                                <View style={styles.row}>
                                     <Text style={styles.label}>Urgency:</Text>
                                     <Menu
                                         visible={showMenu}
@@ -257,7 +258,7 @@ export default function AskServiceScreen({navigation}) {
                                     </Menu>
                                 </View>
 
-                                    {/* <View style={styles.row}>
+                                {/* <View style={styles.row}>
                                     <Text style={styles.label}>Appointment date:</Text>
                                     <Button onPress={() => setShowDatePicker(true)}>{selectedDate.toLocaleDateString()}</Button>
                                     {showDatePicker && (
@@ -284,13 +285,13 @@ export default function AskServiceScreen({navigation}) {
                                 )}
                             </View> */}
 
-                        
-                            <Button onPress={() => setIsSettingLocation(true)} style={styles.locationButton}>Pick Location</Button>
-                           
-                            <Button  mode="contained" style={styles.serviceButton} onPress={() => PushToFirestore()}> Ask for Service </Button>
+
+                                <Button onPress={() => setIsSettingLocation(true)} style={styles.locationButton}>Pick Location</Button>
+
+                                <Button mode="contained" style={styles.serviceButton} onPress={() => PushToFirestore()}> Ask for Service </Button>
                             </ScrollView>
                         </View>
-                    )}
+                        )}
                 </>)}
 
         </SafeAreaView>

@@ -40,8 +40,18 @@ function WorkersList() {
 
   }, []);
 
-  const handleBanUser = async () => {
-
+  const handleBanUser = async (uid) => {
+    setLoading(true);
+    fetch(`http://localhost:3000/admin/banuser/${uid}`, { method: 'GET' })
+      .then(resp => {
+        alert('User Banned');
+        fetchUser();
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error('Error fetching workers:', error);
+        setLoading(false);
+      });
   }
 
   const handleDeleteUser = async (uid) => {
@@ -89,7 +99,7 @@ function WorkersList() {
                 {workers.map((user) => (
                   <TableRow key={user.uid}>
                     <TableCell>
-                      <Link to={`/users/${user.uid}`}>
+                      <Link to={`/viewworker/${user.uid}`}>
                         {user.uid}
                       </Link>
                     </TableCell>

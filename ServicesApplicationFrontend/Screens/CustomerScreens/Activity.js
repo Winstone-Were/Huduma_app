@@ -52,15 +52,12 @@ const ActivityScreen = ({ navigation }) => {
   }
 
   const getRequestSent = async () => {
-    getDocs(collection(FIRESTORE_DB, "ServiceRequest"))
-      .then((result) => {
-        result.forEach((doc) => {
-          if (doc.id == AUTH.currentUser.uid) {
-            setCurrentWorkState('Your request has been placed')
-            setloading(false);
-          }
-        })
-      })
+    let q = doc(FIRESTORE_DB, 'ServiceRequest', AUTH.currentUser.uid);
+    onSnapshot(q, (snapshot)=>{
+      if(snapshot.exists){
+        setWorkerComing(true)
+      }
+    })  
   }
 
   const getWorkerProfile = async () => {
@@ -109,7 +106,6 @@ const ActivityScreen = ({ navigation }) => {
 
   useEffect(() => {
     getActivity();
-    getRequestSent();
     getWorkerProfile();
     getJobFinished();
   }, [])
@@ -149,6 +145,11 @@ const ActivityScreen = ({ navigation }) => {
       })
   }
 
+  const cancelJob = async () => {
+    let docRef = doc(FIRESTORE_DB, 'ServiceRequest', AUTH.currentUser.uid);
+    await deleteDoc(docRef);
+  }
+
   return (
     <View style={{ flex: 1 }}>
       {loading ?
@@ -159,6 +160,7 @@ const ActivityScreen = ({ navigation }) => {
         (<View style={{ flex: 1 }}>
           {workerComing ?
             (<>
+            <Button onPress={()=> cancelJob()}> Cancel Job Request </Button>
               {jobFinished ?
                 (<>
                   <View style={styles.container}>

@@ -27,6 +27,7 @@ import ClientComplain from "../Screens/CustomerScreens/ClientComplain";
 import BanScreen from "../Screens/SettingScreens/BanScreen";
 import NotApprovedScreen from "../Screens/SettingScreens/NotApprovedScreen";
 import WorkerBuildProfile from "../Screens/WorkerScreens/WorkerBuildProfile";
+import ActivityScreen from "../Screens/CustomerScreens/Activity";
 
 const Stack = createNativeStackNavigator();
 const noHeader = { headerShown: false };
@@ -173,6 +174,7 @@ const AuthStack = () => {
                     <Stack.Screen name="BanScreen" component={BanScreen} options={noHeader} />
                     <Stack.Screen name="NotApprovedScreen" component={NotApprovedScreen} options={noHeader} />
                     <Stack.Screen name="WorkerBuildProfileScreen" component={WorkerBuildProfile} options={noHeader} />
+                    <Stack.Screen name="CustomerActivity" component={ActivityScreen} options={noHeader} />
                 </Stack.Navigator>
             </NavigationContainer>
         </PaperProvider>
