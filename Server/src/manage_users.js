@@ -160,6 +160,25 @@ async function getUnapprovedWorkers() {
     throw new Error('Unable to fetch workers');
   }
 }
+
+async function getClients() {
+  try {
+    const snapshot = await db.collection('Users').where('role', '==', 'client').get();
+    let clients = [];
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      let uid = doc.id;
+      clients.push({ ...data, uid });
+    });
+    const count = snapshot.size; // Number of documents in the collection
+    return { clients, totalClients: count };
+  } catch (error) {
+    console.error('Error fetching clients:', error);
+    throw new Error('Unable to fetch clients');
+  }
+}
+
+
 async function getAcceptedRequests() {
   try {
     const snapshot = await db.collection('AcceptedRequests').get();
@@ -205,17 +224,6 @@ async function getComplaints() {
     return Complaints;
   } catch (err) {
     console.error(err);
-  }
-}
-async function getClients() {
-  try {
-    const snapshot = await db.collection('users').where('role', '==', 'client').get();
-    const clients = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    const count = snapshot.size; // Number of documents in the collection
-    return { clients, totalClients: count };
-  } catch (error) {
-    console.error('Error fetching clients:', error);
-    throw new Error('Unable to fetch clients');
   }
 }
 
