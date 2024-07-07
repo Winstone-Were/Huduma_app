@@ -161,6 +161,7 @@ async function getUnapprovedWorkers() {
   }
 }
 
+
 async function getClients() {
   try {
     const snapshot = await db.collection('Users').where('role', '==', 'client').get();
@@ -267,6 +268,7 @@ async function unBanUser(uid) {
 }
 
 
+
 module.exports = {
   getUser,
   listAllUsers,
@@ -280,5 +282,6 @@ module.exports = {
   approveWorker,
   banUser,
   getUnapprovedWorkers,
-  unBanUser
+  unBanUser,
+  getClients
 };
