@@ -4,21 +4,77 @@ import React, { useState, useEffect } from 'react';
 import { Box, Typography } from '@mui/material';
 import SummaryCard from './SummaryCards'; // Assuming you have a SummaryCard component
 import ToDoList from './ToDoList';
-import PieChart from './PieChart';
-import { Pie } from 'react-chartjs-2';
-import 'chart.js/auto';
+import { BarChart, PieChart, pieArcLabelClasses, LineChart, ChartContainer, BarPlot } from '@mui/x-charts';
 
 function Dashboard() {
   const [totalUsers, setTotalUsers] = useState(0);
+  const [customers, setCustomers] = useState(0);
   const [workerCount, setWorkerCount] = useState(0);
   const [jobsDone, setJobsDone] = useState(0);
   const [acceptedRequests, setAcceptedRequests] = useState(0);
-  const [clientCount, setClientCount] = useState(0);
-  // const [workerOccupationData, setWorkerOccupationData] = useState({});
+  const [workerDist, setWorkerDist] = useState([]);
+  const [history, setHistory] = useState([]);
+  const [moneyCollected, setMoneyCollected] = useState([]);
+  const [dateLabel, setDateLabel] = useState([]);
+  const [satisfaction, setSatisfaction] = useState([]);
   const workerData = [
     { y: 100, label: "Electrician" },
   ];
-  // const [jobData, setJobData] = useState([]);
+
+  const getWorkerDistributionData = async () => {
+    fetch('http://localhost:3000/admin/getworkerdistribution')
+      .then(res => res.json())
+      .then(data => {
+        console.log(data);
+        let electricians = 0;
+        let plumbers = 0;
+        let maids = 0;
+        data.forEach(worker => {
+          if (worker.occupation == 'Electrician') {
+            electricians += 1;
+          }
+          if (worker.occupation == 'Plumber') {
+            plumbers += 1;
+          }
+          if (worker.occupation == "Maid") {
+            maids += 1;
+          }
+        })
+        let tempArray = [electricians, plumbers, maids];
+        setWorkerDist(tempArray);
+      });
+  }
+
+  const fetchJobHistory = async () => {
+    fetch('http://localhost:3000/admin/jobhistory')
+      .then(resp => resp.json())
+      .then(data => {
+        let electricians = 0;
+        let plumbers = 0;
+        let maids = 0;
+        setHistory(data);
+        setJobsDone(data.length);
+        let SatisfactionArray = [];
+        let DateArray = [];
+        data.forEach(job => {
+          SatisfactionArray.push(job.data.satisfaction);
+          DateArray.push(job.data.date.slice(0, 9));
+          if (job.data.ServiceWanted == "Electrician") {
+            electricians += parseInt(job.data.payment);
+          }
+          if (job.data.ServiceWanted == "Plumber") {
+            plumbers += parseInt(job.data.payment);
+          }
+          if (job.data.ServiceWanted == "Maid") {
+            maids += parseInt(job.data.payment);
+          }
+        })
+        let tempArray = [electricians, plumbers, maids];
+        setMoneyCollected(tempArray);
+        setSatisfaction(SatisfactionArray);
+        setDateLabel(DateArray);
+      })
+  }
 
   useEffect(() => {
     // Fetch total users count
@@ -53,48 +109,15 @@ function Dashboard() {
     fetch('http://localhost:3000/admin/getworkers', { method: 'GET' })
       .then(response => response.json())
       .then(data => {
-        setWorkerCount(data.count); 
+        setWorkerCount(data.count);
+        setCustomers(totalUsers - workerCount);
       })
       .catch(error => {
         console.error('Error fetching workers:', error);
       });
-
-    fetch('http://localhost:3000/admin/jobhistory')
-      .then(resp => resp.json())
-      .then(data => {
-        setJobsDone(data.length);
-        setJobData(data);
-        console.log(data);
-      })
-
-    // Fetch clients data and count
-    fetch('http://localhost:3000/admin/getclients', { method: 'GET' })
-    .then(response => response.json())
-    .then(data => {
-      setClientCount(data.totalClients);
-    })
-    .catch(error => console.error('Error fetching clients:', error));
-    
-    
-
-  
+    getWorkerDistributionData();
+    fetchJobHistory();
   }, []);
-  // const workerOccupationChartData = {
-  //   labels: Object.keys(workerOccupationData),
-  //   datasets: [
-  //     {
-  //       data: Object.values(workerOccupationData),
-  //       backgroundColor: [
-  //         'rgba(75, 192, 192, 0.6)', 
-  //         'rgba(255, 99, 132, 0.6)', 
-  //         'rgba(54, 162, 235, 0.6)',
-  //         // Add more colors if you have more occupations
-  //       ]
-  //     }
-  //   ]
-  // };
-
-  // console.log('Worker Occupation Data:', workerOccupationChartData);
 
   return (
     <Box p={3}>
@@ -103,7 +126,7 @@ function Dashboard() {
       </Typography>
       <Box display="flex" justifyContent="space-between" flexWrap="wrap">
         <SummaryCard title="Total Users" value={totalUsers} />
-        <SummaryCard title="Clients" value={clientCount} /> {/* Placeholder for customers */}
+        <SummaryCard title="Customers" value="3" /> {/* Placeholder for customers */}
         <SummaryCard title="Workers" value={workerCount} />
         <SummaryCard title="Jobs Done" value={jobsDone} />
       </Box>
@@ -111,7 +134,68 @@ function Dashboard() {
         <Typography variant="h5" gutterBottom>
           Worker Categories Percentage
         </Typography>
-        <PieChart dataPoints={Object.entries(workerOccupationData).map(([label, value]) => ({ label, value }))} title="Worker Categories" />
+        <PieChart
+          series={[
+            {
+              arcLabel: (item) => `${item.label} (${item.value})`,
+              arcLabelMinAngle: 45,
+              data: [
+                { id: 0, value: workerDist[0], label: 'Electricians' },
+                { id: 1, value: workerDist[1], label: 'Plumbers' },
+                { id: 2, value: workerDist[2], label: 'Maids' },
+              ],
+            },
+          ]}
+          sx={{
+            [`& .${pieArcLabelClasses.root}`]: {
+              fill: 'black',
+              fontWeight: 'bold',
+            },
+          }}
+          width={400}
+          height={200}
+        />
+      </Box>
+      <Box mt={2}>
+        <Typography>
+          Satisfaction 
+        </Typography>
+        <LineChart
+          xAxis={[{ scaleType: 'point', data: dateLabel, }]}
+          series={[
+            {
+              data: satisfaction,
+            },
+          ]}
+          width={900}
+          height={500}
+        />
+      </Box>
+      <Box mt={2}>
+        <Typography variant="h5" gutterBottom>
+          Money Earned 
+        </Typography>
+        <PieChart
+        series={[
+          {
+            arcLabel: (item) => `${item.label} (${item.value})`,
+            arcLabelMinAngle: 45,
+            data: [
+              { id: 0, value: moneyCollected[0], label: 'Electricians' },
+              { id: 1, value: moneyCollected[1], label: 'Plumbers' },
+              { id: 2, value: moneyCollected[2], label: 'Maids' },
+            ],
+          },
+        ]}
+        sx={{
+          [`& .${pieArcLabelClasses.root}`]: {
+            fill: 'black',
+            fontWeight: 'bold',
+          },
+        }}
+        width={400}
+        height={200}
+      />
       </Box>
       
           <Box mt={2} bgcolor="white" p={2} borderRadius={8}>

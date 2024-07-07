@@ -3,11 +3,34 @@ import React, { useState, useEffect } from 'react'
 import { ActivityIndicator, Button, Card, Chip, TextInput } from 'react-native-paper';
 import { Image } from 'expo-image';
 import { FIRESTORE_DB } from '../../firebaseConfig';
-import { setDoc, doc, getDoc, collection, onSnapshot, query, where, getDocs, deleteDoc, } from 'firebase/firestore';
+import { setDoc, doc, getDoc, collection, onSnapshot, query, where, getDocs, deleteDoc, orderBy } from 'firebase/firestore';
 import { AUTH } from '../../firebaseConfig';
 
 import { writeToChatPartyState, writeToWorkerState, readWorkerState, writeAskForJobState } from '../../Services/stateService';
 import call from 'react-native-phone-call';
+import { getChatPartyState } from '../../Services/stateService';
+import * as Notifications from "expo-notifications";
+
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+});
+
+const generateNotification = async () => {
+  //show the notification to the user
+  Notifications.scheduleNotificationAsync({
+    //set the content of the notification
+    content: {
+      title: "Huduma App",
+      body: "You might have a new message",
+    },
+    trigger: null,
+  });
+};
 
 const ActivityScreen = ({ navigation }) => {
   const [loading, setloading] = useState(true);
@@ -28,6 +51,7 @@ const ActivityScreen = ({ navigation }) => {
   const [arrivaTime, setArrivalTime] = useState(0);
   const [satisfaction, setSatisfaction] = useState(0);
   const [payment,setPayment] = useState(0);
+  
 
   const getActivity = async () => {
     let q = collection(FIRESTORE_DB, "AcceptedRequests");
@@ -52,15 +76,12 @@ const ActivityScreen = ({ navigation }) => {
   }
 
   const getRequestSent = async () => {
-    getDocs(collection(FIRESTORE_DB, "ServiceRequest"))
-      .then((result) => {
-        result.forEach((doc) => {
-          if (doc.id == AUTH.currentUser.uid) {
-            setCurrentWorkState('Your request has been placed')
-            setloading(false);
-          }
-        })
-      })
+    let q = doc(FIRESTORE_DB, 'ServiceRequest', AUTH.currentUser.uid);
+    onSnapshot(q, (snapshot)=>{
+      if(snapshot.exists){
+        setWorkerComing(true)
+      }
+    })  
   }
 
   const getWorkerProfile = async () => {
@@ -109,9 +130,21 @@ const ActivityScreen = ({ navigation }) => {
 
   useEffect(() => {
     getActivity();
-    getRequestSent();
     getWorkerProfile();
     getJobFinished();
+    if (getChatPartyState() && AUTH.currentUser) {
+      let { sentBy, sentTo } = getChatPartyState();
+      if (sentBy == AUTH.currentUser.uid || sentTo == AUTH.currentUser.uid && sentTo != AUTH.currentUser.uid) {
+        let chatid = `${sentBy}::${sentTo}`;
+        console.log(chatid, AUTH.currentUser.uid)
+        const q = query(collection(FIRESTORE_DB, 'chats'), orderBy('createdAt', "desc"));
+        onSnapshot(q, (snapshot) => {
+          console.log(snapshot)
+          generateNotification();
+        }
+        );
+      }
+    }
   }, [])
 
   const blurhash =
@@ -135,7 +168,7 @@ const ActivityScreen = ({ navigation }) => {
 
   const handleFormSubmit = async () =>{
     setFormLoading(true);
-    let JobsHistoryRef = doc(FIRESTORE_DB, 'JobsHistory', collectionName);
+    let JobsHistoryRef = doc(FIRESTORE_DB, 'NewJobsHistory', collectionName);
     let DeleteRef = doc(FIRESTORE_DB, 'FinishedJobs', collectionName);
     let DeleteRed = doc(FIRESTORE_DB, 'AcceptedRequests', collectionName);
     setDoc(JobsHistoryRef, {...jobObject, arrivaTime, satisfaction, payment}, {merge:true})
@@ -149,6 +182,11 @@ const ActivityScreen = ({ navigation }) => {
       })
   }
 
+  const cancelJob = async () => {
+    let docRef = doc(FIRESTORE_DB, 'ServiceRequest', AUTH.currentUser.uid);
+    await deleteDoc(docRef);
+  }
+
   return (
     <View style={{ flex: 1 }}>
       {loading ?
@@ -159,6 +197,7 @@ const ActivityScreen = ({ navigation }) => {
         (<View style={{ flex: 1 }}>
           {workerComing ?
             (<>
+            <Button onPress={()=> cancelJob()}> Cancel Job Request </Button>
               {jobFinished ?
                 (<>
                   <View style={styles.container}>

@@ -4,8 +4,9 @@ const bodyParser = require('body-parser');
 require("dotenv").config();
 
 const { collection, getDocs, count } = require('firebase/firestore');
-const { getUser,
-    listAllUsers
+const {
+    getUser,
+    listAllUsers    
     , createUser
     , countUsers,
     getAcceptedRequests,
@@ -15,9 +16,9 @@ const { getUser,
     getComplaints,
     getUnapprovedWorkers,
     approveWorker,
-    banUser, 
+    banUser,
     unBanUser,
-    getClients} = require("./manage_users")
+    getWorkerDistribution } = require("./manage_users")
 
 
 
@@ -200,24 +201,34 @@ app.post('/api/sendNotification', async (req, res) => {
     }
 });
 
-app.get('/admin/unbanuser/:id', (req,res)=>{
+app.get('/admin/getworkerdistribution', (req,res)=>{
+    getWorkerDistribution()
+        .then((data)=> {
+            res.json(data)
+            console.log(data);
+        }
+        )
+        .catch((err)=> res.send(err));
+})
+
+app.get('/admin/unbanuser/:id', (req, res) => {
     let { id } = req.params;
     unBanUser(id)
-        .then(()=>{
+        .then(() => {
             res.status(200).send('success');
-        }).catch(err=>{
+        }).catch(err => {
             console.error(err);
             res.status(400).send(err);
         })
 })
 
 
-app.get('/admin/banuser/:id', (req,res)=>{
+app.get('/admin/banuser/:id', (req, res) => {
     let { id } = req.params;
     banUser(id)
-        .then(()=>{
+        .then(() => {
             res.status(200).send('success');
-        }).catch(err=>{
+        }).catch(err => {
             console.error(err);
             res.status(400).send(err);
         })

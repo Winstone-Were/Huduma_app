@@ -37,6 +37,9 @@ export default function App() {
         console.log(chatid, AUTH.currentUser.uid)
         const q = query(collection(FIRESTORE_DB, 'chats', chatid, 'messages'), orderBy('createdAt', "desc"));
         onSnapshot(q, (snapshot) => {
+          snapshot.forEach(doc=>{
+            console.log(doc);
+          });
           generateNotification();
         }
         );

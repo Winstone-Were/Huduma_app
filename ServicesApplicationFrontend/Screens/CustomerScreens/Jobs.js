@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { View, TouchableOpacity, Text, StyleSheet, Image, SafeAreaView, ScrollView, Alert } from 'react-native';
 import { Dialog, Portal, Button, ActivityIndicator } from 'react-native-paper';
 
 import { AUTH, FIRESTORE_DB } from '../../firebaseConfig';
-import { doc, setDoc } from "firebase/firestore"; 
+import { setDoc, doc, getDoc, collection, onSnapshot, query, where, getDocs, deleteDoc, } from 'firebase/firestore';
 import {writeAskForJobState} from '../../Services/stateService'
 
 const occupations = [
@@ -27,6 +27,12 @@ const OccupationItem = ({ name, icon, onPress }) => (
 
 const JobScreen = ({ navigation }) => {
 
+  const cancelJob = async () => {
+    let docRef = doc(FIRESTORE_DB, 'ServiceRequest', AUTH.currentUser.uid);
+    await deleteDoc(docRef);
+  }
+
+  const [onJob, setOnJob] = useState(false);
   const [visible, setVisible] = useState(false);
   const [loadingJobRequest, setLoadingJobRequest] = useState(false);
   const showDialog = () => setVisible(true);
@@ -43,8 +49,18 @@ const JobScreen = ({ navigation }) => {
 
   const handleJobRequest = async () => {
     setLoadingJobRequest(true);
-    writeAskForJobState({serviceWanted});
-    navigation.push("AskServiceScreen");
+    if(onJob){
+      Alert.alert('Alert','You already have a job in queue', 
+      [{
+        text: 'Cancel Job',
+        onPress: () => cancelJob()
+      }, {
+        text:'Close'
+      }])
+    }else{
+      writeAskForJobState({serviceWanted});
+      navigation.push("AskServiceScreen");
+    }
   }
 
   return (

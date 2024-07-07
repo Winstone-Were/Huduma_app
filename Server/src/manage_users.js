@@ -4,7 +4,7 @@ const { initializeApp } = require('firebase-admin/app');
 const { getAuth } = require('firebase-admin/auth');
 const { getFirestore } = require('firebase-admin/firestore');
 
-const serviceAccount = require("../config/huduma-4bc13-firebase-adminsdk-ogdgh-e3b6545e86.json");
+const serviceAccount = require("../config/huduma-4bc13-firebase-adminsdk-ogdgh-c574cf7f69.json");
 const admin = require("firebase-admin");
 
 admin.initializeApp({
@@ -134,7 +134,7 @@ async function getWorkers() {
     snapshot.forEach(doc => {
       const data = doc.data();
       let uid = doc.id;
-      if(data.approved){
+      if (data.approved) {
         workers.push({ ...data, uid });
       }
     });
@@ -228,6 +228,21 @@ async function getComplaints() {
   }
 }
 
+
+async function getWorkerDistribution() {
+  try {
+    let EmptyArray = [];
+    let elecCount=0, plumCount=0, maidCount = 0;
+    let result = await db.collection('Users').where('role', '==', 'worker').get();
+    result.forEach(doc=>{
+      EmptyArray.push(doc.data());
+    })
+    return EmptyArray;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
 async function clearComplaint(id) {
   try {
     const deleteRef = db.collection('Complaints').doc(id).delete();
@@ -238,36 +253,44 @@ async function clearComplaint(id) {
 }
 
 async function approveWorker(uid) {
-  try{
+  try {
     const workerRef = db.collection('Users').doc(uid);
-    await workerRef.update({approved:true});
-    return "success"; 
-  }catch(err){
+    await workerRef.update({ approved: true });
+    return "success";
+  } catch (err) {
     return err;
   }
 }
 
 async function banUser(uid) {
-  try{
+  try {
     const workerRef = db.collection('Users').doc(uid);
-    await workerRef.update({ban:true});
-    return "success"; 
-  }catch(err){
+    await workerRef.update({ ban: true });
+    return "success";
+  } catch (err) {
     return err;
   }
 }
 
 async function unBanUser(uid) {
-  try{
+  try {
     const workerRef = db.collection('Users').doc(uid);
-    await workerRef.update({ban:false});
-    return "success"; 
-  }catch(err){
+    await workerRef.update({ ban: false });
+    return "success";
+  } catch (err) {
     return err;
   }
 }
 
 
+async function getRatings() {
+  try {
+    const ratingsArray = [];
+
+  } catch (err) {
+
+  }
+}
 
 module.exports = {
   getUser,
@@ -283,5 +306,6 @@ module.exports = {
   banUser,
   getUnapprovedWorkers,
   unBanUser,
-  getClients
+  getClients,
+  getWorkerDistribution
 };

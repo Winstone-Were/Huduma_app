@@ -19,9 +19,9 @@ Huduma is a centralized service provision mobile application that connects users
 ## Installation steps
 
 1. **Clone the repository:**
-   It can be cloned to any location of your choice 
+   It can be cloned to any location of your choice preferably your Desktop
     ```bash
-    git clone https://github.com/TijaniTatu/Huduma_app.git <directory-path>
+    git clone https://github.com/TijaniTatu/Huduma_app.git
     ```
     Then in the terminal change the directory
    ```bash
