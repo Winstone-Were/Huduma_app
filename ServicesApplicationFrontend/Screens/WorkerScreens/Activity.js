@@ -2,13 +2,35 @@ import { Alert, StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'rea
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { Card, ActivityIndicator, Button, Chip } from 'react-native-paper';
 import { FIRESTORE_DB } from '../../firebaseConfig';
-import { setDoc, doc, getDoc, collection, onSnapshot, query, where, getDocs, deleteDoc } from 'firebase/firestore';
+import { setDoc, doc, getDoc, collection, onSnapshot, query, where, getDocs, deleteDoc, orderBy } from 'firebase/firestore';
 import { AUTH } from '../../firebaseConfig';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import openMap from 'react-native-open-maps';
 import { writeToChatPartyState } from '../../Services/stateService'
 import * as Location from "expo-location";
+import { getChatPartyState } from '../../Services/stateService';
+import * as Notifications from "expo-notifications";
 
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+});
+
+const generateNotification = async () => {
+  //show the notification to the user
+  Notifications.scheduleNotificationAsync({
+    //set the content of the notification
+    content: {
+      title: "Huduma App",
+      body: "You might have a new message",
+    },
+    trigger: null,
+  });
+};
 
 const Activity = ({ navigation }) => {
 
@@ -16,6 +38,19 @@ const Activity = ({ navigation }) => {
     getActivity();
     getLocation();
     checkBan();
+    if (getChatPartyState() && AUTH.currentUser) {
+      let { sentBy, sentTo } = getChatPartyState();
+      if (sentBy == AUTH.currentUser.uid || sentTo == AUTH.currentUser.uid && sentTo != AUTH.currentUser.uid) {
+        let chatid = `${sentBy}::${sentTo}`;
+        console.log(chatid, AUTH.currentUser.uid)
+        const q = query(collection(FIRESTORE_DB, 'chats'), orderBy('createdAt', "desc"));
+        onSnapshot(q, (snapshot) => {
+          console.log(snapshot)
+          generateNotification();
+        }
+        );
+      }
+    }
   }, []);
 
   const checkBan = async () => {

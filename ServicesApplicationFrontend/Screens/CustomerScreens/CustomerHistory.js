@@ -19,7 +19,7 @@ export default function CustomerHistoryScreen({ navigation }) {
   }, []);
   const fetchUserHistory = async () => {
     setLoading(true);
-    const q = query(collection(FIRESTORE_DB, 'JobsHistory'))
+    const q = query(collection(FIRESTORE_DB, 'NewJobsHistory'))
     onSnapshot(q, (snapsot) => {
       let EmptyArray = [];
       snapsot.forEach((doc) => {

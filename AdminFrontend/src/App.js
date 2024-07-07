@@ -38,6 +38,8 @@ import JobsHistory from './tabs/JobsHistory';
 import Complaints from './tabs/Complaints';
 import ViewWorker from './tabs/Users/ViewWorker'
 
+import {BarChart} from '@mui/x-charts'
+
 function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
