@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -73,10 +73,50 @@ const theme = {
 
 };
 
+import * as Notifications from "expo-notifications";
+import { getChatPartyState } from '../Services/stateService'
+import { AUTH, FIRESTORE_DB } from "../firebaseConfig";
+import { onSnapshot, orderBy, query, collection } from "firebase/firestore";
+
+Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: true,
+        shouldSetBadge: true,
+    }),
+});
+
+const generateNotification = async () => {
+    //show the notification to the user
+    Notifications.scheduleNotificationAsync({
+        //set the content of the notification
+        content: {
+            title: "Huduma App",
+            body: "You might have a new message",
+        },
+        trigger: null,
+    });
+};
+
+
 const AuthStack = () => {
 
-    return (
 
+    useEffect(() => {
+
+        const q = query(collection(FIRESTORE_DB, 'chats'))
+        onSnapshot(q, (snapshot) => {
+            if(snapshot){
+                console.log('Some',snapshot);
+                generateNotification();
+            }
+        }
+        );
+
+    }, [])
+
+
+    return (
         <PaperProvider theme={DefaultTheme}>
             <NavigationContainer>
 

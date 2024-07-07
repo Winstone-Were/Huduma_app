@@ -82,7 +82,7 @@ function UserDetails() {
         setLoading(false);
       });
   }
-}
+
 
 if (loading) {
   return <CircularProgress />;
@@ -126,6 +126,6 @@ return (
     )}
   </Box>
 );
-
+}
 
 export default UserDetails;

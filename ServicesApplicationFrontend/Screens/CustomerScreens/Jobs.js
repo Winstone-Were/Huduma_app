@@ -33,29 +33,6 @@ const JobScreen = ({ navigation }) => {
   }
 
   const [onJob, setOnJob] = useState(false);
-
-  useEffect(()=>{
-    let q = doc(FIRESTORE_DB, 'ServiceRequest', AUTH.currentUser.uid);
-    getDoc(q)
-    .then((dooc)=>{
-      if(dooc.exists){
-        Alert.alert('Alert','You already have a job in queue', 
-        [{
-          text:'Go to Activity',
-          onPress: () => navigation.push('CustomerActivity'),
-          style:'default'
-        },{
-          text: 'Cancel Job',
-          onPress: () => cancelJob()
-        }, {
-          text:'Close'
-        }])
-
-        setOnJob(true)
-      }
-    })
-  },[onJob])
-
   const [visible, setVisible] = useState(false);
   const [loadingJobRequest, setLoadingJobRequest] = useState(false);
   const showDialog = () => setVisible(true);

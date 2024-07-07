@@ -14,6 +14,10 @@ function WorkersList() {
   const [unapprovedCount, setUnapprovedCount] = useState(0);
 
   useEffect(() => {
+    fetchUser();
+  }, []);
+
+  const fetchUser = async () => {
     fetch('http://localhost:3000/admin/getworkers', { method: 'GET' })
       .then(response => response.json())
       .then(data => {
@@ -37,8 +41,7 @@ function WorkersList() {
         setLoading(false);
       });
 
-
-  }, []);
+  }
 
   const handleBanUser = async (uid) => {
     setLoading(true);

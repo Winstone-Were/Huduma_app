@@ -152,7 +152,7 @@ export default function AskServiceScreen({ navigation }) {
             deviceModel, currentLocation, phoneNumber
         }, { merge: true })
             .then(() => {
-            navigation.replace('CustomerActivity')
+            navigation.replace('CustomerHomepage');
             }).catch(err => {
                 setLoading(false);
                 console.error(err);

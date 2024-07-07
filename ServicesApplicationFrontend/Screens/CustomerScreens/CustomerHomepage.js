@@ -10,6 +10,7 @@ import ActivityScreen from './Activity';
 import { AUTH, FIRESTORE_DB } from '../../firebaseConfig';
 
 import {readCustomerState, writeToCustomerState, clearCustomerState} from '../../Services/stateService'
+import { getChatPartyState } from '../../Services/stateService';
 
 
 const Tab = createMaterialBottomTabNavigator();

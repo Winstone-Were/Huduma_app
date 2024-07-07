@@ -134,7 +134,7 @@ async function getWorkers() {
     snapshot.forEach(doc => {
       const data = doc.data();
       let uid = doc.id;
-      if(data.approved){
+      if (data.approved) {
         workers.push({ ...data, uid });
       }
     });
@@ -219,6 +219,21 @@ async function getClients() {
   }
 }
 
+
+async function getWorkerDistribution() {
+  try {
+    let EmptyArray = [];
+    let elecCount=0, plumCount=0, maidCount = 0;
+    let result = await db.collection('Users').where('role', '==', 'worker').get();
+    result.forEach(doc=>{
+      EmptyArray.push(doc.data());
+    })
+    return EmptyArray;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
 async function clearComplaint(id) {
   try {
     const deleteRef = db.collection('Complaints').doc(id).delete();
@@ -229,35 +244,43 @@ async function clearComplaint(id) {
 }
 
 async function approveWorker(uid) {
-  try{
+  try {
     const workerRef = db.collection('Users').doc(uid);
-    await workerRef.update({approved:true});
-    return "success"; 
-  }catch(err){
+    await workerRef.update({ approved: true });
+    return "success";
+  } catch (err) {
     return err;
   }
 }
 
 async function banUser(uid) {
-  try{
+  try {
     const workerRef = db.collection('Users').doc(uid);
-    await workerRef.update({ban:true});
-    return "success"; 
-  }catch(err){
+    await workerRef.update({ ban: true });
+    return "success";
+  } catch (err) {
     return err;
   }
 }
 
 async function unBanUser(uid) {
-  try{
+  try {
     const workerRef = db.collection('Users').doc(uid);
-    await workerRef.update({ban:false});
-    return "success"; 
-  }catch(err){
+    await workerRef.update({ ban: false });
+    return "success";
+  } catch (err) {
     return err;
   }
 }
 
+async function getRatings() {
+  try {
+    const ratingsArray = [];
+
+  } catch (err) {
+
+  }
+}
 
 module.exports = {
   getUser,
@@ -272,5 +295,6 @@ module.exports = {
   approveWorker,
   banUser,
   getUnapprovedWorkers,
-  unBanUser
+  unBanUser,
+  getWorkerDistribution
 };
