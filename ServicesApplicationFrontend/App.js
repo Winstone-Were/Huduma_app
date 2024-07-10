@@ -8,44 +8,8 @@ import { FIRESTORE_DB, AUTH } from "./firebaseConfig";
 import React, { useEffect, useState } from 'react';
 import { getChatPartyState } from './Services/stateService';
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: true,
-  }),
-});
-
-const generateNotification = async () => {
-  //show the notification to the user
-  Notifications.scheduleNotificationAsync({
-    //set the content of the notification
-    content: {
-      title: "Huduma App",
-      body: "You might have a new message",
-    },
-    trigger: null,
-  });
-};
-
 export default function App() {
-  useEffect(() => {
-    if (getChatPartyState() && AUTH.currentUser) {
-      let { sentBy, sentTo } = getChatPartyState();
-      if (sentBy == AUTH.currentUser.uid || sentTo == AUTH.currentUser.uid && sentTo != AUTH.currentUser.uid) {
-        let chatid = `${sentBy}::${sentTo}`;
-        console.log(chatid, AUTH.currentUser.uid)
-        const q = query(collection(FIRESTORE_DB, 'chats', chatid, 'messages'), orderBy('createdAt', "desc"));
-        onSnapshot(q, (snapshot) => {
-          snapshot.forEach(doc=>{
-            console.log(doc);
-          });
-          generateNotification();
-        }
-        );
-      }
-    }
-  }, []);
+
   return (
     <View style={{flex:1}}>
           <Index />

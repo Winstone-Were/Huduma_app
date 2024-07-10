@@ -28,6 +28,7 @@ import BanScreen from "../Screens/SettingScreens/BanScreen";
 import NotApprovedScreen from "../Screens/SettingScreens/NotApprovedScreen";
 import WorkerBuildProfile from "../Screens/WorkerScreens/WorkerBuildProfile";
 import ActivityScreen from "../Screens/CustomerScreens/Activity";
+import WorkerPayment from "../Screens/WorkerScreens/WorkerPayment";
 
 const Stack = createNativeStackNavigator();
 const noHeader = { headerShown: false };
@@ -44,49 +45,7 @@ const theme = {
     },
   };
 
-import * as Notifications from "expo-notifications";
-import { getChatPartyState } from '../Services/stateService'
-import { AUTH, FIRESTORE_DB } from "../firebaseConfig";
-import { onSnapshot, orderBy, query, collection } from "firebase/firestore";
-
-Notifications.setNotificationHandler({
-    handleNotification: async () => ({
-        shouldShowAlert: true,
-        shouldPlaySound: true,
-        shouldSetBadge: true,
-    }),
-});
-
-const generateNotification = async () => {
-    //show the notification to the user
-    Notifications.scheduleNotificationAsync({
-        //set the content of the notification
-        content: {
-            title: "Huduma App",
-            body: "You might have a new message",
-        },
-        trigger: null,
-    });
-};
-
-
 const AuthStack = () => {
-
-
-    useEffect(() => {
-
-        const q = query(collection(FIRESTORE_DB, 'chats'))
-        onSnapshot(q, (snapshot) => {
-            if(snapshot){
-                console.log('Some',snapshot);
-                generateNotification();
-            }
-        }
-        );
-
-    }, [])
-
-
     return (
         <PaperProvider theme={theme}>
             <NavigationContainer>
@@ -186,6 +145,7 @@ const AuthStack = () => {
                     <Stack.Screen name="NotApprovedScreen" component={NotApprovedScreen} options={noHeader} />
                     <Stack.Screen name="WorkerBuildProfileScreen" component={WorkerBuildProfile} options={noHeader} />
                     <Stack.Screen name="CustomerActivity" component={ActivityScreen} options={noHeader} />
+                    <Stack.Screen name="WorkerPayment" component={WorkerPayment} options={noHeader} />
                 </Stack.Navigator>
             </NavigationContainer>
         </PaperProvider>

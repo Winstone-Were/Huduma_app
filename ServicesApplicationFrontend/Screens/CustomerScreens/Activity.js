@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { ActivityIndicator, Button, Card, Chip, TextInput } from 'react-native-paper';
 import { Image } from 'expo-image';
 import { FIRESTORE_DB } from '../../firebaseConfig';
@@ -11,27 +11,8 @@ import call from 'react-native-phone-call';
 import { getChatPartyState } from '../../Services/stateService';
 import * as Notifications from "expo-notifications";
 import { Rating } from 'react-native-ratings';
+import RBSheet from 'react-native-raw-bottom-sheet';
 
-
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: true,
-  }),
-});
-
-const generateNotification = async () => {
-  //show the notification to the user
-  Notifications.scheduleNotificationAsync({
-    //set the content of the notification
-    content: {
-      title: "Huduma App",
-      body: "You might have a new message",
-    },
-    trigger: null,
-  });
-};
 
 const ActivityScreen = ({ navigation }) => {
   const [loading, setloading] = useState(true);
@@ -44,22 +25,22 @@ const ActivityScreen = ({ navigation }) => {
   const [imageURL, setImageURL] = useState();
   const [workURL, setWorkURL] = useState('')
   const [jobFinished, setJobFinished] = useState(false);
-  
+
   const [collectionName, setCollectionName] = useState('');
-  
+
   //FormStates
   const [formLoading, setFormLoading] = useState(false);
   const [arrivaTime, setArrivalTime] = useState(0);
   const [satisfaction, setSatisfaction] = useState(0);
-  const [payment,setPayment] = useState(0);
-  const [starRating, setStarRating] = useState(0);
+  const [payment, setPayment] = useState(0);
+const [starRating, setStarRating] = useState(0);
 
   const getActivity = async () => {
     let q = collection(FIRESTORE_DB, "AcceptedRequests");
     onSnapshot(q, (querySnapshot) => {
       querySnapshot.forEach((doc) => {
         if (doc.id.split("::")[1] == AUTH.currentUser.uid) {
-          writeAskForJobState({collectionName:doc.id});
+          writeAskForJobState({ collectionName: doc.id });
           setWorkURL(doc.id);
           work_url = doc.id;
           let workerId = doc.id.split("::")[0];
@@ -78,11 +59,11 @@ const ActivityScreen = ({ navigation }) => {
 
   const getRequestSent = async () => {
     let q = doc(FIRESTORE_DB, 'ServiceRequest', AUTH.currentUser.uid);
-    onSnapshot(q, (snapshot)=>{
-      if(snapshot.exists){
+    onSnapshot(q, (snapshot) => {
+      if (snapshot.exists) {
         setWorkerComing(true)
       }
-    })  
+    })
   }
 
   const getWorkerProfile = async () => {
@@ -123,6 +104,7 @@ const ActivityScreen = ({ navigation }) => {
       querySnapshot.forEach((doc) => {
         if (doc.id.split("::")[1] == AUTH.currentUser.uid) {
           setCollectionName(doc.id);
+          setloading(false);
           setJobFinished(true);
         }
       })
@@ -133,19 +115,6 @@ const ActivityScreen = ({ navigation }) => {
     getActivity();
     getWorkerProfile();
     getJobFinished();
-    if (getChatPartyState() && AUTH.currentUser) {
-      let { sentBy, sentTo } = getChatPartyState();
-      if (sentBy == AUTH.currentUser.uid || sentTo == AUTH.currentUser.uid && sentTo != AUTH.currentUser.uid) {
-        let chatid = `${sentBy}::${sentTo}`;
-        console.log(chatid, AUTH.currentUser.uid)
-        const q = query(collection(FIRESTORE_DB, 'chats'), orderBy('createdAt', "desc"));
-        onSnapshot(q, (snapshot) => {
-          console.log(snapshot)
-          generateNotification();
-        }
-        );
-      }
-    }
   }, [])
 
   const blurhash =
@@ -159,25 +128,22 @@ const ActivityScreen = ({ navigation }) => {
     let startTime = startDate.toISOString();
     setDoc(workerArriveRef, { ...jobObject, startTime })
       .then(() => {
-        setloading(false);
+        //setloading(false);
       }).catch(err => console.error);
-    //Take Start Time
-    //Start Job
-    //Bottom Sheet to end work
 
   }
 
-  const handleFormSubmit = async () =>{
+  const handleFormSubmit = async () => {
     setFormLoading(true);
     let JobsHistoryRef = doc(FIRESTORE_DB, 'NewJobsHistory', collectionName);
     let DeleteRef = doc(FIRESTORE_DB, 'FinishedJobs', collectionName);
     let DeleteRed = doc(FIRESTORE_DB, 'AcceptedRequests', collectionName);
-    setDoc(JobsHistoryRef, {...jobObject, arrivaTime, satisfaction, starRating, payment}, {merge:true})
-      .then(()=>{ 
+    setDoc(JobsHistoryRef, { ...jobObject, arrivaTime, satisfaction, starRating, payment }, { merge: true })
+      .then(() => {
         deleteDoc(DeleteRef);
         deleteDoc(DeleteRed);
         navigation.replace('CustomerHomepage');
-      }).catch(err=>{ 
+      }).catch(err => {
         console.error(err);
         setFormLoading(false);
       })
@@ -187,6 +153,8 @@ const ActivityScreen = ({ navigation }) => {
     let docRef = doc(FIRESTORE_DB, 'ServiceRequest', AUTH.currentUser.uid);
     await deleteDoc(docRef);
   }
+
+  const refRBSheet = useRef();
 
   return (
     <View style={{ flex: 1 }}>
@@ -198,7 +166,7 @@ const ActivityScreen = ({ navigation }) => {
         (<View style={{ flex: 1 }}>
           {workerComing ?
             (<>
-            <Button onPress={()=> cancelJob()}> Cancel Job Request </Button>
+              <Button onPress={() => cancelJob()}> Cancel Job Request </Button>
               {jobFinished ?
                 (<>
                   <View style={styles.container}>
@@ -209,7 +177,7 @@ const ActivityScreen = ({ navigation }) => {
                       mode='outlined'
                       label='Worker Arrived on Time 0-5'
                       value={arrivaTime}
-                      onChangeText={(text)=> setArrivalTime(text)}
+                      onChangeText={(text) => setArrivalTime(text)}
                       maxLength={2}
                       disabled={formLoading}
                     />
@@ -218,17 +186,8 @@ const ActivityScreen = ({ navigation }) => {
                       mode='outlined'
                       label="Satisfied by Worker's job 0-5"
                       value={satisfaction}
-                      onChangeText={(text)=> setSatisfaction(text)}
+                      onChangeText={(text) => setSatisfaction(text)}
                       maxLength={2}
-                      disabled={formLoading}
-                    />
-                    <TextInput
-                      style={styles.input}
-                      mode='outlined'
-                      label="How much did you pay ?"
-                      value={payment}
-                      onChangeText={(text)=> setPayment(text)}
-                      maxLength={6}
                       disabled={formLoading}
                     />
                    <Text>Rate the Worker's Service:</Text>
@@ -238,7 +197,7 @@ const ActivityScreen = ({ navigation }) => {
                       onFinishRating={(rating) => setStarRating(rating)}
                       style={{ paddingVertical: 10 }}
                     />
-                    <Button onPress={()=> handleFormSubmit()} disabled={formLoading}> Submit </Button>
+                    <Button onPress={() => handleFormSubmit()} disabled={formLoading}> Submit </Button>
                   </View>
                 </>)
                 :
@@ -273,6 +232,35 @@ const ActivityScreen = ({ navigation }) => {
                         <Card.Actions>
                           <Button mode='outlined' onPress={() => onWorkerArrive()}> Worker Has Arrived </Button>
                         </Card.Actions>
+                        <Button onPress={() => refRBSheet.current.open()}> Worker Stats </Button>
+                        <RBSheet
+                          ref={refRBSheet}
+                          useNativeDriver={false}
+                          customStyles={{
+                            wrapper: {
+                              backgroundColor: 'transparent',
+                            },
+                            draggableIcon: {
+                              backgroundColor: '#000',
+                            },
+                          }}
+                          customModalProps={{
+                            animationType: 'slide',
+                            statusBarTranslucent: true,
+                          }}
+                          customAvoidingViewProps={{
+                            enabled: false,
+                          }}>
+                          <View style={{ flex: 1 }}>
+                          <Button mode='contained' onPress={() => refRBSheet.current.close()}> Close </Button>
+                            <View style={styles.container}>
+                              <Chip style={{ marginTop: 10 }} icon="account-hard-hat"> {worker.occupation} </Chip>
+                              <Chip style={{ marginTop: 10 }} icon="wrench"> Jobs : {worker.jobs} </Chip>
+                              <Chip style={{ marginTop: 10 }} icon="arrow-up-down"> Rating :{worker.rating} </Chip>
+                              <Chip style={{ marginTop: 10 }} icon="cash-minus"> Average cost : {worker.averagecost} </Chip>
+                            </View>
+                          </View>
+                        </RBSheet>
                       </>) : (<>
                         <ActivityIndicator animating />
                         <TouchableOpacity onPress={() => getWorkerProfile()}>
@@ -290,7 +278,7 @@ const ActivityScreen = ({ navigation }) => {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, marginHorizontal: 20, marginTop: 40 },
+  container: {marginHorizontal: 20, marginTop: 10 },
   input: { marginVertical: 5, borderRadius: 0 },
   row: {
     alignItems: "center",

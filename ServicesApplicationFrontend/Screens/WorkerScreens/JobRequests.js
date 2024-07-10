@@ -1,6 +1,6 @@
 import { Alert, StyleSheet, Text, View, ScrollView } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { Card, ActivityIndicator, Button, Chip } from 'react-native-paper';
+import { Card, ActivityIndicator, Button, Chip, Surface } from 'react-native-paper';
 import { FIRESTORE_DB } from '../../firebaseConfig';
 import { setDoc, doc, getDoc, collection, onSnapshot, query, where, getDocs, deleteDoc } from 'firebase/firestore';
 import { AUTH } from '../../firebaseConfig';
@@ -18,14 +18,14 @@ const JobRequests = ({ navigation }) => {
   occupation = (readWorkerState().occupation);
 
   const getSpecificUserObject = async () => {
-    getJobs();  
+    getJobs();
   }
 
   const checkBan = async () => {
-    let userRef = doc(FIRESTORE_DB,'Users',AUTH.currentUser.uid)
+    let userRef = doc(FIRESTORE_DB, 'Users', AUTH.currentUser.uid)
     getDoc(userRef)
-      .then(doc=>{
-        if(doc.data().ban){
+      .then(doc => {
+        if (doc.data().ban) {
           navigation.replace("BanScreen");
         }
       })
@@ -48,7 +48,7 @@ const JobRequests = ({ navigation }) => {
           setLoading(false);
         })
       }
-    },(onerror)=>{
+    }, (onerror) => {
       console.error(onerror.message);
     })
   }
@@ -97,9 +97,18 @@ const JobRequests = ({ navigation }) => {
                       <Card key={index} mode='elevated' style={styles.card}>
                         <Card.Title title={job['clientName']} />
                         <Card.Cover source={{ uri: job['imageURL'] }} />
-                        <Card.Content>
-                          <Text variant="bodyMedium"> Description  </Text>
-                          <Text> {job['description']} </Text>
+                        <Card.Content style={{ flex: 1, width: 500 }}>
+                          {job['deviceBroken']
+                            &&
+                            <Surface style={styles.surface} elevation={5}>
+                              <Chip style={{ marginTop: 10, width: 200 }} icon="cog"> Damaged Device</Chip>
+                              <Text style={{ fontSize: 25 }}> Device Type </Text>
+                              <Text> {job['deviceType']} </Text>
+                              <Text style={{ fontSize: 25 }}> Device Model </Text>
+                              <Text> {job['deviceModel']}  </Text>
+                            </Surface>}
+                          <Text variant="bodyMedium" style={{ fontSize: 25 }}> Description  </Text>
+                          <Text style={{ fontSize: 15 ,width:500 }} numberOfLines={5} lineBreakMode='tail'> {job['description']} </Text>
                           <Chip style={{ marginTop: 10, width: 200 }} icon="account-hard-hat"> {job['ServiceWanted']} </Chip>
                         </Card.Content>
                         <Card.Actions>
@@ -117,7 +126,7 @@ const JobRequests = ({ navigation }) => {
               </>)}
           </>)
       }
-      <Button onPress={()=> navigation.push('WorkerHistoryScreen')}> View History </Button>
+      <Button onPress={() => navigation.push('WorkerHistoryScreen')}> View History </Button>
     </View>
   )
 }
@@ -146,6 +155,8 @@ const styles = StyleSheet.create({
     alignSelf: "center"
   },
   card: {
-    width: 500
-  }
+    padding: 0
+  },
+  surface: {
+  },
 });
