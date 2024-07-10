@@ -31,12 +31,7 @@ const Settings = ({ navigation }) => {
               <Switch value={notificationsEnabled} onValueChange={toggleNotifications} />
             )}
           />
-          <List.Item
-            title="Dark Mode"
-            right={() => (
-              <Switch value={darkModeEnabled} onValueChange={toggleDarkMode} />
-            )}
-          />
+
           {/* <List.Item
             title="Language"
             description="English"

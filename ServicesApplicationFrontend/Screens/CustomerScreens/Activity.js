@@ -10,6 +10,7 @@ import { writeToChatPartyState, writeToWorkerState, readWorkerState, writeAskFor
 import call from 'react-native-phone-call';
 import { getChatPartyState } from '../../Services/stateService';
 import * as Notifications from "expo-notifications";
+import { Rating } from 'react-native-ratings';
 
 
 Notifications.setNotificationHandler({
@@ -51,7 +52,7 @@ const ActivityScreen = ({ navigation }) => {
   const [arrivaTime, setArrivalTime] = useState(0);
   const [satisfaction, setSatisfaction] = useState(0);
   const [payment,setPayment] = useState(0);
-  
+  const [starRating, setStarRating] = useState(0);
 
   const getActivity = async () => {
     let q = collection(FIRESTORE_DB, "AcceptedRequests");
@@ -171,7 +172,7 @@ const ActivityScreen = ({ navigation }) => {
     let JobsHistoryRef = doc(FIRESTORE_DB, 'NewJobsHistory', collectionName);
     let DeleteRef = doc(FIRESTORE_DB, 'FinishedJobs', collectionName);
     let DeleteRed = doc(FIRESTORE_DB, 'AcceptedRequests', collectionName);
-    setDoc(JobsHistoryRef, {...jobObject, arrivaTime, satisfaction, payment}, {merge:true})
+    setDoc(JobsHistoryRef, {...jobObject, arrivaTime, satisfaction, starRating, payment}, {merge:true})
       .then(()=>{ 
         deleteDoc(DeleteRef);
         deleteDoc(DeleteRed);
@@ -229,6 +230,13 @@ const ActivityScreen = ({ navigation }) => {
                       onChangeText={(text)=> setPayment(text)}
                       maxLength={6}
                       disabled={formLoading}
+                    />
+                   <Text>Rate the Worker's Service:</Text>
+                    <Rating
+                      startingValue={starRating}
+                      imageSize={30}
+                      onFinishRating={(rating) => setStarRating(rating)}
+                      style={{ paddingVertical: 10 }}
                     />
                     <Button onPress={()=> handleFormSubmit()} disabled={formLoading}> Submit </Button>
                   </View>

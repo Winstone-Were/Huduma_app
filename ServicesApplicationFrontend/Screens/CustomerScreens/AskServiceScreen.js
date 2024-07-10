@@ -1,26 +1,20 @@
-
-import { View, TouchableOpacity, KeyboardAvoidingView, StyleSheet, SafeAreaView, ScrollView, Alert } from 'react-native';
+import { View, TouchableOpacity, KeyboardAvoidingView, StyleSheet, SafeAreaView, ScrollView, Alert, Platform } from 'react-native';
 import { Text, Button, TextInput, Appbar, ActivityIndicator, Menu } from 'react-native-paper';
 import React, { useEffect, useRef, useState } from 'react';
 import { Image } from 'expo-image';
-
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { CameraView, useCameraPermissions, Camera } from 'expo-camera';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import MapScreen from './MapScreen';
 import * as Location from "expo-location";
-
 import { STORAGE } from '../../firebaseConfig';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { AUTH, FIRESTORE_DB } from '../../firebaseConfig';
 import { setDoc, doc, getDoc } from 'firebase/firestore';
-
 import { writeAskForJobState, getAskForJobState, cleatAskForJobState, readCustomerState } from '../../Services/stateService';
-
 
 const TakePhotos = (props) => {
     const cameraRef = useRef();
-    const [images, setImages] = useState([]);
     const [permission, requestPermission] = useCameraPermissions();
     useEffect(() => {
         requestPermission();
@@ -31,11 +25,11 @@ const TakePhotos = (props) => {
         const { status } = await Camera.getCameraPermissionsAsync();
         if (status === 'granted') {
             // do something
-
         } else {
             Alert.alert("Access denied")
         }
     }
+
     const __takePicture = async () => {
         const photo = await cameraRef.current.takePictureAsync();
         props.setStateImage(photo.uri)
@@ -43,7 +37,6 @@ const TakePhotos = (props) => {
     }
 
     return (
-
         <View style={{ flex: 1 }}>
             <CameraView ref={cameraRef} style={{ flex: 1 }} />
             <Button onPress={() => __takePicture()}> Take photo </Button>
@@ -73,8 +66,7 @@ export default function AskServiceScreen({ navigation }) {
     const [deviceBroken, setDeviceBroken] = useState(false);
     const [deviceType, setDeviceType] = useState('');
     const [deviceModel, setDeviceModel] = useState('');
-    const blurhash =
-        '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
+    const blurhash = '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
 
     const getUploadPath = async () => {
         try {
@@ -152,17 +144,19 @@ export default function AskServiceScreen({ navigation }) {
             deviceModel, currentLocation, phoneNumber
         }, { merge: true })
             .then(() => {
-            navigation.replace('CustomerHomepage');
+                navigation.replace('CustomerHomepage');
             }).catch(err => {
                 setLoading(false);
                 console.error(err);
             })
     }
+
     const onTimeChange = (event, selectedDate) => {
         const currentDate = selectedDate || selectedTime;
         setShowTimePicker(false);
         setSelectedTime(currentDate);
     };
+
     const onDateChange = (event, selectedDate) => {
         const currentDate = selectedDate || selectedDate;
         setShowDatePicker(false);
@@ -174,79 +168,76 @@ export default function AskServiceScreen({ navigation }) {
             <Appbar.Header>
                 <Appbar.BackAction onPress={() => navigation.goBack()} />
                 <Appbar.Content title="Request Details" />
-
             </Appbar.Header>
 
             {loading ?
                 (<View style={styles.loadingContainer}>
                     <ActivityIndicator size={40} animating />
                 </View>
-                ) : (<>
-                    {isPickingPhoto || isSettingLocation ?
-                        (<>
-                            {isPickingPhoto ?
-                                (<>
+                ) : (
+                    <>
+                        {isPickingPhoto || isSettingLocation ? (
+                            <>
+                                {isPickingPhoto ? (
                                     <TakePhotos closeCamera={setIsPickingPhoto} setStateImage={(val) => setImage(val)} />
-                                </>) :
-                                (<>
-                                    <MapScreen
-                                        setState={(val) => setLocationName(val)}
-                                        setStateCurrentLocation={(val) => setCurrentLocation(val)}
+                                ) : (
+                                    <>
+                                        <MapScreen
+                                            setState={(val) => setLocationName(val)}
+                                            setStateCurrentLocation={(val) => setCurrentLocation(val)}
+                                        />
+                                        <Text style={styles.locationText}>{locationName}</Text>
+                                        <Button onPress={() => setIsSettingLocation(false)}>Select Location</Button>
+                                    </>
+                                )}
+                            </>
+                        ) : (
+                            <KeyboardAvoidingView
+                                behavior={Platform.OS === "ios" ? "padding" : "height"}
+                                style={{ flex: 1 }}
+                            >
+                                <ScrollView contentContainerStyle={styles.scrollViewContent}>
+                                    <Text style={styles.title}>{serviceWanted} Service Details</Text>
+                                    <Image
+                                        style={styles.image}
+                                        source={{ uri: image }}
+                                        placeholder={{ blurhash }}
+                                        contentFit="cover"
+                                        transition={1000}
                                     />
-                                    <Text style={styles.locationText}> {locationName} </Text>
-                                    <Button onPress={() => setIsSettingLocation(false)}> Select Location</Button>
-                                </>)}
-                        </>) :
-                        (<View>
-                            <ScrollView contentContainerStyle={styles.scrollViewContent}>
-
-                                <Text style={styles.title}>{serviceWanted} Service Details</Text>
-                                <Image
-                                    style={styles.image}
-                                    source={{ uri: image }}
-                                    placeholder={{ blurhash }}
-                                    contentFit="cover"
-                                    transition={1000}
-                                />
-                                <Button onPress={() => setIsPickingPhoto(!isPickingPhoto)}> ADD A PHOTO </Button>
-                                <View style={styles.row}>
-                                    <Text style={styles.label}>Is it a broken Appliance?</Text>
-                                    <Button
-                                        mode="contained"
-                                        onPress={() => setDeviceBroken(!deviceBroken)}
-                                        style={[styles.input, { backgroundColor: deviceBroken ? 'green' : 'red', marginVertical: 10 }]}
-                                    >
-                                        {deviceBroken ? 'Yes' : 'No'}
-                                    </Button>
-                                </View>
-                                <View style={styles.row}>
-                                    <Text style={styles.label}>Type of device:</Text>
+                                    <Button onPress={() => setIsPickingPhoto(!isPickingPhoto)}>ADD A PHOTO</Button>
+                                    <View style={styles.row}>
+                                        <Text style={styles.label}>Is it a broken Appliance?</Text>
+                                        <Button
+                                            mode="contained"
+                                            onPress={() => setDeviceBroken(!deviceBroken)}
+                                            style={[styles.input, { backgroundColor: deviceBroken ? 'green' : 'red', marginVertical: 10 }]}
+                                        >
+                                            {deviceBroken ? 'Yes' : 'No'}
+                                        </Button>
+                                    </View>
                                     <TextInput
-                                        style={[styles.input, { height: 40 }]}
-                                        label="Type of device"
+                                        label="Appliance Type"
+                                        value={deviceType}
                                         onChangeText={(text) => setDeviceType(text)}
+                                        style={styles.input}
                                     />
-                                </View>
-                                <View style={styles.row}>
-                                    <Text style={styles.label}>Model:</Text>
                                     <TextInput
-                                        style={[styles.input, { height: 40 }]}
-                                        label="Model number"
+                                        label="Appliance Model"
+                                        value={deviceModel}
                                         onChangeText={(text) => setDeviceModel(text)}
+                                        style={styles.input}
                                     />
-                                </View>
-                                <Text style={styles.descriptionLabel}>Detailed Description</Text>
-                                <TextInput
-                                    style={[styles.input, { height: 70 }]}
-                                    multiline
-                                    label='Details on what you want or what the issue is'
-                                    numberOfLines={10}
-                                    onChangeText={(text) => setDescription(text)}
-                                    value={description}
-                                />
 
-                                <View style={styles.row}>
-                                    <Text style={styles.label}>Urgency:</Text>
+                                   
+                                    <TextInput
+                                        label="Describe the Issue"
+                                        value={description}
+                                        onChangeText={(text) => setDescription(text)}
+                                        style={styles.input}
+                                        multiline
+                                        numberOfLines={4}
+                                    />
                                     <Menu
                                         visible={showMenu}
                                         onDismiss={() => setShowMenu(false)}
@@ -256,115 +247,62 @@ export default function AskServiceScreen({ navigation }) {
                                         <Menu.Item onPress={() => { setUrgency("Medium"); setShowMenu(false); }} title="Medium" />
                                         <Menu.Item onPress={() => { setUrgency("High"); setShowMenu(false); }} title="High" />
                                     </Menu>
-                                </View>
+                                    <Button onPress={() => setIsSettingLocation(!isSettingLocation)}>SET LOCATION</Button>
 
-                                {/* <View style={styles.row}>
-                                    <Text style={styles.label}>Appointment date:</Text>
-                                    <Button onPress={() => setShowDatePicker(true)}>{selectedDate.toLocaleDateString()}</Button>
-                                    {showDatePicker && (
-                                        <DateTimePicker
-                                        value={selectedDate}
-                                        mode="date"
-                                        display="default"
-                                        onChange={onDateChange}
-                                    />
-                                )}
-                                
-                                </View> */}
-                                {/* <View style={styles.row}>
-                                <Text style={styles.label}>Appointment time:</Text>
-                                <Button onPress={() => setShowTimePicker(true)}>{selectedTime.toLocaleTimeString()}</Button>
-                                {showTimePicker && (
-                                    <DateTimePicker
-                                        value={selectedTime}
-                                        mode="time"
-                                        s24Hour={true}
-                                        display="default"
-                                        onChange={onTimeChange}
-                                    />
-                                )}
-                            </View> */}
-
-
-                                <Button onPress={() => setIsSettingLocation(true)} style={styles.locationButton}>Pick Location</Button>
-
-                                <Button mode="contained" style={styles.serviceButton} onPress={() => PushToFirestore()}> Ask for Service </Button>
-                            </ScrollView>
-                        </View>
+                                </ScrollView>
+                                <Button
+                                    mode="contained"
+                                    onPress={() => PushToFirestore()}
+                                    style={styles.submitButton}
+                                >
+                                    Ask for Service
+                                </Button>
+                            </KeyboardAvoidingView>
                         )}
-                </>)}
-
+                    </>
+                )
+            }
         </SafeAreaView>
-    )
+    );
 }
+
 const styles = StyleSheet.create({
     container: {
-        flex: 1
-    },
-    scrollViewContent: {
-        flexGrow: 1,
-        paddingVertical: 20,
-        paddingHorizontal: 20
+        flex: 1,
+        backgroundColor: 'white',
     },
     loadingContainer: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+    },
+    scrollViewContent: {
+        paddingHorizontal: 20,
+        paddingBottom: 20,
     },
     title: {
-        alignSelf: 'center',
-        fontSize: 24,
-        marginVertical: 10
+        fontSize: 20,
+        marginVertical: 10,
+        fontWeight: 'bold',
     },
-    row: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        marginVertical: 10
+    image: {
+        width: '100%',
+        height: 200,
+        marginBottom: 20,
     },
     label: {
         fontSize: 16,
-        flex: 1
-    },
-    descriptionLabel: {
-        fontSize: 16,
-        marginBottom: 5
     },
     input: {
-        flex: 1
+        marginVertical: 10,
     },
-    textInput: {
-        backgroundColor: '#fff',
-        borderWidth: 1,
-        borderColor: '#ccc',
-        paddingHorizontal: 10,
-        paddingVertical: 8
+    submitButton: {
+        margin: 20,
+        paddingVertical: 10,
     },
-    image: {
-        width: 300,
-        height: 200,
-        alignSelf: 'center',
-        marginVertical: 20
+    locationText: {
+        fontSize: 16,
+        padding: 10,
     },
-    locationButton: {
-        marginVertical: 10
-    },
-    serviceButton: {
-        backgroundColor: 'green',
-        marginVertical: 20
-    }
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
 

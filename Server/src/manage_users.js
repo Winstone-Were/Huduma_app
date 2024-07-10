@@ -4,7 +4,7 @@ const { initializeApp } = require('firebase-admin/app');
 const { getAuth } = require('firebase-admin/auth');
 const { getFirestore } = require('firebase-admin/firestore');
 
-const serviceAccount = require("../config/huduma-4bc13-firebase-adminsdk-ogdgh-c574cf7f69.json");
+const serviceAccount = require("../config/huduma-4bc13-firebase-adminsdk-ogdgh-e3b6545e86.json");
 const admin = require("firebase-admin");
 
 admin.initializeApp({

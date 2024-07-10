@@ -37,10 +37,10 @@ const theme = {
     roundness: 0,
     colors: {
         ...DefaultTheme.colors,
-        primary: "#FF0000",
-        primaryContainer: "#7FAF73",
-        secondary: "#00FF00",
-        secondaryContainer: "#FFFF00",
+        primary: "#FF7000",
+        primaryContainer: "#FFAC4A",
+        secondary: "#FFFFFF", // white
+        secondaryContainer: "#FFFFFF",
         tertiary: "#800080",
         tertiaryContainer: "#FFA500",
         surface: "#FFC0CB",
@@ -117,7 +117,7 @@ const AuthStack = () => {
 
 
     return (
-        <PaperProvider theme={DefaultTheme}>
+        <PaperProvider theme={theme}>
             <NavigationContainer>
 
                 <Stack.Navigator initialRouteName="SplashScreen">

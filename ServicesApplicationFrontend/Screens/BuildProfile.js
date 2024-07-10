@@ -380,25 +380,38 @@ export default function BuildProfile({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  input: { marginVertical: 5, borderRadius: 0 },
-  row: {
-    alignItems: "center",
-    flexDirection: "row",
-    marginVertical: 20,
-    justifyContent: "space-between",
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: '#FFFFFF',
   },
-  textContainer: { padding: 10 },
-  headerText: { fontSize: 40 },
+  input: {
+    marginVertical: 10,
+    borderRadius: 8,
+    backgroundColor: '#FFAC4A',
+    padding: 10,
+    fontSize: 16,
+  },
+  textContainer: {
+    paddingVertical: 20,
+    alignItems: 'center',
+  },
+  headerText: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
   centerText: {
-    fontSize: 20,
-    fontStyle: '',
+    fontSize: 18,
+    textAlign: 'center',
+    marginTop: 10,
+    marginBottom: 5,
   },
   image: {
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    alignSelf: "center"
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    alignSelf: 'center',
+    marginVertical: 20,
   },
-
 });

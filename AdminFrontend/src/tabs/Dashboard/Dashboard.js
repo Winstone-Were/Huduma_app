@@ -93,18 +93,18 @@ function Dashboard() {
       })
       .catch(error => console.error('Error fetching accepted requests:', error));
 
-    // Fetch workers data and count
-    fetch('http://localhost:3000/admin/workers', { method: 'GET' })
-      .then(response => response.json())
-      .then(data => {
-        setWorkerCount(data.count);
-        const occupationData = data.workers.reduce((acc, worker) => {
-          acc[worker.occupation] = (acc[worker.occupation] || 0) + 1;
-          return acc;
-        }, {});
-        setWorkerOccupationData(occupationData);
-      })
-      .catch(error => console.error('Error fetching workers:', error));
+    // // Fetch workers data and count
+    // fetch('http://localhost:3000/admin/workers', { method: 'GET' })
+    //   .then(response => response.json())
+    //   .then(data => {
+    //     setWorkerCount(data.count);
+    //     const occupationData = data.workers.reduce((acc, worker) => {
+    //       acc[worker.occupation] = (acc[worker.occupation] || 0) + 1;
+    //       return acc;
+    //     }, {});
+    //     setWorkerOccupationData(occupationData);
+    //   })
+    //   .catch(error => console.error('Error fetching workers:', error));
 
     fetch('http://localhost:3000/admin/getworkers', { method: 'GET' })
       .then(response => response.json())
