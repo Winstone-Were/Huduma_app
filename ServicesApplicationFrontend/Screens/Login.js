@@ -20,7 +20,7 @@ export default function Login({ navigation }) {
       .then(result => {
         user = JSON.parse(result);
         console.log(user);
-        if (JSON.parse(result)) {
+        if (user.email != "") {
           LocalAuthentication.authenticateAsync({ promptMessage: "Scan your Biometrics to continue" })
             .then(biometrics => {
               if (biometrics.success) {

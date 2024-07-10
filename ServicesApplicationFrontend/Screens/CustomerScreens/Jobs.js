@@ -5,7 +5,8 @@ import { Dialog, Portal, Button, ActivityIndicator } from 'react-native-paper';
 
 import { AUTH, FIRESTORE_DB } from '../../firebaseConfig';
 import { setDoc, doc, getDoc, collection, onSnapshot, query, where, getDocs, deleteDoc, } from 'firebase/firestore';
-import {writeAskForJobState} from '../../Services/stateService'
+import {writeAskForJobState} from '../../Services/stateService';
+import {CheckCollission, CheckAskService} from '../../Services/collissionService';
 
 const occupations = [
   { id: '1', name: 'Electrician', icon: require('../../assets/Icons/electrician.png') },
@@ -30,7 +31,20 @@ const JobScreen = ({ navigation }) => {
   const cancelJob = async () => {
     let docRef = doc(FIRESTORE_DB, 'ServiceRequest', AUTH.currentUser.uid);
     await deleteDoc(docRef);
+    CheckAskService(AUTH.currentUser.uid)
+    .then((collission)=>{
+      console.log(collission);
+      setLoadingJobRequest(collission);
+    });
   }
+
+  useEffect(()=>{
+    CheckAskService(AUTH.currentUser.uid)
+      .then((collission)=>{
+        console.log(collission);
+        setLoadingJobRequest(collission);
+      });
+  },[]);
 
   const [onJob, setOnJob] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -68,6 +82,8 @@ const JobScreen = ({ navigation }) => {
       {loadingJobRequest ?
         (<>
           <ActivityIndicator style={{alignSelf:'center'}} animating size={80}/>
+          <Text style={{textAlign:'center'}}> You have requested for a job </Text>
+          <Button onPress={cancelJob}> Cancel </Button>
         </>) :
         (<>
           <ScrollView contentContainerStyle={styles.grid}>
@@ -94,6 +110,7 @@ const JobScreen = ({ navigation }) => {
           </ScrollView>
         </>)}
         <Button mode='outlined' onPress={()=>{ navigation.push('CustomerHistoryScreen')}}> View History </Button>
+
     </SafeAreaView>
   );
 };

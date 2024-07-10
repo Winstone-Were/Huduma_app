@@ -1,6 +1,6 @@
 import { Alert, StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { Card, ActivityIndicator, Button, Chip } from 'react-native-paper';
+import { Card, ActivityIndicator, Button, Chip, TextInput } from 'react-native-paper';
 import { FIRESTORE_DB } from '../../firebaseConfig';
 import { setDoc, doc, getDoc, collection, onSnapshot, query, where, getDocs, deleteDoc, orderBy } from 'firebase/firestore';
 import { AUTH } from '../../firebaseConfig';
@@ -10,7 +10,9 @@ import { writeToChatPartyState } from '../../Services/stateService'
 import * as Location from "expo-location";
 import { getChatPartyState } from '../../Services/stateService';
 import * as Notifications from "expo-notifications";
+import axios from 'axios';
 
+import {readWorkerJobState, writeWorkerJobState, clearWorkerJobState} from '../../Services/stateService'
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -76,7 +78,8 @@ const Activity = ({ navigation }) => {
   const [arrived, setArrived] = useState();
   const [collectionName, setCollectionName] = useState();
   const [loading, setLoading] = useState(true);
-
+  const [pay, setPay] = useState(1);
+  const [phone, setPhone] = useState( )
 
   const openGoogleMaps = async () => {
     let latitude = jobObject.currentLocation.latitude;
@@ -145,6 +148,7 @@ const Activity = ({ navigation }) => {
           setJobQueryString(doc.id);
           setJobObject(doc.data())
           setLoading(false);
+          setPhone(parseInt(doc.data().phoneNumber.slice(1)));
         }
         if (querySnapshot.empty) {
           setJobObject([]);
@@ -170,6 +174,9 @@ const Activity = ({ navigation }) => {
 
   const handleFinishWork = async () => {
     setLoading(true);
+    clearWorkerJobState();
+    writeWorkerJobState(jobObject);
+    
     let DeleteRed = doc(FIRESTORE_DB, 'StartedJobs', collectionName);
     let FinishRef = doc(FIRESTORE_DB, 'FinishedJobs', collectionName);
     let finishtime = (new Date ()).toISOString();
@@ -178,7 +185,7 @@ const Activity = ({ navigation }) => {
       .then(() => {
         setLoading(false);
         deleteDoc(DeleteRed);
-        navigation.replace("WorkerHomepage");
+        navigation.replace("WorkerPayment");
       })
       .catch((err) => {
         console.error(err);

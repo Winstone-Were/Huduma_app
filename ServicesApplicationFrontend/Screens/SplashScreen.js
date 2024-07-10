@@ -4,14 +4,6 @@ import LottieView from 'lottie-react-native';
 
 const SplashScreen = ({ navigation }) => {
   const [showSplash, setShowSplash] = useState(true);
-
-  useEffect(() => {
-    setTimeout(() => {
-      setShowSplash(false);
-      navigation.push('LoginScreen'); // navigate to LoginScreen after 30 seconds
-    }, 30000); // show splash screen for 30 seconds
-  }, []);
-
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#FFFFFF' }}>
       {showSplash && (
