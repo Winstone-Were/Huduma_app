@@ -10,9 +10,6 @@ import ActivityScreen from './Activity';
 import { AUTH, FIRESTORE_DB } from '../../firebaseConfig';
 
 import {readCustomerState, writeToCustomerState, clearCustomerState} from '../../Services/stateService'
-import { getChatPartyState } from '../../Services/stateService';
-
-
 const Tab = createMaterialBottomTabNavigator();
 
 const CustomerHomepage = ({ navigation }) => {
@@ -23,7 +20,7 @@ const CustomerHomepage = ({ navigation }) => {
   useEffect(() => {
     // Function to fetch username from AsyncStorage or backend API
     fetchUsername();
-  }, []);
+  }, [username]);
 
   const fetchUsername = async () => {
     setUsername(AUTH.currentUser.displayName);

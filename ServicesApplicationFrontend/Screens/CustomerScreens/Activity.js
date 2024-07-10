@@ -12,26 +12,6 @@ import { getChatPartyState } from '../../Services/stateService';
 import * as Notifications from "expo-notifications";
 
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: true,
-  }),
-});
-
-const generateNotification = async () => {
-  //show the notification to the user
-  Notifications.scheduleNotificationAsync({
-    //set the content of the notification
-    content: {
-      title: "Huduma App",
-      body: "You might have a new message",
-    },
-    trigger: null,
-  });
-};
-
 const ActivityScreen = ({ navigation }) => {
   const [loading, setloading] = useState(true);
   const [requestSent, setRequestSent] = useState();
@@ -132,19 +112,6 @@ const ActivityScreen = ({ navigation }) => {
     getActivity();
     getWorkerProfile();
     getJobFinished();
-    if (getChatPartyState() && AUTH.currentUser) {
-      let { sentBy, sentTo } = getChatPartyState();
-      if (sentBy == AUTH.currentUser.uid || sentTo == AUTH.currentUser.uid && sentTo != AUTH.currentUser.uid) {
-        let chatid = `${sentBy}::${sentTo}`;
-        console.log(chatid, AUTH.currentUser.uid)
-        const q = query(collection(FIRESTORE_DB, 'chats'), orderBy('createdAt', "desc"));
-        onSnapshot(q, (snapshot) => {
-          console.log(snapshot)
-          generateNotification();
-        }
-        );
-      }
-    }
   }, [])
 
   const blurhash =
@@ -160,9 +127,6 @@ const ActivityScreen = ({ navigation }) => {
       .then(() => {
         setloading(false);
       }).catch(err => console.error);
-    //Take Start Time
-    //Start Job
-    //Bottom Sheet to end work
 
   }
 
