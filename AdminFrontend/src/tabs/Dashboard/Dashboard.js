@@ -98,6 +98,11 @@ function Dashboard() {
       .then(response => response.json())
       .then(data => {
         setWorkerCount(data.count);
+        const occupationData = data.workers.reduce((acc, worker) => {
+          acc[worker.occupation] = (acc[worker.occupation] || 0) + 1;
+          return acc;
+        }, {});
+        setWorkerOccupationData(occupationData);
       })
       .catch(error => console.error('Error fetching workers:', error));
 
@@ -192,13 +197,15 @@ function Dashboard() {
         height={200}
       />
       </Box>
-      <Box mt={2} bgcolor="white" p={2} borderRadius={8}>
+      
+          <Box mt={2} bgcolor="white" p={2} borderRadius={8}>
         <Typography variant="h5" gutterBottom>
           To-Do List
         </Typography>
         <ToDoList />
       </Box>
     </Box>
+        
   );
 }
 export default Dashboard;

@@ -161,6 +161,7 @@ async function getUnapprovedWorkers() {
   }
 }
 
+
 async function getClients() {
   try {
     const snapshot = await db.collection('Users').where('role', '==', 'client').get();
@@ -281,6 +282,7 @@ async function unBanUser(uid) {
   }
 }
 
+
 async function getRatings() {
   try {
     const ratingsArray = [];
@@ -304,5 +306,6 @@ module.exports = {
   banUser,
   getUnapprovedWorkers,
   unBanUser,
+  getClients,
   getWorkerDistribution
 };
